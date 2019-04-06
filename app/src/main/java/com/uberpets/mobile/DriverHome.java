@@ -1,17 +1,51 @@
 package com.uberpets.mobile;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class DriverHome extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+
+
+import afu.org.checkerframework.checker.nullness.qual.NonNull;
+
+public class  DriverHome extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+
+
+    private GoogleMap mMap;
+    private Location currentLocation;
+    private LatLng mDestiny;
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private static float ZOOM_VALUE = 14.0f;
+    private int locationRequestCode = 1000;
+    private String TAG_FRAG_TRANS = "Fragment Trasation";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +62,17 @@ public class DriverHome extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        //is used to obtain user's location, with this our app no needs to manually manage connections
+        //to Google Play Services through GoogleApiClient
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        requestPermission();
     }
 
     @Override
     public void onBackPressed() {
+        finishPreviusFragments();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -86,4 +127,160 @@ public class DriverHome extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    public void requestPermission(){
+        //check if user has granted location permission,
+        // its necessary to use mFusedLocationProviderClient
+        if (ActivityCompat.checkSelfPermission(DriverHome.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DriverHome.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION},locationRequestCode);
+        }else{
+            fetchLastLocation();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult (int requestCode, @NonNull String [] permissions, @NonNull int [] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case 1000: {
+                // Si se cancela la solicitud, las matrices de resultados están vacías.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    fetchLastLocation();
+                }
+            }
+        }
+    }
+
+    public void fetchLastLocation() {
+
+        //check if user has granted location permission,
+        // its necessary to use mFusedLocationProviderClient
+        if (ActivityCompat.checkSelfPermission(DriverHome.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DriverHome.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }else{
+            // obtain the last location and save in task, that's Collection's Activities
+            Task<Location> task = mFusedLocationProviderClient.getLastLocation();
+            // add object OnSuccessListener, when the connection is established and the location is fetched
+            task.addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    if (location != null) {
+                        currentLocation = location;
+                        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+                        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                                .findFragmentById(R.id.map);
+                        mapFragment.getMapAsync(DriverHome.this);
+                    }
+                }
+            });
+        }
+    }
+
+
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        try {
+            if (googleMap != null) {
+                Log.d("INFO", "GOOGLE GOOD LOADED");
+                mMap = googleMap;
+                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+                LatLng latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+
+                //MarkerOptions are used to create a new Marker.You can specify location, title etc with MarkerOptions
+                MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Estas Acá");
+
+                //Adding the created the marker on the map
+                mMap.addMarker(markerOptions);
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,ZOOM_VALUE));
+
+                //**********mientras tanto
+                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+                    @Override
+                    public void onMapClick(LatLng newLatLon) {
+                        mMap.addMarker(new MarkerOptions().position(newLatLon).title("Marker"));
+                        mDestiny = newLatLon;
+                        getRouteTravel();
+                        showInfoTravel();
+                    }
+                });
+                //************************
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("ERROR", "GOOGLE MAPS NOT LOADED");
+        }
+    }
+
+
+    public void getRouteTravel() {
+        // se tiene que mejorar...
+        LatLng origin = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+        Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
+                .clickable(false)
+                .add(origin, mDestiny));
+    }
+
+    //init fragment options travel
+    public void showInfoTravel() {
+        replaceFragment( new OptionsTravelFragment(), true);
+    }
+
+
+
+    public boolean popFragment() {
+        boolean isPop = false;
+
+        Fragment currentFragment = getSupportFragmentManager()
+                .findFragmentById(R.id.layout_driver);
+
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            isPop = true;
+            getSupportFragmentManager().popBackStackImmediate();
+        }
+
+        return isPop;
+    }
+
+    public void finishPreviusFragments() {
+        if (!popFragment()) {
+            finish();
+        }
+    }
+
+
+    public void replaceFragment(Fragment fragment, boolean addToBackStack) {
+
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction();
+
+        if (addToBackStack) {
+            transaction.addToBackStack(null);
+
+        } else {
+            getSupportFragmentManager().popBackStack(null,
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        }
+        transaction.replace(R.id.layout_driver, fragment);
+        transaction.commit();
+        getSupportFragmentManager().executePendingTransactions();
+
+    }
+
+
 }

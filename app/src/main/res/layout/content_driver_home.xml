@@ -8,4 +8,6 @@
     tools:context=".DriverHome"
     tools:showIn="@layout/app_bar_driver_home">
 
+    <include layout="@layout/activity_maps_driver"></include>
+
 </android.support.constraint.ConstraintLayout>

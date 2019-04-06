@@ -329,7 +329,7 @@ public class UserHome extends AppCompatActivity
 
         showSearchingDriver();
 
-        //logic to send to server
+        /*//logic to send to server
         //hard
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "http://young-wave-26125.herokuapp.com/travels";
@@ -356,7 +356,7 @@ public class UserHome extends AppCompatActivity
             }
         };
         // Add the request to the RequestQueue
-        queue.add(stringRequest);
+        queue.add(stringRequest);*/
     }
 
     public void showMenssageError(String message){
