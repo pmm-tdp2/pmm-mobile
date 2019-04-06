@@ -1,4 +1,4 @@
-package com.uberpets.mobile.fragment;
+package com.uberpets.mobile;
 
 
 import android.net.Uri;

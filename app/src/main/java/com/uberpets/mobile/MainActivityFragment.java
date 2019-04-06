@@ -1,4 +1,4 @@
-package com.uberpets.mobile.fragment;
+package com.uberpets.mobile;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;

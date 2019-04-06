@@ -40,8 +40,6 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
-import com.uberpets.mobile.fragment.OptionsTravelFragment;
-import com.uberpets.mobile.fragment.SearchingDriverFragment;
 
 
 import java.util.Arrays;
