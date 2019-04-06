@@ -1,4 +1,4 @@
-package com.uberpets.tpd2_1c_2019_mobile;
+package com.uberpets.mobile;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

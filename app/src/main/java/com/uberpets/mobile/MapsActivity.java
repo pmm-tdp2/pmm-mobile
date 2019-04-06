@@ -1,20 +1,19 @@
-package com.uberpets.tpd2_1c_2019_mobile;
+package com.uberpets.mobile;
 
 import android.Manifest;
-import android.app.Fragment;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -41,6 +40,8 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.uberpets.mobile.fragment.OptionsTravelFragment;
+import com.uberpets.mobile.fragment.SearchingDriverFragment;
 
 
 import java.util.Arrays;
@@ -62,6 +63,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String API_KEY = "AIzaSyBEHTV0SgaBDXTfYtbflZ_gXyIQd3j2TNY";
     private CardView mCardView;
     private LinearLayout mInfoDriver;
+    private String TAG_FRAG_TRANS = "Fragment Trasation";
 
 
     @Override
@@ -74,8 +76,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         mCardView = findViewById(R.id.card_view);
-        mInfoDriver = findViewById(R.id.linear_info_driver_layout);
-        mInfoDriver.setVisibility(LinearLayout.INVISIBLE);
+        //mInfoDriver = findViewById(R.id.linear_info_driver_layout);
+        //mInfoDriver.setVisibility(LinearLayout.INVISIBLE);
         requestPermission();
         autocompleteLocation();
     }
@@ -205,11 +207,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         mMap.addMarker(new MarkerOptions().position(newLatLon).title("Marker"));
                         mDestiny = newLatLon;
                         getRouteTravel();
+                        showInfoTravel();
                     }
                 });
                 //************************
-
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -219,21 +220,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     public void getRouteTravel() {
-        showInfoTravel();
+        // se tiene que mejorar...
         mCardView.setVisibility(View.INVISIBLE);
         LatLng origin = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
         Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
                 .clickable(false)
                 .add(origin, mDestiny));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(-23.684, 133.903), 4));
     }
 
+    //init fragment options travel
     public void showInfoTravel() {
-        mInfoDriver.setVisibility(LinearLayout.VISIBLE);
+        replaceFragment( new OptionsTravelFragment(), true);
     }
 
+    //init Show Searching Driver
+    public void showSearchingDriver() {
+        finishPreviusFragments();
+        replaceFragment( new SearchingDriverFragment(), true);
+    }
 
     public void getDriver(View view) {
+
+        showSearchingDriver();
+
         //logic to send to server
         //hard
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -244,6 +253,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onResponse(String response) {
                 Log.i("GETDRIVER", response);
+                finishPreviusFragments();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -259,9 +269,65 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return params;
             }
         };
-
         // Add the request to the RequestQueue
         queue.add(stringRequest);
+    }
+
+    public void showMenssageError(String message){
+
+    }
+
+    public void showMenssageCharging(String message){
+
+    }
+
+    public void ShowPositionDriver(String message){
+
+    }
+
+
+    public boolean popFragment() {
+        boolean isPop = false;
+
+        Fragment currentFragment = getSupportFragmentManager()
+                .findFragmentById(R.id.options_travel);
+
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            isPop = true;
+            getSupportFragmentManager().popBackStackImmediate();
+        }
+
+        return isPop;
+    }
+
+    public void finishPreviusFragments() {
+        if (!popFragment()) {
+            finish();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        finishPreviusFragments();
+    }
+
+    public void replaceFragment(Fragment fragment, boolean addToBackStack) {
+
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction();
+
+        if (addToBackStack) {
+            transaction.addToBackStack(null);
+
+        } else {
+            getSupportFragmentManager().popBackStack(null,
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        }
+        transaction.replace(R.id.options_travel, fragment);
+        transaction.commit();
+        getSupportFragmentManager().executePendingTransactions();
+
     }
 
 }
