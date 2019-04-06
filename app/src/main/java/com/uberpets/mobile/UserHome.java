@@ -65,7 +65,6 @@ public class UserHome extends AppCompatActivity
     private String TAG_PLACE_AUTO = "PLACE_AUTO_COMPLETED";
     private int locationRequestCode = 1000;
     private AutocompleteSupportFragment mAutocompleteSupportFragment;
-    private String API_KEY = "AIzaSyCdTJmjKlPiAGfPl29AmuO-eP-oZmDmWV4";
     private CardView mCardView;
     private LinearLayout mInfoDriver;
     private String TAG_FRAG_TRANS = "Fragment Trasation";
@@ -173,7 +172,7 @@ public class UserHome extends AppCompatActivity
 
         // Initialize Places.
         if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(),API_KEY);
+            Places.initialize(getApplicationContext(),getString(R.string.google_maps_key));
         }
 
         Log.d(TAG_PLACE_AUTO,"MENSAJE");
