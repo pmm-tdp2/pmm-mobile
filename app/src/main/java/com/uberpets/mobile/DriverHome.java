@@ -26,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -42,7 +43,7 @@ public class  DriverHome extends AppCompatActivity
     private GoogleMap mMap;
     private Location currentLocation;
     private LatLng mockLocation;
-    private MarkerOptions markerPosition;
+    private Marker currentPositionMarker;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private static float ZOOM_VALUE = 14.0f;
     private static double MOVEMENT_SPEED = 0.001;
@@ -201,10 +202,10 @@ public class  DriverHome extends AppCompatActivity
                 LatLng latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
 
                 //MarkerOptions are used to create a new Marker.You can specify location, title etc with MarkerOptions
-                markerPosition = new MarkerOptions().position(latLng).title("Estas Acá");
+                MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Estas Acá");
 
                 //Adding the created the marker on the map
-                mMap.addMarker(markerPosition);
+                currentPositionMarker = mMap.addMarker(markerOptions);
 
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,ZOOM_VALUE));
             }
@@ -282,8 +283,8 @@ public class  DriverHome extends AppCompatActivity
         mockLocation = new LatLng(mockLocation.latitude + latitude, mockLocation.longitude + longitude);
 
         //MarkerOptions are used to create a new Marker.You can specify location, title etc with MarkerOptions
-        markerPosition.position(mockLocation);
-        mMap.addMarker(markerPosition);
+        currentPositionMarker.setPosition(mockLocation);
+        //mMap.addMarker(markerPosition);
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mockLocation, ZOOM_VALUE));
     }
