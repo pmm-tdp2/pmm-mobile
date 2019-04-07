@@ -8,6 +8,66 @@
     tools:context=".DriverHome"
     tools:showIn="@layout/app_bar_driver_home">
 
-    <include layout="@layout/activity_maps_driver"></include>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/moveLeftLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:rotation="90"
+        android:onClick="moveLocationLeft"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/moveDownLocation"
+        app:layout_constraintEnd_toStartOf="@+id/moveDownLocation"
+        app:srcCompat="@android:drawable/arrow_down_float" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/moveRightLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:rotation="270"
+        android:onClick="moveLocationRight"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/moveDownLocation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/arrow_down_float" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/moveUpLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="moveLocationUp"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/moveRightLocation"
+        app:layout_constraintEnd_toStartOf="@+id/moveRightLocation"
+        app:srcCompat="@android:drawable/arrow_up_float" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/moveDownLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="moveLocationDown"
+        app:backgroundTint="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/moveRightLocation"
+        app:srcCompat="@android:drawable/arrow_down_float" />
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/activity_maps_driver"/>
 
 </android.support.constraint.ConstraintLayout>

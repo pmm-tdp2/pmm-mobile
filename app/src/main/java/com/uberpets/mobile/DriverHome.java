@@ -41,11 +41,12 @@ public class  DriverHome extends AppCompatActivity
 
     private GoogleMap mMap;
     private Location currentLocation;
-    private LatLng mDestiny;
+    private LatLng mockLocation;
+    private MarkerOptions markerPosition;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private static float ZOOM_VALUE = 14.0f;
+    private static double MOVEMENT_SPEED = 0.001;
     private int locationRequestCode = 1000;
-    private String TAG_FRAG_TRANS = "Fragment Trasation";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,7 +156,6 @@ public class  DriverHome extends AppCompatActivity
     }
 
     public void fetchLastLocation() {
-
         //check if user has granted location permission,
         // its necessary to use mFusedLocationProviderClient
         if (ActivityCompat.checkSelfPermission(DriverHome.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DriverHome.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -196,29 +196,17 @@ public class  DriverHome extends AppCompatActivity
                 Log.d("INFO", "GOOGLE GOOD LOADED");
                 mMap = googleMap;
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                mockLocation = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
 
                 LatLng latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
 
                 //MarkerOptions are used to create a new Marker.You can specify location, title etc with MarkerOptions
-                MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Estas Acá");
+                markerPosition = new MarkerOptions().position(latLng).title("Estas Acá");
 
                 //Adding the created the marker on the map
-                mMap.addMarker(markerOptions);
+                mMap.addMarker(markerPosition);
 
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,ZOOM_VALUE));
-
-                //**********mientras tanto
-                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
-                    @Override
-                    public void onMapClick(LatLng newLatLon) {
-                        mMap.addMarker(new MarkerOptions().position(newLatLon).title("Marker"));
-                        mDestiny = newLatLon;
-                        getRouteTravel();
-                        showInfoTravel();
-                    }
-                });
-                //************************
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -227,19 +215,12 @@ public class  DriverHome extends AppCompatActivity
     }
 
 
-    public void getRouteTravel() {
-        // se tiene que mejorar...
-        LatLng origin = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-        Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
-                .clickable(false)
-                .add(origin, mDestiny));
-    }
+
 
     //init fragment options travel
     public void showInfoTravel() {
         replaceFragment( new OptionsTravelFragment(), true);
     }
-
 
 
     public boolean popFragment() {
@@ -279,7 +260,32 @@ public class  DriverHome extends AppCompatActivity
         transaction.replace(R.id.layout_driver, fragment);
         transaction.commit();
         getSupportFragmentManager().executePendingTransactions();
+    }
 
+    public void moveLocationUp(android.view.View view){
+        moveLocation(MOVEMENT_SPEED,0);
+    }
+
+    public void moveLocationDown(android.view.View view){
+        moveLocation(-MOVEMENT_SPEED,0);
+    }
+
+    public void moveLocationLeft(android.view.View view){
+        moveLocation(0,-MOVEMENT_SPEED);
+    }
+
+    public void moveLocationRight(android.view.View view){
+        moveLocation(0,MOVEMENT_SPEED);
+    }
+
+    public void moveLocation(double latitude, double longitude){
+        mockLocation = new LatLng(mockLocation.latitude + latitude, mockLocation.longitude + longitude);
+
+        //MarkerOptions are used to create a new Marker.You can specify location, title etc with MarkerOptions
+        markerPosition.position(mockLocation);
+        mMap.addMarker(markerPosition);
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mockLocation, ZOOM_VALUE));
     }
 
 
