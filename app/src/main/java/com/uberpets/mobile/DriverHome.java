@@ -2,6 +2,8 @@ package com.uberpets.mobile;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -25,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -201,8 +204,18 @@ public class  DriverHome extends AppCompatActivity
 
                 LatLng latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
 
+
+                int height = 32;
+                int width = 64;
+                BitmapDrawable bitmapdraw =(BitmapDrawable)getResources().getDrawable(R.drawable.car);
+                Bitmap b = bitmapdraw.getBitmap();
+                Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+
                 //MarkerOptions are used to create a new Marker.You can specify location, title etc with MarkerOptions
-                MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Estas Acá");
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(latLng)
+                        .title("Estas Acá")
+                        .icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
 
                 //Adding the created the marker on the map
                 currentPositionMarker = mMap.addMarker(markerOptions);
@@ -281,11 +294,7 @@ public class  DriverHome extends AppCompatActivity
 
     public void moveLocation(double latitude, double longitude){
         mockLocation = new LatLng(mockLocation.latitude + latitude, mockLocation.longitude + longitude);
-
-        //MarkerOptions are used to create a new Marker.You can specify location, title etc with MarkerOptions
         currentPositionMarker.setPosition(mockLocation);
-        //mMap.addMarker(markerPosition);
-
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mockLocation, ZOOM_VALUE));
     }
 
