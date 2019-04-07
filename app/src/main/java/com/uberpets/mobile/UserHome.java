@@ -29,6 +29,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -37,6 +40,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -47,6 +51,10 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.uberpets.model.Connection;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,6 +66,7 @@ public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private GoogleMap mMap;
+    private Marker mMarker;
     private Location currentLocation;
     private LatLng mDestiny;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -68,11 +77,19 @@ public class UserHome extends AppCompatActivity
     private CardView mCardView;
     private LinearLayout mInfoDriver;
     private String TAG_FRAG_TRANS = "Fragment Trasation";
+    private Connection mConnection;
+
+    private Socket mSocket;
+    private final String EVENT_POSITON_DRIVER = "POSITION DRIVER";
+    private final String EVENT_DRIVER_ARRIVED_DESTINY = "DRIVER ARRIVED TO DESTINY";
+    private final String EVENT_DRIVER_ARRIVED_USER = "DRIVER ARRIVED TO USER";
+    private final String URL = "http://young-wave-26125.herokuapp.com/travels";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_user_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -99,13 +116,9 @@ public class UserHome extends AppCompatActivity
         //is used to obtain user's location, with this our app no needs to manually manage connections
         //to Google Play Services through GoogleApiClient
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
         mCardView = findViewById(R.id.card_view);
-        //mInfoDriver = findViewById(R.id.linear_info_driver_layout);
-        //mInfoDriver.setVisibility(LinearLayout.INVISIBLE);
         requestPermission();
         autocompleteLocation();
-
     }
 
 
@@ -290,7 +303,7 @@ public class UserHome extends AppCompatActivity
 
                     @Override
                     public void onMapClick(LatLng newLatLon) {
-                        mMap.addMarker(new MarkerOptions().position(newLatLon).title("Marker"));
+                        mMarker = mMap.addMarker(new MarkerOptions().position(newLatLon).title("Marker"));
                         mDestiny = newLatLon;
                         getRouteTravel();
                         showInfoTravel();
@@ -337,9 +350,8 @@ public class UserHome extends AppCompatActivity
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        driverComing(response);
                         Log.i("GETDRIVER", response);
-                        finishPreviusFragments();
-                        replaceFragment(new InfoDriverAssingFragment(),true);
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -359,15 +371,86 @@ public class UserHome extends AppCompatActivity
         queue.add(stringRequest);
     }
 
-    public void showMenssageError(String message){
+
+
+    public void getDriverPosition(){
+        mSocket.on(EVENT_POSITON_DRIVER, new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject data = (JSONObject) args[0];
+                        String latitude;
+                        String longitude;
+                        try {
+                            latitude = data.getString("latitude");
+                            longitude = data.getString("longitude");
+                            ShowPositionDriver(Float.parseFloat(latitude),Float.parseFloat(longitude));
+                        } catch (JSONException e) {
+                            return;
+                        }
+
+
+                    }
+                });
+            }
+        });
+    }
+
+
+    public void driverComing(String infoDriver){
+        mSocket.connect();
+        finishPreviusFragments();
+        replaceFragment(new InfoDriverAssingFragment(),true);
+        getDriverPosition();
+
+        mSocket.on(EVENT_DRIVER_ARRIVED_USER, new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject data = (JSONObject) args[0];
+                        initTravel();
+                    }
+                });
+            }
+        });
+    }
+
+
+    public void initTravel(){
+        finishPreviusFragments();
+        replaceFragment(new TrackingTravelFragment(),true);
+
+        mSocket.on(EVENT_DRIVER_ARRIVED_DESTINY, new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject data = (JSONObject) args[0];
+                            endTravel();
+                    }
+                });
+            }
+        });
+    }
+
+    public void endTravel(){
+        mSocket.disconnect();
+        showRatingBar();
+    }
+
+    public void showRatingBar(){
 
     }
 
-    public void showMenssageCharging(String message){
 
-    }
+    public void ShowPositionDriver(float latitude, float longitude){
+        LatLng latLng = new LatLng(latitude,longitude);
 
-    public void ShowPositionDriver(String message){
 
     }
 
