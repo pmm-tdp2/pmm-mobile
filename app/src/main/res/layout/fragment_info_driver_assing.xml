@@ -24,6 +24,7 @@
                 android:layout_gravity="center"
                 android:text="El chofer está en camino"
                 android:textSize="25dp"
+                android:textColor="@color/places_text_white_alpha_87"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -36,6 +37,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:text="llegará en "
+                    android:textColor="@color/places_text_white_alpha_87"
                     android:textSize="15dp"
                     android:textStyle="bold" />
 
@@ -44,6 +46,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
+                    android:textColor="@color/places_text_white_alpha_87"
                     android:text="10 min"
                     android:textSize="15dp"
                     android:textStyle="bold" />
