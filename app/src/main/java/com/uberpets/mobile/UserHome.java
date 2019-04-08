@@ -74,6 +74,8 @@ public class UserHome extends AppCompatActivity
     private Marker destinyMarker;
     private Marker driverMarker;
 
+    private CardView mMessageCard;
+
     private Location currentLocation;
     private LatLng mDestiny;
     private LatLng mOrigin;
@@ -135,6 +137,8 @@ public class UserHome extends AppCompatActivity
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mCardView = findViewById(R.id.card_view);
 
+        mMessageCard = findViewById(R.id.card_view_message);
+        mMessageCard.setVisibility(CardView.INVISIBLE);
 
         {
             try {
@@ -396,6 +400,8 @@ public class UserHome extends AppCompatActivity
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.i("GETDRIVER", error.toString());
+                finishPreviusFragments();
+                mMessageCard.setVisibility(CardView.VISIBLE);
             }
         }){
             @Override
@@ -446,14 +452,14 @@ public class UserHome extends AppCompatActivity
                         JSONObject data = (JSONObject) args[0];
                         String latitude;
                         String longitude;
-                        try {
-                            latitude = data.getString("latitude");
-                            longitude = data.getString("longitude");
-                            Log.d(TAG_CONNECTION_SERVER,"position driver");
-                            ShowPositionDriver(Float.parseFloat(latitude),Float.parseFloat(longitude));
-                        } catch (JSONException e) {
-                            return;
-                        }
+                        //try {
+                            //latitude = data.getString("latitude");
+                            //longitude = data.getString("longitude");
+                            Log.d(TAG_CONNECTION_SERVER,"position driver recived");
+                            //ShowPositionDriver(Float.parseFloat(latitude),Float.parseFloat(longitude));
+                        //} catch (JSONException e) {
+                          //  return;
+                        //}
 
                     }
                 });
@@ -471,6 +477,7 @@ public class UserHome extends AppCompatActivity
                     public void run() {
                         JSONObject data = (JSONObject) args[0];
                         Log.d(TAG_CONNECTION_SERVER, "Established Connection");
+                        Log.d(TAG_CONNECTION_SERVER, data.toString());
                     }
                 });
             }
