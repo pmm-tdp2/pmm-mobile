@@ -30,6 +30,11 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <LinearLayout
                 style="?attr/actionBarTabBarStyle"
                 android:layout_width="match_parent"
@@ -43,6 +48,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="32dp"
                     android:layout_marginBottom="8dp"
+                    android:onClick="rejectTravel"
                     android:padding="8dp"
                     android:text="@string/reject"
                     android:textColor="@color/quantum_googred"

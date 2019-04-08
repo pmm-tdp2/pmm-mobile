@@ -21,6 +21,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -263,7 +265,6 @@ public class  DriverHome
         }
     }
 
-
     public void replaceFragment(Fragment fragment, boolean addToBackStack) {
 
         FragmentTransaction transaction = getSupportFragmentManager()
@@ -322,5 +323,20 @@ public class  DriverHome
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment){
+
+    }
+
+    public void showNewTravelNotification(android.view.View view){
+        View f = findViewById(R.id.requestTravelFragment);
+        f.setAlpha(1);
+    }
+
+    public void rejectTravel(android.view.View view){
+        View f = findViewById(R.id.requestTravelFragment);
+        f.setAlpha(0);
     }
 }

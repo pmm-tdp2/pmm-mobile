@@ -71,12 +71,23 @@
         layout="@layout/activity_maps_driver"/>
 
     <fragment
-        android:id="@+id/fragment2"
+        android:id="@+id/requestTravelFragment"
         android:name="com.uberpets.mobile.TravelRequestFragment"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/include" />
+
+    <Button
+        android:id="@+id/newTravelMock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="showNewTravelNotification"
+        android:text="nuevo viaje"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
