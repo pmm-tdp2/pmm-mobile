@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -39,8 +40,12 @@ import com.google.android.gms.tasks.Task;
 
 import afu.org.checkerframework.checker.nullness.qual.NonNull;
 
-public class  DriverHome extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+public class  DriverHome
+        extends AppCompatActivity
+        implements
+            NavigationView.OnNavigationItemSelectedListener,
+            OnMapReadyCallback,
+            TravelRequestFragment.OnFragmentInteractionListener {
 
 
     private GoogleMap mMap;
@@ -314,4 +319,8 @@ public class  DriverHome extends AppCompatActivity
     }
 
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }
