@@ -68,10 +68,15 @@ public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private GoogleMap mMap;
+
     private Marker mMarker;
+    private Marker originMarker;
+    private Marker destinyMarker;
     private Marker driverMarker;
+
     private Location currentLocation;
     private LatLng mDestiny;
+    private LatLng mOrigin;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private static float ZOOM_VALUE = 14.0f;
     private String TAG_PLACE_AUTO = "PLACE_AUTO_COMPLETED";
@@ -315,9 +320,14 @@ public class UserHome extends AppCompatActivity
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng newLatLon) {
-                        mMarker.setPosition(newLatLon);
+                        mMap.clear();
+                        LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+                        mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Estas Acá"));
+
+                        destinyMarker = mMap.addMarker(new MarkerOptions().position(newLatLon).title("destino"));
                         mDestiny = newLatLon;
                         getRouteTravel();
+                        showInfoTravel();
                     }
                 });
                 //************************
@@ -361,7 +371,7 @@ public class UserHome extends AppCompatActivity
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        //driverComing(response);
+                        driverComing(response);
                         Log.i("GETDRIVER", response);
                     }
                 }, new Response.ErrorListener() {
@@ -411,11 +421,11 @@ public class UserHome extends AppCompatActivity
 
 
     public void driverComing(String infoDriver){
-        mSocket.connect();
         finishPreviusFragments();
         replaceFragment(new InfoDriverAssingFragment(),true);
         getDriverPosition();
 
+        /*mSocket.connect();
         mSocket.on(EVENT_DRIVER_ARRIVED_USER, new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
@@ -427,7 +437,7 @@ public class UserHome extends AppCompatActivity
                     }
                 });
             }
-        });
+        });*/
     }
 
 
