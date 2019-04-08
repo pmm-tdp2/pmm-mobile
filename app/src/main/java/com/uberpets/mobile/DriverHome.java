@@ -215,7 +215,8 @@ public class  DriverHome extends AppCompatActivity
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(latLng)
                         .title("Estas Acá")
-                        .icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+                        .icon(BitmapDescriptorFactory.fromBitmap(smallMarker))
+                        .anchor(0.5f, 0.5f);
 
                 //Adding the created the marker on the map
                 currentPositionMarker = mMap.addMarker(markerOptions);
@@ -293,8 +294,22 @@ public class  DriverHome extends AppCompatActivity
     }
 
     public void moveLocation(double latitude, double longitude){
+        Location prevLocation = new Location("");
+        prevLocation.setLatitude(mockLocation.latitude);
+        prevLocation.setLongitude(mockLocation.longitude);
+
         mockLocation = new LatLng(mockLocation.latitude + latitude, mockLocation.longitude + longitude);
+
+        Location newLocation = new Location("");
+        newLocation.setLongitude(mockLocation.longitude);
+        newLocation.setLatitude(mockLocation.latitude);
+
         currentPositionMarker.setPosition(mockLocation);
+
+        Float bearing = prevLocation.bearingTo(newLocation);
+
+        currentPositionMarker.setRotation(bearing - 270);
+
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mockLocation, ZOOM_VALUE));
     }
 
