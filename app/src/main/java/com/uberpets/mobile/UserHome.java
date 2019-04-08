@@ -31,6 +31,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -56,6 +57,7 @@ import com.uberpets.model.Connection;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,6 +69,7 @@ public class UserHome extends AppCompatActivity
 
     private GoogleMap mMap;
     private Marker mMarker;
+    private Marker driverMarker;
     private Location currentLocation;
     private LatLng mDestiny;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -83,7 +86,7 @@ public class UserHome extends AppCompatActivity
     private final String EVENT_POSITON_DRIVER = "POSITION DRIVER";
     private final String EVENT_DRIVER_ARRIVED_DESTINY = "DRIVER ARRIVED TO DESTINY";
     private final String EVENT_DRIVER_ARRIVED_USER = "DRIVER ARRIVED TO USER";
-    private final String URL = "http://young-wave-26125.herokuapp.com/travels";
+    private final String URL = "http://young-wave-26125.herokuapp.com";
 
 
     @Override
@@ -117,6 +120,12 @@ public class UserHome extends AppCompatActivity
         //to Google Play Services through GoogleApiClient
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mCardView = findViewById(R.id.card_view);
+        {
+            try {
+                mSocket = IO.socket("http://chat.socket.io");
+            } catch (URISyntaxException e) {}
+        }
+
         requestPermission();
         autocompleteLocation();
     }
@@ -288,25 +297,27 @@ public class UserHome extends AppCompatActivity
                 mMap = googleMap;
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
+                LatLng mockLatLng = new LatLng(0,0);
+                driverMarker = mMap.addMarker(new MarkerOptions().position(mockLatLng).title("conductor"));
+                driverMarker.setVisible(false);
+
                 LatLng latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
 
                 //MarkerOptions are used to create a new Marker.You can specify location, title etc with MarkerOptions
                 MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Estas Acá");
 
                 //Adding the created the marker on the map
-                mMap.addMarker(markerOptions);
+                mMarker = mMap.addMarker(markerOptions);
 
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,ZOOM_VALUE));
 
                 //**********mientras tanto
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
                     @Override
                     public void onMapClick(LatLng newLatLon) {
-                        mMarker = mMap.addMarker(new MarkerOptions().position(newLatLon).title("Marker"));
+                        mMarker.setPosition(newLatLon);
                         mDestiny = newLatLon;
                         getRouteTravel();
-                        showInfoTravel();
                     }
                 });
                 //************************
@@ -350,7 +361,7 @@ public class UserHome extends AppCompatActivity
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        driverComing(response);
+                        //driverComing(response);
                         Log.i("GETDRIVER", response);
                     }
                 }, new Response.ErrorListener() {
@@ -450,8 +461,7 @@ public class UserHome extends AppCompatActivity
 
     public void ShowPositionDriver(float latitude, float longitude){
         LatLng latLng = new LatLng(latitude,longitude);
-
-
+        driverMarker.setPosition(latLng);
     }
 
 
