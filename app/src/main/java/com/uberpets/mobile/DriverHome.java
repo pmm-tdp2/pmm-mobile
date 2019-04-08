@@ -24,6 +24,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,6 +42,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
 
 import afu.org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -58,6 +66,17 @@ public class  DriverHome
     private static float ZOOM_VALUE = 14.0f;
     private static double MOVEMENT_SPEED = 0.001;
     private int locationRequestCode = 1000;
+
+    private Socket mSocket;
+    private final String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
+    private final String EVENT_NOTIFICATION_TRAVEL = "NOTIFICATION_OF_TRAVEL";
+    private final String EVENT_CONNECTION = "message";
+    private Emitter.Listener mListenerConnection;
+    private Emitter.Listener mListenerNotificationTravel;
+
+    //private final String URL = "http://young-wave-26125.herokuapp.com";
+    private final String URL = "http://192.168.1.105:8081";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +99,17 @@ public class  DriverHome
         //to Google Play Services through GoogleApiClient
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         requestPermission();
+
+        {
+            try {
+                mSocket = IO.socket(URL);
+                Log.d(TAG_CONNECTION_SERVER,"io socket succes");
+                connectToServer();
+                listenNotificaciónTravel();
+            } catch (URISyntaxException e) {
+                Log.d(TAG_CONNECTION_SERVER,"io socket failure");
+            }
+        }
     }
 
     @Override
@@ -207,14 +237,14 @@ public class  DriverHome
                 Log.d("INFO", "GOOGLE GOOD LOADED");
                 mMap = googleMap;
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                mockLocation = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+                mockLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
-                LatLng latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+                LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
 
                 int height = 32;
                 int width = 64;
-                BitmapDrawable bitmapdraw =(BitmapDrawable)getResources().getDrawable(R.drawable.car);
+                BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.car);
                 Bitmap b = bitmapdraw.getBitmap();
                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
 
@@ -228,22 +258,13 @@ public class  DriverHome
                 //Adding the created the marker on the map
                 currentPositionMarker = mMap.addMarker(markerOptions);
 
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,ZOOM_VALUE));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_VALUE));
             }
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("ERROR", "GOOGLE MAPS NOT LOADED");
         }
     }
-
-
-
-
-    //init fragment options travel
-    public void showInfoTravel() {
-        replaceFragment( new OptionsTravelFragment(), true);
-    }
-
 
     public boolean popFragment() {
         boolean isPop = false;
@@ -325,6 +346,7 @@ public class  DriverHome
 
     }
 
+
     @Override
     public void onAttachFragment(Fragment fragment){
 
@@ -339,4 +361,57 @@ public class  DriverHome
         View f = findViewById(R.id.requestTravelFragment);
         f.setAlpha(0);
     }
+
+
+    /* BEGIN OF SOCKET CONNECTION*/
+
+    public void connectToServer(){
+        mSocket.connect();
+        mSocket.on(EVENT_CONNECTION, mListenerConnection = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject data = (JSONObject) args[0];
+                        Log.d(TAG_CONNECTION_SERVER, "Established Connection");
+                    }
+                });
+            }
+        });
+        mSocket.emit("ROL","DRIVER");
+    }
+
+
+    //listen if arrive message that driver arrived to user
+    public void listenNotificaciónTravel() {
+        mSocket.on(EVENT_NOTIFICATION_TRAVEL, mListenerNotificationTravel = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject data = (JSONObject) args[0];
+
+                        //hay q corregir el fragment seguro rompe
+                        finishPreviusFragments();
+                        replaceFragment(new TravelRequestFragment(),true);
+                    }
+                });
+            }
+        });
+    }
+
+    /* END OF SOCKET CONNECTION*/
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mSocket.disconnect();
+        mSocket.off("FINISH", mListenerConnection);
+        mSocket.off("FINISH", mListenerNotificationTravel);
+    }
+
 }

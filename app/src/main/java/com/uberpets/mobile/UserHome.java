@@ -93,6 +93,12 @@ public class UserHome extends AppCompatActivity
     private final String EVENT_CONNECTION = "message";
     private final String EVENT_DRIVER_ARRIVED_USER = "DRIVER ARRIVED TO USER";
     private final String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
+    private Emitter.Listener mListenerConnection;
+    private Emitter.Listener mListenerPositionDriver;
+    private Emitter.Listener mListenerDriverArrivedToUser;
+    private Emitter.Listener mListenerDriverArrivedToDestiny;
+
+
 //    private final String URL = "http://young-wave-26125.herokuapp.com";
     private final String URL = "http://192.168.1.105:8081";
 
@@ -134,6 +140,10 @@ public class UserHome extends AppCompatActivity
             try {
                 mSocket = IO.socket(URL);
                 Log.d(TAG_CONNECTION_SERVER,"io socket succes");
+                connectToServer();
+                getDriverPosition();
+                listenDriverArrivedUser();
+                listenDriverArrivedDestiny();
             } catch (URISyntaxException e) {
                 Log.d(TAG_CONNECTION_SERVER,"io socket failure");
             }
@@ -401,9 +411,33 @@ public class UserHome extends AppCompatActivity
     }
 
 
+    public void driverComing(String infoDriver){
+        finishPreviusFragments();
+        replaceFragment(new InfoDriverAssingFragment(),true);
+    }
+
+
+    public void ShowPositionDriver(float latitude, float longitude){
+        LatLng latLng = new LatLng(latitude,longitude);
+        driverMarker.setPosition(latLng);
+    }
+
+
+    public void initTravel(){
+        finishPreviusFragments();
+        replaceFragment(new TrackingTravelFragment(),true);
+    }
+
+
+    public void showRatingBar(){
+
+    }
+
+
+    /* BEGIN OF SOCKET CONNECTION*/
 
     public void getDriverPosition(){
-        mSocket.on(EVENT_POSITON_DRIVER, new Emitter.Listener() {
+        mSocket.on(EVENT_POSITON_DRIVER, mListenerPositionDriver = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
@@ -421,21 +455,15 @@ public class UserHome extends AppCompatActivity
                             return;
                         }
 
-
                     }
                 });
             }
         });
     }
 
-
-    public void driverComing(String infoDriver){
-        finishPreviusFragments();
-        replaceFragment(new InfoDriverAssingFragment(),true);
-        getDriverPosition();
-
+    public void connectToServer(){
         mSocket.connect();
-        mSocket.on(EVENT_CONNECTION, new Emitter.Listener() {
+        mSocket.on(EVENT_CONNECTION, mListenerConnection = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
@@ -447,8 +475,13 @@ public class UserHome extends AppCompatActivity
                 });
             }
         });
-        getDriverPosition();
-        /*mSocket.on(EVENT_DRIVER_ARRIVED_USER, new Emitter.Listener() {
+        mSocket.emit("ROL","USER");
+    }
+
+
+    //listen if arrive message that driver arrived to user
+    public void listenDriverArrivedUser() {
+        mSocket.on(EVENT_DRIVER_ARRIVED_USER, mListenerDriverArrivedToUser = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
@@ -459,42 +492,39 @@ public class UserHome extends AppCompatActivity
                     }
                 });
             }
-        });*/
+        });
     }
 
-    public void ShowPositionDriver(float latitude, float longitude){
-        LatLng latLng = new LatLng(latitude,longitude);
-        driverMarker.setPosition(latLng);
-    }
-
-
-    public void initTravel(){
-        finishPreviusFragments();
-        replaceFragment(new TrackingTravelFragment(),true);
-
-        mSocket.on(EVENT_DRIVER_ARRIVED_DESTINY, new Emitter.Listener() {
+    //listen if arrive message that driver arrived to destiny
+    public void listenDriverArrivedDestiny() {
+        mSocket.on(EVENT_DRIVER_ARRIVED_DESTINY, mListenerDriverArrivedToDestiny = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         JSONObject data = (JSONObject) args[0];
-                            endTravel();
                     }
                 });
             }
         });
     }
 
-    public void endTravel(){
+    /* END OF SOCKET CONNECTION*/
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
         mSocket.disconnect();
-        showRatingBar();
+        mSocket.off("FINISH", mListenerConnection);
+        mSocket.off("FINISH", mListenerPositionDriver);
+        mSocket.off("FINISH", mListenerDriverArrivedToUser);
+        mSocket.off("FINISH", mListenerDriverArrivedToDestiny);
     }
 
-    public void showRatingBar(){
-
-    }
-
+    /*BEGIN REPLACE FRAGMENT*/
 
     public boolean popFragment() {
         boolean isPop = false;
@@ -516,10 +546,6 @@ public class UserHome extends AppCompatActivity
         }
     }
 
-    /*@Override
-    public void onBackPressed() {
-        finishPreviusFragments();
-    }*/
 
     public void replaceFragment(Fragment fragment, boolean addToBackStack) {
 
@@ -539,6 +565,8 @@ public class UserHome extends AppCompatActivity
         getSupportFragmentManager().executePendingTransactions();
 
     }
+
+    /*END REPLACE FRAGMENT*/
 
 }
 
