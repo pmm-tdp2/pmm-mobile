@@ -12,8 +12,8 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="title_activity_travel">Map</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_user_home">UserHome</string>
+    <string name="new_travel_message">Te ha llegado un nuevo viaje</string>
+    <string name="accept">Aceptar</string>
+    <string name="reject">Rechazar</string>
 </resources>
