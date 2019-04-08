@@ -68,10 +68,15 @@ public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private GoogleMap mMap;
+
     private Marker mMarker;
+    private Marker originMarker;
+    private Marker destinyMarker;
     private Marker driverMarker;
+
     private Location currentLocation;
     private LatLng mDestiny;
+    private LatLng mOrigin;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private static float ZOOM_VALUE = 14.0f;
     private String TAG_PLACE_AUTO = "PLACE_AUTO_COMPLETED";
@@ -85,8 +90,11 @@ public class UserHome extends AppCompatActivity
     private Socket mSocket;
     private final String EVENT_POSITON_DRIVER = "POSITION DRIVER";
     private final String EVENT_DRIVER_ARRIVED_DESTINY = "DRIVER ARRIVED TO DESTINY";
+    private final String EVENT_CONNECTION = "message";
     private final String EVENT_DRIVER_ARRIVED_USER = "DRIVER ARRIVED TO USER";
-    private final String URL = "http://young-wave-26125.herokuapp.com";
+    private final String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
+//    private final String URL = "http://young-wave-26125.herokuapp.com";
+    private final String URL = "http://192.168.1.105:8081";
 
 
     @Override
@@ -120,10 +128,15 @@ public class UserHome extends AppCompatActivity
         //to Google Play Services through GoogleApiClient
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mCardView = findViewById(R.id.card_view);
+
+
         {
             try {
-                mSocket = IO.socket("http://chat.socket.io");
-            } catch (URISyntaxException e) {}
+                mSocket = IO.socket(URL);
+                Log.d(TAG_CONNECTION_SERVER,"io socket succes");
+            } catch (URISyntaxException e) {
+                Log.d(TAG_CONNECTION_SERVER,"io socket failure");
+            }
         }
 
         requestPermission();
@@ -315,9 +328,14 @@ public class UserHome extends AppCompatActivity
                 mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                     @Override
                     public void onMapClick(LatLng newLatLon) {
-                        mMarker.setPosition(newLatLon);
+                        mMap.clear();
+                        LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+                        mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Estas Acá"));
+
+                        destinyMarker = mMap.addMarker(new MarkerOptions().position(newLatLon).title("destino"));
                         mDestiny = newLatLon;
                         getRouteTravel();
+                        showInfoTravel();
                     }
                 });
                 //************************
@@ -355,13 +373,13 @@ public class UserHome extends AppCompatActivity
         //hard
         showSearchingDriver();
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://young-wave-26125.herokuapp.com/travels";
+        String url = URL+"/travels";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        //driverComing(response);
+                        driverComing(response);
                         Log.i("GETDRIVER", response);
                     }
                 }, new Response.ErrorListener() {
@@ -397,6 +415,7 @@ public class UserHome extends AppCompatActivity
                         try {
                             latitude = data.getString("latitude");
                             longitude = data.getString("longitude");
+                            Log.d(TAG_CONNECTION_SERVER,"position driver");
                             ShowPositionDriver(Float.parseFloat(latitude),Float.parseFloat(longitude));
                         } catch (JSONException e) {
                             return;
@@ -411,12 +430,25 @@ public class UserHome extends AppCompatActivity
 
 
     public void driverComing(String infoDriver){
-        mSocket.connect();
         finishPreviusFragments();
         replaceFragment(new InfoDriverAssingFragment(),true);
         getDriverPosition();
 
-        mSocket.on(EVENT_DRIVER_ARRIVED_USER, new Emitter.Listener() {
+        mSocket.connect();
+        mSocket.on(EVENT_CONNECTION, new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject data = (JSONObject) args[0];
+                        Log.d(TAG_CONNECTION_SERVER, "Established Connection");
+                    }
+                });
+            }
+        });
+        getDriverPosition();
+        /*mSocket.on(EVENT_DRIVER_ARRIVED_USER, new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
@@ -427,7 +459,12 @@ public class UserHome extends AppCompatActivity
                     }
                 });
             }
-        });
+        });*/
+    }
+
+    public void ShowPositionDriver(float latitude, float longitude){
+        LatLng latLng = new LatLng(latitude,longitude);
+        driverMarker.setPosition(latLng);
     }
 
 
@@ -456,12 +493,6 @@ public class UserHome extends AppCompatActivity
 
     public void showRatingBar(){
 
-    }
-
-
-    public void ShowPositionDriver(float latitude, float longitude){
-        LatLng latLng = new LatLng(latitude,longitude);
-        driverMarker.setPosition(latLng);
     }
 
 
