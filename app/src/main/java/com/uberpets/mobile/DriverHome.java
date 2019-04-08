@@ -22,6 +22,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.IO;
+import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,6 +40,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
 
 import afu.org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -56,6 +64,17 @@ public class  DriverHome
     private static float ZOOM_VALUE = 14.0f;
     private static double MOVEMENT_SPEED = 0.001;
     private int locationRequestCode = 1000;
+
+    private Socket mSocket;
+    private final String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
+    private final String EVENT_NOTIFICATION_TRAVEL = "NOTIFICATION_OF_TRAVEL";
+    private final String EVENT_CONNECTION = "message";
+    private Emitter.Listener mListenerConnection;
+    private Emitter.Listener mListenerNotificationTravel;
+
+    //private final String URL = "http://young-wave-26125.herokuapp.com";
+    private final String URL = "http://192.168.1.105:8081";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +97,17 @@ public class  DriverHome
         //to Google Play Services through GoogleApiClient
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         requestPermission();
+
+        {
+            try {
+                mSocket = IO.socket(URL);
+                Log.d(TAG_CONNECTION_SERVER,"io socket succes");
+                connectToServer();
+                listenNotificaciónTravel();
+            } catch (URISyntaxException e) {
+                Log.d(TAG_CONNECTION_SERVER,"io socket failure");
+            }
+        }
     }
 
     @Override
@@ -243,45 +273,6 @@ public class  DriverHome
     }
 
 
-    public boolean popFragment() {
-        boolean isPop = false;
-
-        Fragment currentFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.layout_driver);
-
-        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            isPop = true;
-            getSupportFragmentManager().popBackStackImmediate();
-        }
-
-        return isPop;
-    }
-
-    public void finishPreviusFragments() {
-        if (!popFragment()) {
-            finish();
-        }
-    }
-
-
-    public void replaceFragment(Fragment fragment, boolean addToBackStack) {
-
-        FragmentTransaction transaction = getSupportFragmentManager()
-                .beginTransaction();
-
-        if (addToBackStack) {
-            transaction.addToBackStack(null);
-
-        } else {
-            getSupportFragmentManager().popBackStack(null,
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-        }
-        transaction.replace(R.id.layout_driver, fragment);
-        transaction.commit();
-        getSupportFragmentManager().executePendingTransactions();
-    }
-
     public void moveLocationUp(android.view.View view){
         moveLocation(MOVEMENT_SPEED,0);
     }
@@ -323,4 +314,105 @@ public class  DriverHome
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+
+
+    /* BEGIN OF SOCKET CONNECTION*/
+
+    public void connectToServer(){
+        mSocket.connect();
+        mSocket.on(EVENT_CONNECTION, mListenerConnection = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject data = (JSONObject) args[0];
+                        Log.d(TAG_CONNECTION_SERVER, "Established Connection");
+                    }
+                });
+            }
+        });
+        mSocket.emit("ROL","DRIVER");
+    }
+
+
+    //listen if arrive message that driver arrived to user
+    public void listenNotificaciónTravel() {
+        mSocket.on(EVENT_NOTIFICATION_TRAVEL, mListenerNotificationTravel = new Emitter.Listener() {
+            @Override
+            public void call(final Object... args) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        JSONObject data = (JSONObject) args[0];
+
+                        //hay q corregir el fragment seguro rompe
+                        finishPreviusFragments();
+                        replaceFragment(new TravelRequestFragment(),true);
+                    }
+                });
+            }
+        });
+    }
+
+    /* END OF SOCKET CONNECTION*/
+
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mSocket.disconnect();
+        mSocket.off("FINISH", mListenerConnection);
+        mSocket.off("FINISH", mListenerNotificationTravel);
+    }
+
+
+
+
+
+
+    /*BEGIN REPLACE FRAGMENT*/
+    public boolean popFragment() {
+        boolean isPop = false;
+
+        Fragment currentFragment = getSupportFragmentManager()
+                .findFragmentById(R.id.layout_driver);
+
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            isPop = true;
+            getSupportFragmentManager().popBackStackImmediate();
+        }
+
+        return isPop;
+    }
+
+    public void finishPreviusFragments() {
+        if (!popFragment()) {
+            finish();
+        }
+    }
+
+
+    public void replaceFragment(Fragment fragment, boolean addToBackStack) {
+
+        FragmentTransaction transaction = getSupportFragmentManager()
+                .beginTransaction();
+
+        if (addToBackStack) {
+            transaction.addToBackStack(null);
+
+        } else {
+            getSupportFragmentManager().popBackStack(null,
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        }
+        transaction.replace(R.id.layout_driver, fragment);
+        transaction.commit();
+        getSupportFragmentManager().executePendingTransactions();
+    }
+
+    /*END REPLACE FRAGMENT*/
+
 }
