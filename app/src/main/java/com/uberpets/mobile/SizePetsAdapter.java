@@ -71,7 +71,7 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
             public void onClick(View v) {
                 if(getItemCount() > minNumbItems){
                     pets.remove(position);
-                    //notifyItemRemoved(position);
+                    notifyItemRemoved(position);
                     notifyItemRangeChanged(position, pets.size());
                     //updateHolders();
                 }
