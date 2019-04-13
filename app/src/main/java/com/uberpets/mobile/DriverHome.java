@@ -66,6 +66,7 @@ public class  DriverHome
     private static float ZOOM_VALUE = 14.0f;
     private static double MOVEMENT_SPEED = 0.001;
     private int locationRequestCode = 1000;
+    private Fragment notification;
 
     private Socket mSocket;
     private final String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
@@ -74,8 +75,8 @@ public class  DriverHome
     private Emitter.Listener mListenerConnection;
     private Emitter.Listener mListenerNotificationTravel;
 
-    //private final String URL = "http://young-wave-26125.herokuapp.com";
-    private final String URL = "http://192.168.1.105:8081";
+    //private final String URL = "https://young-wave-26125.herokuapp.com";
+    private final String URL = "http://192.168.43.175:8081";
 
 
     @Override
@@ -94,6 +95,9 @@ public class  DriverHome
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        /*notification = getSupportFragmentManager().findFragmentById(R.id.requestTravelFragment);
+        View v = notification.getView();
+        v.setAlpha(0);*/
 
         //is used to obtain user's location, with this our app no needs to manually manage connections
         //to Google Play Services through GoogleApiClient
@@ -270,7 +274,7 @@ public class  DriverHome
         boolean isPop = false;
 
         Fragment currentFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.layout_driver);
+                .findFragmentById(R.id.upper_section_fragment);
 
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             isPop = true;
@@ -299,7 +303,7 @@ public class  DriverHome
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
         }
-        transaction.replace(R.id.layout_driver, fragment);
+        transaction.replace(R.id.upper_section_fragment, fragment);
         transaction.commit();
         getSupportFragmentManager().executePendingTransactions();
     }
@@ -346,20 +350,27 @@ public class  DriverHome
 
     }
 
-
     @Override
     public void onAttachFragment(Fragment fragment){
 
     }
 
-    public void showNewTravelNotification(android.view.View view){
-        View f = findViewById(R.id.requestTravelFragment);
-        f.setAlpha(1);
+    public void showNewTravelNotification(android.view.View view) {
+        /*View f = findViewById(R.id.requestTravelFragment);
+        f.setAlpha(1);*/
+        replaceFragment(new TravelRequestFragment(),false);
+        //replaceFragment(TravelRequestFragment.newInstance("A"), false);
+
     }
 
     public void rejectTravel(android.view.View view){
-        View f = findViewById(R.id.requestTravelFragment);
-        f.setAlpha(0);
+        /*View f = findViewById(R.id.requestTravelFragment);
+        f.setAlpha(0);*/
+        //TODO: mandar notificacion al server
+    }
+
+    public void acceptTravel(android.view.View view){
+
     }
 
 
@@ -394,8 +405,10 @@ public class  DriverHome
                         JSONObject data = (JSONObject) args[0];
 
                         //hay q corregir el fragment seguro rompe
-                        finishPreviusFragments();
-                        replaceFragment(new TravelRequestFragment(),true);
+                        //finishPreviusFragments();
+                        replaceFragment(new TravelRequestFragment(),false);
+                        /*View f = findViewById(R.id.requestTravelFragment);
+                        f.setAlpha(1);*/
                     }
                 });
             }

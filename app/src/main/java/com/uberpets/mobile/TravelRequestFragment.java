@@ -99,5 +99,13 @@ public class TravelRequestFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    public void acceptTravel(android.view.View view){
+
+    }
+
+    public void rejectTravel(android.view.View view){
+
+    }
+
 
 }
