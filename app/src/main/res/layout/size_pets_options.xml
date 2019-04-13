@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:background="@drawable/layout_bg">
+
+    <ImageButton
+        android:id="@+id/little_pet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="12dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/baseline_pets_black_24" />
+
+    <ImageButton
+        android:id="@+id/medium_pet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="12dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/baseline_pets_black_36" />
+
+    <ImageButton
+        android:id="@+id/big_pet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="12dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/baseline_pets_black_48" />
+
+    <ImageButton
+        android:id="@+id/button_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="12dp"
+        android:background="@android:color/transparent"
+        android:src="@android:drawable/ic_delete" />
+
+</LinearLayout >

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -62,7 +63,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import afu.org.checkerframework.checker.nullness.qual.NonNull;
 
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
@@ -99,6 +99,8 @@ public class UserHome extends AppCompatActivity
     private Emitter.Listener mListenerPositionDriver;
     private Emitter.Listener mListenerDriverArrivedToUser;
     private Emitter.Listener mListenerDriverArrivedToDestiny;
+
+    private OptionsTravelFragment mFragmentTest;
 
 
     //private final String URL = "http://young-wave-26125.herokuapp.com";
@@ -372,7 +374,8 @@ public class UserHome extends AppCompatActivity
 
     //init fragment options travel
     public void showInfoTravel() {
-        replaceFragment( new OptionsTravelFragment(), true);
+        mFragmentTest =new OptionsTravelFragment();
+        replaceFragment(mFragmentTest , true);
     }
 
     //init Show Searching Driver
@@ -385,6 +388,9 @@ public class UserHome extends AppCompatActivity
 
         //logic to send to server
         //hard
+        Log.d("CANTIDAD_MASCOTAS","___");
+        Log.d("CANTIDAD_MASCOTAS","pequeños: "+mFragmentTest.getAllLittlePets()
+        + "  medianos: "+mFragmentTest.getAllMediumPets()+ "  big: "+mFragmentTest.getAllBigPets());
         showSearchingDriver();
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = URL+"/travels";

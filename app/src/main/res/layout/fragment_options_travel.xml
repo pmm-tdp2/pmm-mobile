@@ -5,68 +5,53 @@
     android:id="@+id/fragment_options_travel2"
     tools:context="com.uberpets.mobile.MapsActivity"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/common_google_signin_btn_text_dark_default">
+        android:layout_gravity="start"
+        android:background="@drawable/layout_bg">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Selecciona las mascotas para el viaje"
-            android:layout_margin="10dp"/>
+            android:text="Seleccione las mascotas para el viaje"
+            android:textSize="15dp"
+            android:gravity="center"
+            android:textColor="@color/colorAccent"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="10dp"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="2dp">
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:clickable="true"
-                android:src="@android:drawable/ic_input_add" />
+                android:orientation="horizontal"
+                android:layout_gravity="center">
 
-            <ImageButton
-                android:id="@+id/little_pet"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="10dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/baseline_pets_black_18" />
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:tint="@android:color/white"
+                    android:src="@android:drawable/ic_input_add" />
 
-            <ImageButton
-                android:id="@+id/medium_pet"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="10dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/baseline_pets_black_24" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view_layout_recycler"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    tools:listitem="@layout/size_pets_options"/>
 
-            <ImageButton
-                android:id="@+id/big_pet"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="10dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/baseline_pets_black_36" />
-
-        </LinearLayout>
+            </LinearLayout>
 
         <CheckBox
             android:id="@+id/checkBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginStart="5dp"
             android:text="incluye acompañante" />
 
         <Button
