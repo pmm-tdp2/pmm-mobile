@@ -1,6 +1,7 @@
 package com.uberpets.mobile;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -22,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -55,8 +57,9 @@ public class  DriverHome
         implements
             NavigationView.OnNavigationItemSelectedListener,
             OnMapReadyCallback,
-            TravelRequestFragment.OnFragmentInteractionListener {
-
+            TravelRequestFragment.OnFragmentInteractionListener,
+            DriverFollowUpTravel.OnFragmentInteractionListener
+{
 
     private GoogleMap mMap;
     private Location currentLocation;
@@ -94,10 +97,6 @@ public class  DriverHome
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        /*notification = getSupportFragmentManager().findFragmentById(R.id.requestTravelFragment);
-        View v = notification.getView();
-        v.setAlpha(0);*/
 
         //is used to obtain user's location, with this our app no needs to manually manage connections
         //to Google Play Services through GoogleApiClient
@@ -245,7 +244,6 @@ public class  DriverHome
 
                 LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
-
                 int height = 32;
                 int width = 64;
                 BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.car);
@@ -308,6 +306,14 @@ public class  DriverHome
         getSupportFragmentManager().executePendingTransactions();
     }
 
+    private void removeUpperSectionFragment(){
+        Fragment fragment = getSupportFragmentManager()
+                .findFragmentById(R.id.upper_section_fragment);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.remove(fragment);
+        transaction.commit();
+    }
+
     public void moveLocationUp(android.view.View view){
         moveLocation(MOVEMENT_SPEED,0);
     }
@@ -356,21 +362,27 @@ public class  DriverHome
     }
 
     public void showNewTravelNotification(android.view.View view) {
-        /*View f = findViewById(R.id.requestTravelFragment);
-        f.setAlpha(1);*/
         replaceFragment(new TravelRequestFragment(),false);
-        //replaceFragment(TravelRequestFragment.newInstance("A"), false);
-
     }
 
     public void rejectTravel(android.view.View view){
-        /*View f = findViewById(R.id.requestTravelFragment);
-        f.setAlpha(0);*/
         //TODO: mandar notificacion al server
+        removeUpperSectionFragment();
     }
 
     public void acceptTravel(android.view.View view){
+        //TODO: conexion con el servidor
+        replaceFragment(DriverFollowUpTravel.newInstance("",""), true);
+    }
 
+    public void cancelOngoingTravel(android.view.View view){
+        //TODO: show pop-up "are you sure"
+        removeUpperSectionFragment();
+    }
+
+    public void finishTravel(android.view.View view){
+        Intent intent = new Intent(this, DriverFinalScreen.class);
+        startActivity(intent);
     }
 
 

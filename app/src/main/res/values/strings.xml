@@ -16,4 +16,12 @@
     <string name="new_travel_message">Te ha llegado un nuevo viaje</string>
     <string name="accept">Aceptar</string>
     <string name="reject">Rechazar</string>
+    <string name="driver_follow_up_message">Su viaje esta en curso</string>
+    <string name="estimated_arrival_time">Tiempo estimado de arribo</string>
+    <string name="distance_to_destination">Distancia</string>
+    <string name="end_travel">Finalizar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="end_travel_message">Su viaje ha finalizado</string>
+    <string name="driver_comment_hint">Ingrese un comentario para el cliente</string>
+    <string name="send">Enviar</string>
 </resources>
