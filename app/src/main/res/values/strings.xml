@@ -23,5 +23,9 @@
     <string name="cancel">Cancelar</string>
     <string name="end_travel_message">Su viaje ha finalizado</string>
     <string name="driver_comment_hint">Ingrese un comentario para el cliente</string>
+    <string name="user_comment_hint">Ingrese un comentario para el chofer</string>
     <string name="send">Enviar</string>
+    <string name="pets_are_on_way">Tus mascotas están en camino</string>
+    <string name="arrive_in">llegarán a destino en </string>
+    <string name="name_and_colon">nombre:</string>
 </resources>

@@ -23,7 +23,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:text="El chofer está en camino"
-                android:textSize="25dp"
+                android:textSize="25sp"
                 android:textColor="@color/places_text_white_alpha_87"
                 android:textStyle="bold" />
 
@@ -36,9 +36,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:text="llegará en "
+                    android:text="@string/arrive_in"
                     android:textColor="@color/places_text_white_alpha_87"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -48,7 +48,7 @@
                     android:layout_gravity="center"
                     android:textColor="@color/places_text_white_alpha_87"
                     android:text="10 min"
-                    android:textSize="15dp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -91,8 +91,8 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="nombre:"
-                                    android:textSize="15dp"
+                                    android:text="@string/name_and_colon"
+                                    android:textSize="15sp"
                                     android:textStyle="bold" />
 
                                 <TextView
@@ -100,7 +100,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:text="Samuel Louris"
-                                    android:textSize="15dp" />
+                                    android:textSize="15sp" />
                             </LinearLayout>
 
                             <TextView
@@ -108,7 +108,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Jackson Smith"
-                                android:textSize="15dp" />
+                                android:textSize="15sp" />
 
                         </LinearLayout>
 
@@ -122,7 +122,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Permiso:"
-                                android:textSize="15dp"
+                                android:textSize="15sp"
                                 android:textStyle="bold" />
 
                             <TextView

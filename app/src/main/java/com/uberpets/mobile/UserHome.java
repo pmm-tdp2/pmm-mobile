@@ -55,6 +55,7 @@ import com.google.android.gms.tasks.Task;
 import com.uberpets.model.Connection;
 import com.uberpets.Constants;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
@@ -107,15 +108,6 @@ public class UserHome extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -125,7 +117,6 @@ public class UserHome extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         //is used to obtain user's location, with this our app no needs to manually manage connections
         //to Google Play Services through GoogleApiClient
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -133,8 +124,6 @@ public class UserHome extends AppCompatActivity
 
         mMessageCard = findViewById(R.id.card_view_message);
         mMessageCard.setVisibility(CardView.INVISIBLE);
-
-        Log.d("%%%%%","url: "+ mUrl+ "  intance  "+ mConstants.getURL_REMOTE() );
 
         {
             try {
@@ -150,7 +139,6 @@ public class UserHome extends AppCompatActivity
         }
 
         requestPermission();
-        //autocompleteLocation();
     }
 
 
@@ -301,7 +289,8 @@ public class UserHome extends AppCompatActivity
                 originMarker.setVisible(false);
                 destinyMarker= mMap.addMarker(new MarkerOptions().position(currentLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_pin_36)));
                 destinyMarker.setVisible(false);
-
+                driverMarker= mMap.addMarker(new MarkerOptions().position(currentLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
+                driverMarker.setVisible(false);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -462,7 +451,9 @@ public class UserHome extends AppCompatActivity
 
     public void ShowPositionDriver(float latitude, float longitude){
         LatLng latLng = new LatLng(latitude,longitude);
+        driverMarker.setVisible(true);
         driverMarker.setPosition(latLng);
+        //falta la logica de girar...
     }
 
 
@@ -473,7 +464,14 @@ public class UserHome extends AppCompatActivity
 
 
     public void showRatingBar(){
-
+        mMap.clear();
+        originMarker.setVisible(false);
+        destinyMarker.setVisible(false);
+        driverMarker.setVisible(false);
+        mCardViewSearch.setVisibility(CardView.VISIBLE);
+        finishPreviusFragments();
+        Intent intent = new Intent(this, UserFinalScreen.class);
+        startActivity(intent);
     }
 
 
@@ -486,17 +484,17 @@ public class UserHome extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        JSONObject data = (JSONObject) args[0];
-                        String latitude;
-                        String longitude;
-                        //try {
-                            //latitude = data.getString("latitude");
-                            //longitude = data.getString("longitude");
-                            Log.d(TAG_CONNECTION_SERVER,"position driver recived");
-                            //ShowPositionDriver(Float.parseFloat(latitude),Float.parseFloat(longitude));
-                        //} catch (JSONException e) {
-                          //  return;
-                        //}
+                        try {
+                            JSONObject data = (JSONObject) args[0];
+                            String latitude;
+                            String longitude;
+                            latitude = data.getString("latitude");
+                            longitude = data.getString("longitude");
+                            Log.d(TAG_CONNECTION_SERVER,"position driver received");
+                            ShowPositionDriver(Float.parseFloat(latitude),Float.parseFloat(longitude));
+                        } catch (JSONException e) {
+                            return;
+                        }
 
                     }
                 });
@@ -548,6 +546,7 @@ public class UserHome extends AppCompatActivity
                     @Override
                     public void run() {
                         JSONObject data = (JSONObject) args[0];
+                        showRatingBar();
                     }
                 });
             }
