@@ -1,9 +1,11 @@
 package com.uberpets.mobile;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -22,7 +25,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -41,6 +47,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -81,11 +88,11 @@ public class UserHome extends AppCompatActivity
     private LatLng mOrigin;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private static float ZOOM_VALUE = 14.0f;
-    private String TAG_PLACE_AUTO = "PLACE_AUTO_COMPLETED";
     private int locationRequestCode = 1000;
-    private AutocompleteSupportFragment mAutocompleteSupportFragment;
-    private CardView mCardView;
+    //private AutocompleteSupportFragment mAutocompleteSupportFragment;
+    private CardView mCardViewSearch;
     private LinearLayout mInfoDriver;
+    private String TAG_PLACE_AUTO = "PLACE_AUTO_COMPLETED";
     private String TAG_FRAG_TRANS = "Fragment Trasation";
     private Connection mConnection;
 
@@ -101,6 +108,11 @@ public class UserHome extends AppCompatActivity
     private Emitter.Listener mListenerDriverArrivedToDestiny;
 
     private OptionsTravelFragment mFragmentTest;
+
+    private static final int REQUEST_AUTOCOMPLETE_ACTIVITY = 0;
+    private static final int RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY = 0;
+    private static final int RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY = 1;
+    private static final int RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY = 2;
 
 
     //private final String URL = "http://young-wave-26125.herokuapp.com";
@@ -137,7 +149,7 @@ public class UserHome extends AppCompatActivity
         //is used to obtain user's location, with this our app no needs to manually manage connections
         //to Google Play Services through GoogleApiClient
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        mCardView = findViewById(R.id.card_view);
+        mCardViewSearch = findViewById(R.id.card_view);
 
         mMessageCard = findViewById(R.id.card_view_message);
         mMessageCard.setVisibility(CardView.INVISIBLE);
@@ -156,7 +168,7 @@ public class UserHome extends AppCompatActivity
         }
 
         requestPermission();
-        autocompleteLocation();
+        //autocompleteLocation();
     }
 
 
@@ -217,46 +229,6 @@ public class UserHome extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
-    public void autocompleteLocation(){
-
-        // Initialize Places.
-        if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(),getString(R.string.google_maps_key));
-        }
-
-        Log.d(TAG_PLACE_AUTO,"MENSAJE");
-
-        // Initialize the AutocompleteSupportFragment
-        mAutocompleteSupportFragment = (AutocompleteSupportFragment)
-                getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-
-        // Create a new Places client instance.
-        PlacesClient placesClient = Places.createClient(this);
-
-        // Specify the types of place data to return.
-        mAutocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-
-        // Set up a PlaceSelectionListener to handle the response.
-        mAutocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                //System.out.printf(place.getName());
-                Log.i(TAG_PLACE_AUTO, "Place: " + place.getName() + ", " + place.getId());
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                //System.out.printf(status.toString());
-                Log.i(TAG_PLACE_AUTO, "An error occurred: " + status);
-
-            }
-        });
-    }
-
 
     public void requestPermission(){
         //check if user has granted location permission,
@@ -340,21 +312,14 @@ public class UserHome extends AppCompatActivity
 
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,ZOOM_VALUE));
 
-                //**********mientras tanto
-                mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-                    @Override
-                    public void onMapClick(LatLng newLatLon) {
-                        mMap.clear();
-                        LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-                        mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Estas Acá"));
+                LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+                mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Estas Acá"));
 
-                        destinyMarker = mMap.addMarker(new MarkerOptions().position(newLatLon).title("destino"));
-                        mDestiny = newLatLon;
-                        getRouteTravel();
-                        showInfoTravel();
-                    }
-                });
-                //************************
+                originMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_pin_36)));
+                originMarker.setVisible(false);
+                destinyMarker= mMap.addMarker(new MarkerOptions().position(currentLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_pin_36)));
+                destinyMarker.setVisible(false);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -363,13 +328,97 @@ public class UserHome extends AppCompatActivity
     }
 
 
+    public void showCardToPickLocation() {
+        mCardViewSearch.setBackgroundColor(R.color.quantum_orange500);
+        ImageView imageView = findViewById(R.id.icon_search_cardView);
+        imageView.setImageResource(R.drawable.ic_map_pin_36);
+        TextView textView = findViewById(R.id.text_search_cardView);
+        textView.setText("Haga click en la ubicación");
+    }
+
+    public void pickMapOrigin() {
+        showCardToPickLocation();
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng newLatLon) {
+                originMarker.setPosition(newLatLon);
+                originMarker.setVisible(true);
+                mOrigin = newLatLon;
+                mMap.setOnMapClickListener(null);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 500ms
+                        goToSelectOriginDestiny();
+                    }
+                }, 500);
+            }
+        });
+    }
+
+    public void pickMapDestiny() {
+        showCardToPickLocation();
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng newLatLon) {
+                destinyMarker.setVisible(true);
+                destinyMarker.setPosition(newLatLon);
+                mDestiny = newLatLon;
+                mMap.setOnMapClickListener(null);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 500ms
+                        goToSelectOriginDestiny();
+                    }
+                }, 500);
+            }
+        });
+    }
+
+    public void clickSearchLocations(View view) {
+        goToSelectOriginDestiny();
+    }
+
+
+    public void goToSelectOriginDestiny(){
+        Intent intent = new Intent (this, PlaceAutoCompleteActivity.class);
+        if(mOrigin != null){
+            intent.putExtra("ORIGIN_READY",mOrigin.toString());
+        }
+        if(mDestiny != null){
+            intent.putExtra("DESTINY_READY",mDestiny.toString());
+        }
+        startActivityForResult(intent,REQUEST_AUTOCOMPLETE_ACTIVITY);
+    }
+
+    // Call Back method  to get the Message form other Activity
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if(requestCode == REQUEST_AUTOCOMPLETE_ACTIVITY) {
+            super.onActivityResult(requestCode, resultCode, data);
+            // check if the request code is same as what is passed
+            if(resultCode == RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY) {
+                pickMapOrigin();
+            }else if(resultCode == RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY){
+                pickMapDestiny();
+            }else if(resultCode == RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY){
+                getRouteTravel();
+                showInfoTravel();
+            }
+        }
+    }
+
+
     public void getRouteTravel() {
         // se tiene que mejorar...
-        mCardView.setVisibility(View.INVISIBLE);
-        LatLng origin = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+        mCardViewSearch.setVisibility(View.INVISIBLE);
         Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
                 .clickable(false)
-                .add(origin, mDestiny));
+                .add(mOrigin, mDestiny));
     }
 
     //init fragment options travel
