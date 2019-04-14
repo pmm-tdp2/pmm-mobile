@@ -352,7 +352,7 @@ public class  DriverHome
         newLocation.setLongitude(mockLocation.longitude);
         newLocation.setLatitude(mockLocation.latitude);
 
-        TraceDTO traceDTO = new TraceDTO("userId", "driverId", new GeograficCoordenate(String.valueOf(newLocation.getLatitude()), String.valueOf(newLocation.getLongitude())));
+        TraceDTO traceDTO = new TraceDTO("user1", "driver1", new GeograficCoordenate(String.valueOf(newLocation.getLatitude()), String.valueOf(newLocation.getLongitude())));
         traceService.saveTrace(traceDTO, this);
         currentPositionMarker.setPosition(mockLocation);
 

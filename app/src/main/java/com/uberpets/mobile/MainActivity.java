@@ -9,8 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
+import com.android.volley.*;
+import com.android.volley.toolbox.Volley;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     */
     public RequestQueue getRequestQueue() {
         if (requestQueue == null)
-            requestQueue = Volley.newRequestQueue(getApplicationContext());
+            requestQueue = Volley.newRequestQueue(getApplication());
         return requestQueue;
     }
     /*
