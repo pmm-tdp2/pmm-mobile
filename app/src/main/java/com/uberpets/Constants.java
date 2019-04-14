@@ -2,6 +2,7 @@ package com.uberpets;
 
 import android.util.Log;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,10 +30,9 @@ public class Constants {
 
     private Constants() {
         Properties prop =  new Properties();
-        String propFileName = "application.properties";
+        String propFileName = "/application.properties";
 
-        try (   InputStream input = Constants.class.getClass().getClassLoader().getResourceAsStream(propFileName);) {
-
+        try (InputStream input = Constants.class.getResourceAsStream(propFileName)) {
             if (input != null) {
                 prop.load(input);
             } else {
