@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 import com.uberpets.mobile.MainActivity;
 import com.uberpets.model.TraceDTO;
 
@@ -24,7 +25,7 @@ public class TraceService {
     private final String URL = "http://192.168.0.6:8081/pmm";
 
     public void saveTrace(TraceDTO traceDTO, AppCompatActivity activity) {
-        son gson = new Gson();
+        Gson gson = new Gson();
         String json = gson.toJson(traceDTO);
 
         RequestQueue queue = Volley.newRequestQueue(activity);

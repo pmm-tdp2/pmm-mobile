@@ -9,6 +9,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+
 public class MainActivity extends AppCompatActivity {
 
     //Declare a private RequestQueue variable
