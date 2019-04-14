@@ -43,6 +43,8 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.uberpets.model.TraceDTO;
+import com.uberpets.services.TraceService;
 
 
 import org.json.JSONException;
@@ -60,7 +62,6 @@ public class  DriverHome
             TravelRequestFragment.OnFragmentInteractionListener,
             DriverFollowUpTravel.OnFragmentInteractionListener
 {
-
     private GoogleMap mMap;
     private Location currentLocation;
     private LatLng mockLocation;
@@ -77,9 +78,10 @@ public class  DriverHome
     private final String EVENT_CONNECTION = "message";
     private Emitter.Listener mListenerConnection;
     private Emitter.Listener mListenerNotificationTravel;
+    private TraceService traceService = new TraceService();
 
-    //private final String URL = "https://young-wave-26125.herokuapp.com";
-    private final String URL = "http://192.168.43.175:8081";
+    //private final String URL = "https://young-wave-26125.herokuapp.com/pmm";
+    private final String URL = "http://192.168.0.6:8081/pmm";
 
 
     @Override
@@ -320,6 +322,14 @@ public class  DriverHome
 
     public void moveLocationDown(android.view.View view){
         moveLocation(-MOVEMENT_SPEED,0);
+
+        /*
+
+        Send message to server
+
+         */
+
+
     }
 
     public void moveLocationLeft(android.view.View view){
@@ -341,6 +351,8 @@ public class  DriverHome
         newLocation.setLongitude(mockLocation.longitude);
         newLocation.setLatitude(mockLocation.latitude);
 
+        TraceDTO traceDTO = new TraceDTO("userId", "driverId", String.valueOf(newLocation.getLatitude()), String.valueOf(newLocation.getLongitude()));
+        traceService.saveTrace(traceDTO, this);
         currentPositionMarker.setPosition(mockLocation);
 
         Float bearing = prevLocation.bearingTo(newLocation);
