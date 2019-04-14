@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -25,7 +24,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,7 +38,6 @@ import com.android.volley.toolbox.Volley;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -55,18 +52,12 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.uberpets.model.Connection;
+import com.uberpets.Constants;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,7 +80,6 @@ public class UserHome extends AppCompatActivity
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private static float ZOOM_VALUE = 14.0f;
     private int locationRequestCode = 1000;
-    //private AutocompleteSupportFragment mAutocompleteSupportFragment;
     private CardView mCardViewSearch;
     private LinearLayout mInfoDriver;
     private String TAG_PLACE_AUTO = "PLACE_AUTO_COMPLETED";
@@ -97,26 +87,16 @@ public class UserHome extends AppCompatActivity
     private Connection mConnection;
 
     private Socket mSocket;
-    private final String EVENT_POSITON_DRIVER = "POSITION DRIVER";
-    private final String EVENT_DRIVER_ARRIVED_DESTINY = "DRIVER ARRIVED TO DESTINY";
-    private final String EVENT_CONNECTION = "message";
-    private final String EVENT_DRIVER_ARRIVED_USER = "DRIVER ARRIVED TO USER";
-    private final String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
+
+    private String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
     private Emitter.Listener mListenerConnection;
     private Emitter.Listener mListenerPositionDriver;
     private Emitter.Listener mListenerDriverArrivedToUser;
     private Emitter.Listener mListenerDriverArrivedToDestiny;
 
     private OptionsTravelFragment mFragmentTest;
-
-    private static final int REQUEST_AUTOCOMPLETE_ACTIVITY = 0;
-    private static final int RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY = 0;
-    private static final int RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY = 1;
-    private static final int RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY = 2;
-
-
-    //private final String URL = "http://young-wave-26125.herokuapp.com";
-    private final String URL = "http://192.168.43.175:8081";
+    private Constants mConstants = Constants.getInstance();
+    private String mUrl = mConstants.getURL_REMOTE();
 
 
     @Override
@@ -154,9 +134,11 @@ public class UserHome extends AppCompatActivity
         mMessageCard = findViewById(R.id.card_view_message);
         mMessageCard.setVisibility(CardView.INVISIBLE);
 
+        Log.d("%%%%%","url: "+ mUrl+ "  intance  "+ mConstants.getURL_REMOTE() );
+
         {
             try {
-                mSocket = IO.socket(URL);
+                mSocket = IO.socket(mUrl);
                 Log.d(TAG_CONNECTION_SERVER,"io socket succes");
                 connectToServer();
                 getDriverPosition();
@@ -391,21 +373,21 @@ public class UserHome extends AppCompatActivity
         if(mDestiny != null){
             intent.putExtra("DESTINY_READY",mDestiny.toString());
         }
-        startActivityForResult(intent,REQUEST_AUTOCOMPLETE_ACTIVITY);
+        startActivityForResult(intent,mConstants.getREQUEST_AUTOCOMPLETE_ACTIVITY());
     }
 
     // Call Back method  to get the Message form other Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if(requestCode == REQUEST_AUTOCOMPLETE_ACTIVITY) {
+        if(requestCode == mConstants.getREQUEST_AUTOCOMPLETE_ACTIVITY()) {
             super.onActivityResult(requestCode, resultCode, data);
             // check if the request code is same as what is passed
-            if(resultCode == RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY) {
+            if(resultCode == mConstants.getRESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY()) {
                 pickMapOrigin();
-            }else if(resultCode == RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY){
+            }else if(resultCode == mConstants.getRESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY()){
                 pickMapDestiny();
-            }else if(resultCode == RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY){
+            }else if(resultCode == mConstants.getRESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY()){
                 getRouteTravel();
                 showInfoTravel();
             }
@@ -442,7 +424,7 @@ public class UserHome extends AppCompatActivity
         + "  medianos: "+mFragmentTest.getAllMediumPets()+ "  big: "+mFragmentTest.getAllBigPets());
         showSearchingDriver();
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = URL+"/travels";
+        String url = mUrl+"/travels";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,url,
                 new Response.Listener<String>() {
@@ -498,7 +480,7 @@ public class UserHome extends AppCompatActivity
     /* BEGIN OF SOCKET CONNECTION*/
 
     public void getDriverPosition(){
-        mSocket.on(EVENT_POSITON_DRIVER, mListenerPositionDriver = new Emitter.Listener() {
+        mSocket.on(mConstants.getEVENT_POSITON_DRIVER(), mListenerPositionDriver = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
@@ -524,7 +506,7 @@ public class UserHome extends AppCompatActivity
 
     public void connectToServer(){
         mSocket.connect();
-        mSocket.on(EVENT_CONNECTION, mListenerConnection = new Emitter.Listener() {
+        mSocket.on(mConstants.getEVENT_CONNECTION(), mListenerConnection = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
@@ -543,7 +525,7 @@ public class UserHome extends AppCompatActivity
 
     //listen if arrive message that driver arrived to user
     public void listenDriverArrivedUser() {
-        mSocket.on(EVENT_DRIVER_ARRIVED_USER, mListenerDriverArrivedToUser = new Emitter.Listener() {
+        mSocket.on(mConstants.getEVENT_DRIVER_ARRIVED_USER(), mListenerDriverArrivedToUser = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
@@ -559,7 +541,7 @@ public class UserHome extends AppCompatActivity
 
     //listen if arrive message that driver arrived to destiny
     public void listenDriverArrivedDestiny() {
-        mSocket.on(EVENT_DRIVER_ARRIVED_DESTINY, mListenerDriverArrivedToDestiny = new Emitter.Listener() {
+        mSocket.on(mConstants.getEVENT_DRIVER_ARRIVED_DESTINY(), mListenerDriverArrivedToDestiny = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
