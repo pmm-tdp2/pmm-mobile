@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -66,6 +67,14 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
         mMenu = findViewById(R.id.menu_autocomplete);
         mButton = findViewById(R.id.button_show_route);
         fetchLastLocation();
+
+        Toolbar toolbar = findViewById(R.id.toolbar_place_autocomplete);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
 
