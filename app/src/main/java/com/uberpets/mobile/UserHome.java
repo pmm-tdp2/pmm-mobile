@@ -94,6 +94,7 @@ public class UserHome extends AppCompatActivity
     private Constants mConstants = Constants.getInstance();
     private boolean isQueryCanceled = false;
     private String mUrl = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
+//    private String mUrl = mConstants.getURL_LOCAL() + mConstants.getURL_BASE_PATH();
     private static final String[] TRANSPORTS = {
             "websocket"
     };
@@ -412,7 +413,7 @@ public class UserHome extends AppCompatActivity
                     Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
                     try{
                         int status = response.getInt("status");
-                        if(status == 204){
+                        if(status == 203){
                             showDriverNotFound();
                             Log.i(TAG_REQUEST_SERVER, response.toString());
                         }else{
