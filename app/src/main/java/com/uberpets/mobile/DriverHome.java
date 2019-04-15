@@ -43,6 +43,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.uberpets.Constants;
 import com.uberpets.model.GeograficCoordenate;
 import com.uberpets.model.TraceDTO;
 import com.uberpets.services.TraceService;
@@ -80,9 +81,10 @@ public class  DriverHome
     private Emitter.Listener mListenerConnection;
     private Emitter.Listener mListenerNotificationTravel;
     private TraceService traceService = new TraceService();
+    Constants mConstants = Constants.getInstance();
 
     //private final String URL = "https://young-wave-26125.herokuapp.com/pmm";
-    private final String URL = "http://192.168.0.6:8081/pmm";
+    private final String URL = mConstants.getURL_REMOTE();
 
 
     @Override

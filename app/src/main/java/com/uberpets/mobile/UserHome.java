@@ -32,6 +32,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -90,6 +91,8 @@ public class UserHome extends AppCompatActivity
     private Socket mSocket;
 
     private String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
+    private String TAG_REQUEST_SERVER = "REQUEST_SERVER";
+
     private Emitter.Listener mListenerConnection;
     private Emitter.Listener mListenerPositionDriver;
     private Emitter.Listener mListenerDriverArrivedToUser;
@@ -378,7 +381,7 @@ public class UserHome extends AppCompatActivity
                 pickMapDestiny();
             }else if(resultCode == mConstants.getRESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY()){
                 getRouteTravel();
-                showInfoTravel();
+                showOptionsToTravel();
             }
         }
     }
@@ -393,7 +396,7 @@ public class UserHome extends AppCompatActivity
     }
 
     //init fragment options travel
-    public void showInfoTravel() {
+    public void showOptionsToTravel() {
         mFragmentTest =new OptionsTravelFragment();
         replaceFragment(mFragmentTest , true);
     }
@@ -415,35 +418,42 @@ public class UserHome extends AppCompatActivity
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = mUrl+"/travels";
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST,url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        driverComing(response);
-                        Log.i("GETDRIVER", response);
-                    }
-                }, new Response.ErrorListener() {
+        JSONObject requesTravelJSONObject = new JSONObject();
+        try{
+            requesTravelJSONObject.put("userId","user1");
+            JSONObject from = new JSONObject();
+            from.put("latitude", mOrigin.latitude);
+            from.put("longitude", mOrigin.longitude);
+            requesTravelJSONObject.put("from", from);
+
+            JSONObject to = new JSONObject();
+            from.put("latitude", mDestiny.latitude);
+            from.put("longitude", mDestiny.longitude);
+            requesTravelJSONObject.put("to", to);
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,
+                requesTravelJSONObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.i(TAG_REQUEST_SERVER, response.toString());
+                showInfoDriverAssigned();
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.i("GETDRIVER", error.toString());
-                finishPreviusFragments();
-                mMessageCard.setVisibility(CardView.VISIBLE);
+                Log.e(TAG_REQUEST_SERVER,error.toString(),error);
             }
-        }){
-            @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<>();
-                params.put("longitude",String.valueOf(mDestiny.longitude));
-                params.put("latitude",String.valueOf(mDestiny.latitude));
-                return params;
-            }
-        };
+        });
+
         // Add the request to the RequestQueue
-        queue.add(stringRequest);
+        queue.add(jsonObjectRequest);
     }
 
 
-    public void driverComing(String infoDriver){
+    public void showInfoDriverAssigned(){
         finishPreviusFragments();
         replaceFragment(new InfoDriverAssingFragment(),true);
     }

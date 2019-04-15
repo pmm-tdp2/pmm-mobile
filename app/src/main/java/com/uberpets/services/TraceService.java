@@ -15,6 +15,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.uberpets.Constants;
 import com.uberpets.mobile.MainActivity;
 import com.uberpets.model.TraceDTO;
 
@@ -28,7 +29,7 @@ import java.util.Map;
 public class TraceService {
 
     //private final String URL = "https://young-wave-26125.herokuapp.com";
-    private final String URL = "http://192.168.0.6:8081/pmm";
+    private final String URL = Constants.getInstance().getURL_REMOTE();
 
 
     public void saveTrace(TraceDTO traceDTO, AppCompatActivity activity) {
