@@ -1,4 +1,4 @@
-package com.uberpets.mobile;
+/*package com.uberpets.mobile;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
@@ -22,6 +23,8 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity {
     private String TAG_PLACE_AUTO = "PLACE_AUTO_COMPLETED";
     private boolean isReadyOrigin = false;
     private boolean isReadyDestiny = false;
+    private LatLng origin;
+    private LatLng destiny;
     private static final int RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY = 0;
     private static final int RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY = 1;
     private static final int RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY = 2;
@@ -78,8 +81,8 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity {
         PlacesClient placesClient = Places.createClient(this);
 
         // Specify the types of place data to return.
-        mAutocompleteSupportFragmentOrigin.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-        mAutocompleteSupportFragmentDestiny.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+        mAutocompleteSupportFragmentOrigin.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+        mAutocompleteSupportFragmentDestiny.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
 
         // Set up a PlaceSelectionListener to handle the response.
         mAutocompleteSupportFragmentOrigin.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -87,7 +90,8 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity {
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
                 //System.out.printf(place.getName());
-                Log.i(TAG_PLACE_AUTO, "Origin place: " + place.getName() + ", " + place.getId());
+                Log.i(TAG_PLACE_AUTO, "Origin place: " + place.getName() + ", " + place.getId() );
+                    origin = place.getLatLng();
             }
 
             @Override
@@ -106,6 +110,7 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity {
                 // TODO: Get info about the selected place.
                 //System.out.printf(place.getName());
                 Log.i(TAG_PLACE_AUTO, "Destiny place: " + place.getName() + ", " + place.getId());
+                destiny = place.getLatLng();
             }
 
             @Override
@@ -120,17 +125,26 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity {
 
 
     public void pickOrigin(View view) {
-        setResult(RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY,new Intent());
+        Intent intent = new Intent();
+        intent.putExtra("ORIGIN_AUTOCOMPLETE",origin);
+        intent.putExtra("DESTINY_AUTOCOMPLETE",destiny);
+        setResult(RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY,intent);
         finish();//finishing activity
     }
 
     public void pickDestiny(View view) {
-        setResult(RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY,new Intent());
+        Intent intent = new Intent();
+        intent.putExtra("ORIGIN_AUTOCOMPLETE",origin);
+        intent.putExtra("DESTINY_AUTOCOMPLETE",destiny);
+        setResult(RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY,intent);
         finish();//finishing activity
     }
 
     public void showRoute(View view){
-        if (isReadyOrigin && isReadyDestiny) {
+        Intent intent = new Intent();
+        intent.putExtra("ORIGIN_AUTOCOMPLETE",origin);
+        intent.putExtra("DESTINY_AUTOCOMPLETE",destiny);
+        if (isReadyOrigin && isReadyDestiny || ) {
             setResult(RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY,new Intent());
             finish();//finishing activity
         }
@@ -138,3 +152,4 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity {
 
 
 }
+*/

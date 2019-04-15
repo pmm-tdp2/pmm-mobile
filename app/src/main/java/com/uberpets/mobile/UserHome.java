@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -39,6 +40,7 @@ import com.android.volley.toolbox.Volley;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -53,6 +55,11 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.uberpets.model.Connection;
 import com.uberpets.Constants;
 
@@ -60,6 +67,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -359,15 +367,17 @@ public class UserHome extends AppCompatActivity
 
     public void goToSelectOriginDestiny(){
         Intent intent = new Intent (this, PlaceAutoCompleteActivity.class);
-        if(mOrigin != null){
+        /*if(mOrigin != null){
             intent.putExtra("ORIGIN_READY",mOrigin.toString());
         }
         if(mDestiny != null){
             intent.putExtra("DESTINY_READY",mDestiny.toString());
-        }
-        startActivityForResult(intent,mConstants.getREQUEST_AUTOCOMPLETE_ACTIVITY());
+        }*/
+        //startActivityForResult(intent,mConstants.getREQUEST_AUTOCOMPLETE_ACTIVITY());
+        startActivity(intent);
     }
 
+    /*
     // Call Back method  to get the Message form other Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -381,14 +391,14 @@ public class UserHome extends AppCompatActivity
                 pickMapDestiny();
             }else if(resultCode == mConstants.getRESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY()){
                 getRouteTravel();
-                showOptionsToTravel();
             }
         }
-    }
+    }*/
 
 
     public void getRouteTravel() {
         // se tiene que mejorar...
+        showOptionsToTravel();
         mCardViewSearch.setVisibility(View.INVISIBLE);
         Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
                 .clickable(false)
@@ -445,6 +455,16 @@ public class UserHome extends AppCompatActivity
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG_REQUEST_SERVER,error.toString(),error);
+                mMessageCard.setVisibility(CardView.VISIBLE);
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Do something after 3000ms
+                        mMessageCard.setVisibility(CardView.INVISIBLE);
+                    }
+                }, 3000);
+
             }
         });
 
@@ -620,6 +640,135 @@ public class UserHome extends AppCompatActivity
     }
 
     /*END REPLACE FRAGMENT*/
+
+    public class PlaceAutoCompleteActivity extends AppCompatActivity {
+
+        private String TAG_PLACE_AUTO = "PLACE_AUTO_COMPLETED";
+        private static final int RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY = 0;
+        private static final int RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY = 1;
+        private static final int RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY = 2;
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState)  {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_place_auto_complete);
+            autocompleteLocation();
+        }
+
+
+        public void autocompleteLocation(){
+
+            // Initialize Places.
+            if (!Places.isInitialized()) {
+                Places.initialize(getApplicationContext(),getString(R.string.google_maps_key));
+            }
+
+            AutocompleteSupportFragment mAutocompleteSupportFragmentOrigin;
+            AutocompleteSupportFragment mAutocompleteSupportFragmentDestiny;
+
+            // Initialize the AutocompleteSupportFragment
+            mAutocompleteSupportFragmentOrigin = (AutocompleteSupportFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment_origin);
+
+            mAutocompleteSupportFragmentDestiny = (AutocompleteSupportFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment_destiny);
+
+
+            mAutocompleteSupportFragmentOrigin.setHint("Elija origen");
+            mAutocompleteSupportFragmentDestiny.setHint("Elija destino");
+
+
+                if(mOrigin != null) {
+                    mAutocompleteSupportFragmentOrigin.setHint("Origen Listo");
+                    //findViewById(R.id.button_origin).setBackgroundColor(Color.rgb(205,134,230));
+                }
+
+                if(mDestiny != null){
+                    //findViewById(R.id.button_destiny).setBackgroundColor(Color.rgb(205,134,230));
+                    mAutocompleteSupportFragmentDestiny.setHint("Destino Listo");
+                }
+
+
+
+            // Create a new Places client instance.
+            PlacesClient placesClient = Places.createClient(this);
+
+            // Specify the types of place data to return.
+            mAutocompleteSupportFragmentOrigin.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+            mAutocompleteSupportFragmentDestiny.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+
+            // Set up a PlaceSelectionListener to handle the response.
+            mAutocompleteSupportFragmentOrigin.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(Place place) {
+                    // TODO: Get info about the selected place.
+                    //System.out.printf(place.getName());
+                    Log.i(TAG_PLACE_AUTO, "Origin place: " + place.getName() + ", " + place.getId() );
+                    mOrigin = place.getLatLng();
+                }
+
+                @Override
+                public void onError(Status status) {
+                    // TODO: Handle the error.
+                    //System.out.printf(status.toString());
+                    Log.i(TAG_PLACE_AUTO, "An error occurred in origin place: " + status);
+
+                }
+            });
+
+            // Set up a PlaceSelectionListener to handle the response.
+            mAutocompleteSupportFragmentDestiny.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+                @Override
+                public void onPlaceSelected(Place place) {
+                    // TODO: Get info about the selected place.
+                    //System.out.printf(place.getName());
+                    Log.i(TAG_PLACE_AUTO, "Destiny place: " + place.getName() + ", " + place.getId());
+                    mDestiny = place.getLatLng();
+                }
+
+                @Override
+                public void onError(Status status) {
+                    // TODO: Handle the error.
+                    //System.out.printf(status.toString());
+                    Log.i(TAG_PLACE_AUTO, "An error occurred in destiny place: " + status);
+
+                }
+            });
+        }
+
+
+        public void pickOrigin(View view) {
+            pickMapOrigin();
+            /*Intent intent = new Intent();
+            intent.putExtra("ORIGIN_AUTOCOMPLETE",origin);
+            intent.putExtra("DESTINY_AUTOCOMPLETE",destiny);
+            setResult(RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY,intent);*/
+            finish();//finishing activity
+        }
+
+        public void pickDestiny(View view) {
+            pickMapDestiny();
+            /*Intent intent = new Intent();
+            intent.putExtra("ORIGIN_AUTOCOMPLETE",origin);
+            intent.putExtra("DESTINY_AUTOCOMPLETE",destiny);
+            setResult(RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY,intent);*/
+            finish();//finishing activity
+        }
+
+        public void showRoute(View view){
+            /*Intent intent = new Intent();
+            intent.putExtra("ORIGIN_AUTOCOMPLETE",origin);
+            intent.putExtra("DESTINY_AUTOCOMPLETE",destiny);*/
+            if (mOrigin != null && mDestiny != null) {
+                //setResult(RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY,new Intent());
+                getRouteTravel();
+                finish();//finishing activity
+            }
+        }
+
+
+    }
+
 
 }
 

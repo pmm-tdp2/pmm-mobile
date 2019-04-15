@@ -50,17 +50,19 @@
         <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:id="@+id/card_view_message"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="120dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            card_view:cardBackgroundColor="@color/quantum_yellow900"
+            card_view:cardBackgroundColor="@color/quantum_googred"
             card_view:cardCornerRadius="4dp">
 
             <TextView
+                android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="NO HAY CHOFERES POR EL MOMENTO intententlo más tarde"
-                android:textSize="30dp"/>
+                android:text="Se encontraron problemas en la conexión. intententlo más tarde"
+                android:textColor="@color/quantum_white_100"
+                android:textSize="20dp"/>
         </android.support.v7.widget.CardView>
 
         <LinearLayout android:layout_height="match_parent"
