@@ -46,6 +46,7 @@
             android:layout_margin="20dp"
             android:background="@color/places_text_white_alpha_87"
             android:text="Cancelar"
+            android:onClick="cancelSearchingDriver"
             android:textColor="@color/common_google_signin_btn_text_light_focused"/>
 
     </LinearLayout>

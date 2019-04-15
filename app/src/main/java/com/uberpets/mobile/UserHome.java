@@ -92,6 +92,7 @@ public class UserHome extends AppCompatActivity
 
     private OptionsTravelFragment mFragmentTest;
     private Constants mConstants = Constants.getInstance();
+    private boolean isQueryCanceled = false;
     private String mUrl = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
     private static final String[] TRANSPORTS = {
             "websocket"
@@ -357,6 +358,18 @@ public class UserHome extends AppCompatActivity
     }
 
     //init Show Searching Driver
+    public void cancelSearchingDriver(View view) {
+        finishPreviusFragments();
+        isQueryCanceled = true;
+        returnOriginalState();
+
+        /**
+         *falta ver cancelar la query...
+         * mandar al servidor que ya no quiere el viaje...
+         */
+    }
+
+    //init Show Searching Driver
     public void showSearchingDriver() {
         finishPreviusFragments();
         replaceFragment( new SearchingDriverFragment(), true);
@@ -393,29 +406,34 @@ public class UserHome extends AppCompatActivity
                 requesTravelJSONObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
-                Log.i(TAG_REQUEST_SERVER, response.toString());
-                Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
-                try{
-                    int status = response.getInt("status");
-                    if(status == 204){
-                        showDriverNotFound();
-                        Log.i(TAG_REQUEST_SERVER, response.toString());
-                    }else{
-                        //obtain data of driver...
-                        showInfoDriverAssigned();
-                        Log.i(TAG_REQUEST_SERVER, response.toString());
+                if(!isQueryCanceled) {
+                    Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
+                    Log.i(TAG_REQUEST_SERVER, response.toString());
+                    Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
+                    try{
+                        int status = response.getInt("status");
+                        if(status == 204){
+                            showDriverNotFound();
+                            Log.i(TAG_REQUEST_SERVER, response.toString());
+                        }else{
+                            //obtain data of driver...
+                            showInfoDriverAssigned();
+                            Log.i(TAG_REQUEST_SERVER, response.toString());
+                        }
+                    }catch(JSONException e){
+                        Log.e(TAG_REQUEST_SERVER,"Error to obtain data of response server");
                     }
-                }catch(JSONException e){
-                    Log.e(TAG_REQUEST_SERVER,"Error to obtain data of response server");
                 }
-
+                isQueryCanceled = false;
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG_REQUEST_SERVER,error.toString());
-                showMessageCard();
+                if(!isQueryCanceled){
+                    Log.e(TAG_REQUEST_SERVER,error.toString());
+                    showMessageCard();
+                }
+                isQueryCanceled = false;
             }
         });
 
@@ -446,15 +464,19 @@ public class UserHome extends AppCompatActivity
             @Override
             public void run() {
                 // Do something after 5000ms
-                mMessageCard.setVisibility(CardView.INVISIBLE);
-                mMap.clear();
-                mCardViewSearch.setVisibility(View.VISIBLE);
-                LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-                mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Estas Acá"));
-                originMarker.setVisible(false);
-                destinyMarker.setVisible(false);
+                returnOriginalState();
             }
         }, 5000);
+    }
+
+    public void returnOriginalState(){
+        mMap.clear();
+        LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+        mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Estas Acá"));
+        mCardViewSearch.setVisibility(View.VISIBLE);
+        mMessageCard.setVisibility(CardView.INVISIBLE);
+        originMarker.setVisible(false);
+        destinyMarker.setVisible(false);
     }
 
 
