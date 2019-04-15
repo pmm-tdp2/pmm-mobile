@@ -7,13 +7,10 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NotificationCompat;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -25,22 +22,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
-import com.google.android.gms.common.api.Status;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -55,11 +48,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesClient;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.uberpets.model.Connection;
 import com.uberpets.Constants;
 
@@ -67,9 +55,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class UserHome extends AppCompatActivity
@@ -88,18 +73,16 @@ public class UserHome extends AppCompatActivity
     private LatLng mDestiny;
     private LatLng mOrigin;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    private static float ZOOM_VALUE = 14.0f;
-    private int locationRequestCode = 1000;
+    private static final float ZOOM_VALUE = 14.0f;
+    private static final int locationRequestCode = 1000;
     private CardView mCardViewSearch;
-    private LinearLayout mInfoDriver;
-    private String TAG_PLACE_AUTO = "PLACE_AUTO_COMPLETED";
-    private String TAG_FRAG_TRANS = "Fragment Trasation";
     private Connection mConnection;
 
     private Socket mSocket;
 
     private String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
     private String TAG_REQUEST_SERVER = "REQUEST_SERVER";
+    private String TAG_USER_HOME = "REQUEST_SERVER";
 
     private Emitter.Listener mListenerConnection;
     private Emitter.Listener mListenerPositionDriver;
@@ -310,55 +293,6 @@ public class UserHome extends AppCompatActivity
     }
 
 
-    /*public void showCardToPickLocation() {
-        mCardViewSearch.setBackgroundColor(R.color.quantum_orange500);
-        ImageView imageView = findViewById(R.id.icon_search_cardView);
-        imageView.setImageResource(R.drawable.ic_map_pin_36);
-        TextView textView = findViewById(R.id.text_search_cardView);
-        textView.setText("Haga click en la ubicación");
-    }*/
-
-    /*public void pickMapOrigin() {
-        showCardToPickLocation();
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng newLatLon) {
-                originMarker.setPosition(newLatLon);
-                originMarker.setVisible(true);
-                mOrigin = newLatLon;
-                mMap.setOnMapClickListener(null);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Do something after 500ms
-                        goToSelectOriginDestiny();
-                    }
-                }, 500);
-            }
-        });
-    }
-
-    public void pickMapDestiny() {
-        showCardToPickLocation();
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng newLatLon) {
-                destinyMarker.setVisible(true);
-                destinyMarker.setPosition(newLatLon);
-                mDestiny = newLatLon;
-                mMap.setOnMapClickListener(null);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Do something after 500ms
-                        goToSelectOriginDestiny();
-                    }
-                }, 500);
-            }
-        });
-    }*/
 
     public void clickSearchLocations(View view) {
         goToSelectOriginDestiny();
@@ -367,34 +301,21 @@ public class UserHome extends AppCompatActivity
 
     public void goToSelectOriginDestiny(){
         Intent intent = new Intent (this, PlaceAutoCompleteActivity.class);
-        /*if(mOrigin != null){
-            intent.putExtra("ORIGIN_READY",mOrigin.toString());
-        }
-        if(mDestiny != null){
-            intent.putExtra("DESTINY_READY",mDestiny.toString());
-        }*/
         intent.putExtra("CURRENT_LATITUDE",currentLocation.getLatitude());
         intent.putExtra("CURRENT_LONGITUDE",currentLocation.getLongitude());
         startActivityForResult(intent,mConstants.getREQUEST_AUTOCOMPLETE_ACTIVITY());
-        //UserHome.this.startActivity(intent);
     }
 
 
     // Call Back method  to get the Message form other Activity
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == mConstants.getREQUEST_AUTOCOMPLETE_ACTIVITY()) {
             super.onActivityResult(requestCode, resultCode, data);
-            // check if the request code is same as what is passed
-            /*if(resultCode == mConstants.getRESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY()) {
-                pickMapOrigin();
-            }else if(resultCode == mConstants.getRESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY()){
-                pickMapDestiny();
-            }else*/ if(resultCode == mConstants.getRESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY()){
-                Log.d("$$$","BIEN EL MENSAJE");
+            if(resultCode == mConstants.getRESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY()){
+                Log.d(TAG_USER_HOME,"came back of activity PLACEAUTOCOMPLETEACTIVITY");
                 if(data.getExtras() != null){
-                    Log.d("$$$","LLEGA LOS EXTRA");
+                    Log.d(TAG_USER_HOME,"data is returned from activity PLACEAUTOCOMPLETEACTIVITY");
                     double originLat = data.getDoubleExtra("LATITUDE_ORIGIN_AUTOCOMPLETE",0);
                     double originLon = data.getDoubleExtra("LONGITUDE_ORIGIN_AUTOCOMPLETE",0);
                     mOrigin= new LatLng(originLat,originLon);
@@ -408,8 +329,7 @@ public class UserHome extends AppCompatActivity
                     destinyMarker.setPosition(mDestiny);
                     getRouteTravel();
                 }else{
-                    Log.d("$$$","NOOOOO LLEGA LOS EXTRA");
-
+                    Log.d(TAG_USER_HOME,"no data is returned from activity PLACEAUTOCOMPLETEACTIVITY");
                 }
             }
         }
@@ -440,7 +360,7 @@ public class UserHome extends AppCompatActivity
     public void getDriver(View view) {
 
         //logic to send to server
-        //hard
+        //hard por ahora
         Log.d("CANTIDAD_MASCOTAS","___");
         Log.d("CANTIDAD_MASCOTAS","pequeños: "+mFragmentTest.getAllLittlePets()
         + "  medianos: "+mFragmentTest.getAllMediumPets()+ "  big: "+mFragmentTest.getAllBigPets());
