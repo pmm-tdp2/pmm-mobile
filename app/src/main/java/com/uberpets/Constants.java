@@ -13,6 +13,7 @@ public class Constants {
 
     private String URL_REMOTE;
     private String URL_LOCAL;
+    private String URL_BASE_PATH;
 
     private String EVENT_POSITON_DRIVER;
     private String EVENT_DRIVER_ARRIVED_DESTINY;
@@ -23,6 +24,8 @@ public class Constants {
     private int RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY;
     private int RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY;
     private int RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY;
+
+     private String[] SOCKET_IO_TRANSPORT;
 
     public static Constants getInstance() {
         return ourInstance;
@@ -41,6 +44,7 @@ public class Constants {
 
             URL_REMOTE = prop.getProperty("url.remote_server");
             URL_LOCAL = prop.getProperty("url.local_server");
+            URL_BASE_PATH = prop.getProperty("url.base_path");
 
             EVENT_POSITON_DRIVER = prop.getProperty("event.position_driver");
             EVENT_DRIVER_ARRIVED_DESTINY = prop.getProperty("event.driver_arrived_destiny");
@@ -51,6 +55,8 @@ public class Constants {
             RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY = Integer.parseInt(prop.getProperty("intent.autocomplete_response_origin"));
             RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY = Integer.parseInt(prop.getProperty("intent.autocomplete_response_destiny"));
             RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY = Integer.parseInt(prop.getProperty("intent.autocomplete_response_route"));
+
+            SOCKET_IO_TRANSPORT = new String[] {prop.getProperty("socket.io.transport")};
         } catch (IOException ex) {
             ex.printStackTrace();
             Log.e("CONSTANTS",ex.getMessage());
@@ -66,6 +72,10 @@ public class Constants {
 
     public String getURL_REMOTE() {
         return URL_REMOTE;
+    }
+
+    public String getURL_BASE_PATH() {
+        return URL_BASE_PATH;
     }
 
     public String getURL_LOCAL() {
@@ -100,5 +110,8 @@ public class Constants {
         return RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY;
     }
 
+    public String[] getSOCKET_IO_TRANSPORT() {
+        return SOCKET_IO_TRANSPORT;
+    }
 
 }

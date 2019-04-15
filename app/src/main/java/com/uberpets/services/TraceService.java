@@ -29,8 +29,7 @@ import java.util.Map;
 public class TraceService {
 
     //private final String URL = "https://young-wave-26125.herokuapp.com";
-    private final String URL = Constants.getInstance().getURL_REMOTE();
-
+    private final String URL = Constants.getInstance().getURL_REMOTE() + Constants.getInstance().getURL_BASE_PATH();
 
     public void saveTrace(TraceDTO traceDTO, AppCompatActivity activity) {
 

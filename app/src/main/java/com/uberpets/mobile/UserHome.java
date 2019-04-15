@@ -63,7 +63,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
@@ -100,8 +99,10 @@ public class UserHome extends AppCompatActivity
 
     private OptionsTravelFragment mFragmentTest;
     private Constants mConstants = Constants.getInstance();
-    private String mUrl = mConstants.getURL_REMOTE();
-
+    private String mUrl = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
+    private static final String[] TRANSPORTS = {
+            "websocket"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +131,9 @@ public class UserHome extends AppCompatActivity
 
         {
             try {
-                mSocket = IO.socket(mUrl);
+                final IO.Options options = new IO.Options();
+                options.transports = TRANSPORTS;
+                mSocket = IO.socket(mConstants.getURL_REMOTE(), options);
                 Log.d(TAG_CONNECTION_SERVER,"io socket succes");
                 connectToServer();
                 getDriverPosition();
