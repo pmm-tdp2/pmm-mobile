@@ -427,8 +427,8 @@ public class UserHome extends AppCompatActivity
             requesTravelJSONObject.put("from", from);
 
             JSONObject to = new JSONObject();
-            from.put("latitude", mDestiny.latitude);
-            from.put("longitude", mDestiny.longitude);
+            to.put("latitude", mDestiny.latitude);
+            to.put("longitude", mDestiny.longitude);
             requesTravelJSONObject.put("to", to);
         }catch (JSONException e){
             e.printStackTrace();
