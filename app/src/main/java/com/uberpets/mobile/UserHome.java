@@ -3,6 +3,7 @@ package com.uberpets.mobile;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -391,23 +393,29 @@ public class UserHome extends AppCompatActivity
                 requesTravelJSONObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
+                Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
                 Log.i(TAG_REQUEST_SERVER, response.toString());
-                showInfoDriverAssigned();
+                Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
+                try{
+                    int status = response.getInt("status");
+                    if(status == 204){
+                        showDriverNotFound();
+                        Log.i(TAG_REQUEST_SERVER, response.toString());
+                    }else{
+                        //obtain data of driver...
+                        showInfoDriverAssigned();
+                        Log.i(TAG_REQUEST_SERVER, response.toString());
+                    }
+                }catch(JSONException e){
+                    Log.e(TAG_REQUEST_SERVER,"Error to obtain data of response server");
+                }
+
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e(TAG_REQUEST_SERVER,error.toString(),error);
-                mMessageCard.setVisibility(CardView.VISIBLE);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Do something after 3000ms
-                        mMessageCard.setVisibility(CardView.INVISIBLE);
-                    }
-                }, 3000);
-
+                Log.e(TAG_REQUEST_SERVER,error.toString());
+                showMessageCard();
             }
         });
 
@@ -420,6 +428,35 @@ public class UserHome extends AppCompatActivity
         finishPreviusFragments();
         replaceFragment(new InfoDriverAssingFragment(),true);
     }
+
+    //set text of message card
+    public void showDriverNotFound(){
+        TextView textView =  findViewById(R.id.text_view_message);
+        textView.setText("Por el momento no se encuentran Choferes, intente más tarde");
+        mMessageCard.setBackgroundColor(Color.rgb(255, 160,0));
+        showMessageCard();
+    }
+
+    //value default is error
+    public void showMessageCard(){
+        finishPreviusFragments();
+        mMessageCard.setVisibility(CardView.VISIBLE);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Do something after 5000ms
+                mMessageCard.setVisibility(CardView.INVISIBLE);
+                mMap.clear();
+                mCardViewSearch.setVisibility(View.VISIBLE);
+                LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+                mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Estas Acá"));
+                originMarker.setVisible(false);
+                destinyMarker.setVisible(false);
+            }
+        }, 5000);
+    }
+
 
 
     public void ShowPositionDriver(float latitude, float longitude){
