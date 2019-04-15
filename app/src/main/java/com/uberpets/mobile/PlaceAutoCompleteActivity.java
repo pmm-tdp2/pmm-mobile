@@ -11,8 +11,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -33,14 +31,9 @@ import java.util.Arrays;
 public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private String TAG_PLACE_AUTO = "PLACE_AUTO_COMPLETED";
-    private boolean isReadyOrigin = false;
-    private boolean isReadyDestiny = false;
     private LatLng placeOrigin;
     private LatLng placeDestiny;
     private SupportMapFragment mFragmentMap;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private static final int RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY = 0;
-    private static final int RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY = 1;
     private static final int RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY = 2;
     private GoogleMap mMap;
     AutocompleteSupportFragment mAutocompleteSupportFragmentOrigin;
@@ -55,7 +48,6 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
 
     private LatLng currentPlace;
     private static float ZOOM_VALUE = 14.0f;
-    private int locationRequestCode = 1000;
     private LinearLayout mMenu;
     private Button mButton;
 
@@ -68,7 +60,6 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
         mFragmentMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map_place_autocomplete));
         ((SupportMapFragment) mFragmentMap).getView().setVisibility(View.INVISIBLE);
 
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         mCardPick = findViewById(R.id.card_view_autocomplete);
         mCardPick.setVisibility(View.INVISIBLE);
 
@@ -95,25 +86,6 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
 
         mAutocompleteSupportFragmentOrigin.setHint("Ingrese Origen");
         mAutocompleteSupportFragmentDestiny.setHint("Ingrese Destino");
-
-
-        /*if(getIntent().getExtras() != null) {
-            String latLogOrigin = getIntent().getExtras().getString("ORIGIN_READY");
-            if(latLogOrigin != null) {
-                mAutocompleteSupportFragmentOrigin.setHint("Origen Listo");
-                //findViewById(R.id.button_origin).setBackgroundColor(Color.rgb(205,134,230));
-                isReadyOrigin = true;
-            }
-
-            String latLogDestiny = getIntent().getExtras().getString("DESTINY_READY");
-            if(latLogDestiny != null){
-                //findViewById(R.id.button_destiny).setBackgroundColor(Color.rgb(205,134,230));
-                mAutocompleteSupportFragmentDestiny.setHint("Destino Listo");
-                isReadyDestiny = true;
-            }
-
-        }*/
-
 
         // Create a new Places client instance.
         PlacesClient placesClient = Places.createClient(this);
@@ -240,35 +212,17 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
 
 
     public void fetchLastLocation() {
-/*
-        //check if user has granted location permission,
-        // its necessary to use mFusedLocationProviderClient
-        if (ActivityCompat.checkSelfPermission(PlaceAutoCompleteActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(PlaceAutoCompleteActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }else{
-            // obtain the last location and save in task, that's Collection's Activities
-            Task<Location> task = mFusedLocationProviderClient.getLastLocation();
-            // add object OnSuccessListener, when the connection is established and the location is fetched
-            task.addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    if (location != null) {
-                        currentPlace = location;*/
-                        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-                        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                                .findFragmentById(R.id.map_place_autocomplete);
-                        mapFragment.getMapAsync(PlaceAutoCompleteActivity.this);
-                    /*}
-                }
-            });
-        }*/
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map_place_autocomplete);
+        mapFragment.getMapAsync(PlaceAutoCompleteActivity.this);
 
         if(getIntent().getExtras() != null){
-            double cuLat = getIntent().getExtras().getDouble("CURRENT_LATITUDE");
-            double cuLon = getIntent().getExtras().getDouble("CURRENT_LONGITUDE");
-            Log.d("$$$","values: "+ cuLat);
-            Log.d("$$$","values: "+ cuLon);
-            currentPlace = new LatLng(cuLat,cuLon);
+            double currentLat = getIntent().getExtras().getDouble("CURRENT_LATITUDE");
+            double currentLon = getIntent().getExtras().getDouble("CURRENT_LONGITUDE");
+            Log.d(TAG_PLACE_AUTO,"CURRENT_LATITUDE: "+ currentLat);
+            Log.d(TAG_PLACE_AUTO,"CURRENT_LONGITUDE: "+ currentLon);
+            currentPlace = new LatLng(currentLat,currentLon);
         }
     }
 
@@ -276,7 +230,7 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
     public void onMapReady(GoogleMap googleMap) {
         try {
             if (googleMap != null) {
-                Log.d("INFO", "GOOGLE GOOD LOADED");
+                Log.d("INFO", "GOOGLE GOOD LOADED IN PLACE AUTOCOMPLETED");
                 mMap = googleMap;
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
@@ -303,7 +257,7 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e("ERROR", "GOOGLE MAPS NOT LOADED");
+            Log.e("ERROR", "GOOGLE MAPS NOT LOADED IN PLACE AUTOCOMPLETED");
         }
     }
 }
