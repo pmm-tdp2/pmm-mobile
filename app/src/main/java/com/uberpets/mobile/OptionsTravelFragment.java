@@ -1,33 +1,21 @@
 package com.uberpets.mobile;
 
-
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.CheckBox;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.uberpets.mobile.R;
+import com.uberpets.model.PetSize;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 
 /**
@@ -35,10 +23,7 @@ import java.util.Map;
  */
 public class OptionsTravelFragment extends Fragment {
 
-    private Boolean optionCompanion = false;
-    private Integer numbLittlePets = 0;
-    private Integer numbMediumPets = 0;
-    private Integer numbBigPets = 0;
+    private CheckBox optionCompanion;
     private SizePetsAdapter mAdapter;
     RecyclerView mRecyclerView;
     FloatingActionButton mButtonFab;
@@ -56,12 +41,15 @@ public class OptionsTravelFragment extends Fragment {
         mRecyclerView = rootView.findViewById(R.id.recycler_view_layout_recycler);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new SizePetsAdapter(new ArrayList<>(0));
+        mAdapter = new SizePetsAdapter(new ArrayList<PetSize>(0));
         mAdapter.updateList();
         mRecyclerView.setAdapter(mAdapter);
 
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         mButtonFab = rootView.findViewById(R.id.fab);
+
+        optionCompanion =rootView.findViewById(R.id.checkBox_option_companion);
+
         setmButtonFab();
 
         return rootView;
@@ -93,6 +81,8 @@ public class OptionsTravelFragment extends Fragment {
     public int getAllBigPets() {
         return mAdapter.getAllBigPets();
     }
+
+    public boolean includesCompanion() { return optionCompanion.isChecked(); }
 
     /*
     public void getDriver(View view) {

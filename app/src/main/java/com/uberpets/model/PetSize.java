@@ -24,25 +24,25 @@ public class PetSize {
         this.sizePet = BIG;
     }
 
-    public int getLittlePet() {
+    public boolean isLittlePet() {
         if(this.sizePet == LITTLE) {
-            return 1;
+            return true;
         }
-        return 0;
+        return false;
     }
 
-    public int getMediumPet() {
+    public boolean isMediumPet() {
         if(this.sizePet == MEDIUM) {
-            return 1;
+            return true;
         }
-        return 0;
+        return false;
     }
 
-    public int getBigPet() {
+    public boolean isBigPet() {
         if(this.sizePet == BIG) {
-            return 1;
+            return true;
         }
-        return 0;
+        return false;
     }
 
 }

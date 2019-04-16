@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.uberpets.model.PetSize;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,33 +20,31 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
 
 
     private final List<PetSize> pets;
-    static int id;
     private static final int minNumbItems = 1;
     private static final int maxNumbItems = 3;
-    //private Map<Integer,SizePetsHolder> mapHolder;
 
-    public SizePetsAdapter(ArrayList pets){
+    public SizePetsAdapter(ArrayList<PetSize> pets){
         this.pets = pets;
-        //mapHolder = new HashMap<>();
-        this.id = 0;
     }
 
-
-    public SizePetsHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    @NonNull
+    public SizePetsHolder onCreateViewHolder
+            (@NonNull ViewGroup viewGroup, int i) {
         return new SizePetsHolder(LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.size_pets_options, viewGroup, false));
     }
 
     @Override
-    public void onBindViewHolder(final SizePetsHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final SizePetsHolder holder,
+                                 final int position) {
+
+        updateHolder(holder,position);
 
         holder.getLittlePet().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setLittlePetInHolder(holder);
                 pets.get(position).changeToLittlePet();
-                /*if(!mapHolder.containsKey(position))
-                    mapHolder.put(position,holder);*/
             }
         });
         holder.getMediumPet().setOnClickListener(new View.OnClickListener() {
@@ -53,8 +52,6 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
             public void onClick(View v) {
                 setMediumPetInHolder(holder);
                 pets.get(position).changeToMediumPet();
-                /*if(!mapHolder.containsKey(position))
-                    mapHolder.put(position,holder);*/
             }
         });
         holder.getBigPet().setOnClickListener(new View.OnClickListener() {
@@ -62,8 +59,6 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
             public void onClick(View v) {
                 setBigPetInHolder(holder);
                 pets.get(position).changeToBigPet();
-                /*if(!mapHolder.containsKey(position))
-                    mapHolder.put(position,holder);*/
             }
         });
         holder.getDeleteButton().setOnClickListener(new View.OnClickListener() {
@@ -72,9 +67,9 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
                 if(getItemCount() > minNumbItems){
                     pets.remove(position);
                     notifyItemRemoved(position);
-                    notifyItemRangeChanged(position, pets.size());
-                    //updateHolders();
+                    notifyDataSetChanged();
                 }
+
             }
         });
     }
@@ -96,7 +91,8 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
     public int getAllLittlePets() {
         int number=0;
         for (PetSize pet:pets) {
-            number+= pet.getLittlePet();
+            if(pet.isLittlePet())
+                number++;
         }
         return number;
     }
@@ -104,7 +100,8 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
     public int getAllMediumPets() {
         int number=0;
         for (PetSize pet:pets) {
-            number+= pet.getMediumPet();
+            if(pet.isMediumPet())
+                number++;
         }
         return number;
     }
@@ -112,7 +109,8 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
     public int getAllBigPets() {
         int number=0;
         for (PetSize pet:pets) {
-            number+= pet.getBigPet();
+            if(pet.isBigPet())
+                number++;
         }
         return number;
     }
@@ -135,16 +133,23 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
         holder.getMediumPet().setBackgroundColor(Color.TRANSPARENT);
         holder.getBigPet().setBackgroundResource(R.drawable.layout_selection);
     }
+    public void setBlankAllPetsInHolder(SizePetsHolder holder){
+        holder.getLittlePet().setBackgroundColor(Color.TRANSPARENT);
+        holder.getMediumPet().setBackgroundColor(Color.TRANSPARENT);
+        holder.getBigPet().setBackgroundColor(Color.TRANSPARENT);
+    }
 
-    /*public void updateHolders() {
-        int total = pets.size();
-        for(int i=0;i<total;i++){
-            if(pets.get(i).getLittlePet() ==1)
-                setLittlePetInHolder(mapHolder.get(i));
-            else if (pets.get(i).getMediumPet() ==1)
-                setMediumPetInHolder(mapHolder.get(i));
-            else
-                setBigPetInHolder(mapHolder.get(i));
-        }
-    }*/
+
+    public void updateHolder(SizePetsHolder holder, int position) {
+        PetSize petSize = pets.get(position);
+        if(petSize.isLittlePet())
+            setLittlePetInHolder(holder);
+        else if(petSize.isMediumPet())
+            setMediumPetInHolder(holder);
+        else if(petSize.isBigPet())
+            setBigPetInHolder(holder);
+        else
+            setBlankAllPetsInHolder(holder);
+
+    }
 }
