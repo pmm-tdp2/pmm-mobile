@@ -8,9 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
 
 import com.android.volley.*;
 import com.android.volley.toolbox.Volley;
+import com.uberpets.Constants;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,6 +21,10 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
 
     private static MainActivity mInstance;
+    private RadioButton radioLocalHost;
+    private RadioButton radioCloudServer;
+    private RadioButton radioWriteIp;
+    private EditText ip_input;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,16 +44,39 @@ public class MainActivity extends AppCompatActivity {
         });
 
         Button driverButton = findViewById(R.id.driverButton);
+        radioLocalHost = findViewById(R.id.local_host);
+        radioCloudServer = findViewById(R.id.cloud_server);
+        radioWriteIp = findViewById(R.id.local_ip_configurable);
+        ip_input = findViewById(R.id.ip_input);
+    }
+
+    public boolean isIpServerSelected(){
+        boolean success = false;
+        if (radioCloudServer.isChecked()){
+            Constants.getInstance().setIpToConnect("SERVER_CLOUD");
+            success = true;
+        }else if (radioLocalHost.isChecked()){
+            Constants.getInstance().setIpToConnect("LOCALHOST");
+            success = true;
+        }else if (radioWriteIp.isChecked() && ip_input.getText().length() != 0){
+            Constants.getInstance().setIpToConnect(ip_input.getText().toString());
+            success = true;
+        }
+        return success;
     }
 
     public void goToDriverHome(View view){
-        Intent intent = new Intent(this, DriverHome.class);
-        startActivity(intent);
+        if (isIpServerSelected()){
+            Intent intent = new Intent(this, DriverHome.class);
+            startActivity(intent);
+        }
     }
 
     public void goToUserHome(View view){
-        Intent intent = new Intent(this, UserHome.class);
-        startActivity(intent);
+        if (isIpServerSelected()) {
+            Intent intent = new Intent(this, UserHome.class);
+            startActivity(intent);
+        }
     }
 
     public static synchronized MainActivity getInstance() {
@@ -79,4 +109,5 @@ public class MainActivity extends AppCompatActivity {
     public void cancelAllRequests(String tag) {
         getRequestQueue().cancelAll(tag);
     }
+
 }

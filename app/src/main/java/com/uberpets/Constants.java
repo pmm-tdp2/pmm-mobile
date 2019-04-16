@@ -14,6 +14,7 @@ public class Constants {
     private String URL_REMOTE;
     private String URL_LOCAL;
     private String URL_BASE_PATH;
+    private String URL;
 
     private String EVENT_POSITON_DRIVER;
     private String EVENT_DRIVER_ARRIVED_DESTINY;
@@ -25,11 +26,29 @@ public class Constants {
     private int RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY;
     private int RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY;
 
+    private String TypeUrl;
+
      private String[] SOCKET_IO_TRANSPORT;
 
     public static Constants getInstance() {
         return ourInstance;
     }
+
+    public void setIpToConnect(String ip) {
+        switch (ip){
+            case "LOCALHOST":
+                URL = URL_LOCAL + URL_BASE_PATH;
+                break;
+
+            case "SERVER_CLOUD":
+                URL = URL_REMOTE + URL_BASE_PATH;
+                break;
+
+            default:
+                URL = "http://"+ip+":8081" +URL_BASE_PATH;
+        }
+    }
+
 
     private Constants() {
         Properties prop =  new Properties();
@@ -70,16 +89,20 @@ public class Constants {
         return EVENT_POSITON_DRIVER;
     }
 
-    public String getURL_REMOTE() {
+    /*public String getURL_REMOTE() {
         return URL_REMOTE;
     }
 
-    public String getURL_BASE_PATH() {
+    //public String getURL_BASE_PATH() {
         return URL_BASE_PATH;
     }
 
     public String getURL_LOCAL() {
         return URL_LOCAL;
+    }*/
+
+    public String getURL(){
+        return URL;
     }
 
     public String getEVENT_DRIVER_ARRIVED_DESTINY() {

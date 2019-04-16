@@ -84,7 +84,8 @@ public class  DriverHome
     Constants mConstants = Constants.getInstance();
 
     //private final String URL = "https://young-wave-26125.herokuapp.com/pmm";
-    private final String URL = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
+    //private final String URL = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
+    private final String URL = mConstants.getURL();
     private static final String[] TRANSPORTS = {
             "websocket"
     };
@@ -114,12 +115,12 @@ public class  DriverHome
             try {
                 final IO.Options options = new IO.Options();
                 options.transports = TRANSPORTS;
-                mSocket = IO.socket(mConstants.getURL_REMOTE(), options);
-                Log.d(TAG_CONNECTION_SERVER,"io socket succes");
+                mSocket = IO.socket(URL, options);
+                Log.i(TAG_CONNECTION_SERVER,"io socket succes");
                 connectToServer();
                 listenNotificaciónTravel();
             } catch (URISyntaxException e) {
-                Log.d(TAG_CONNECTION_SERVER,"io socket failure");
+                Log.e(TAG_CONNECTION_SERVER,"io socket failure");
             }
         }
     }

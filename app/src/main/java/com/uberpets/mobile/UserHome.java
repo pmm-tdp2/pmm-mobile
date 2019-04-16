@@ -50,7 +50,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.uberpets.model.Connection;
 import com.uberpets.Constants;
 
 import org.json.JSONException;
@@ -77,7 +76,6 @@ public class UserHome extends AppCompatActivity
     private static final float ZOOM_VALUE = 14.0f;
     private static final int locationRequestCode = 1000;
     private CardView mCardViewSearch;
-    private Connection mConnection;
 
     private Socket mSocket;
 
@@ -93,7 +91,8 @@ public class UserHome extends AppCompatActivity
     private OptionsTravelFragment mFragmentTest;
     private Constants mConstants = Constants.getInstance();
     private boolean isQueryCanceled = false;
-    private String mUrl = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
+    private String mUrl = mConstants.getURL();
+//    private String mUrl = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
 //    private String mUrl = mConstants.getURL_LOCAL() + mConstants.getURL_BASE_PATH();
     private static final String[] TRANSPORTS = {
             "websocket"
@@ -104,7 +103,7 @@ public class UserHome extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_user_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -113,7 +112,7 @@ public class UserHome extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         //is used to obtain user's location, with this our app no needs to manually manage connections
@@ -128,14 +127,14 @@ public class UserHome extends AppCompatActivity
             try {
                 final IO.Options options = new IO.Options();
                 options.transports = TRANSPORTS;
-                mSocket = IO.socket(mConstants.getURL_REMOTE(), options);
-                Log.d(TAG_CONNECTION_SERVER,"io socket succes");
+                mSocket = IO.socket(mUrl, options);
+                Log.i(TAG_CONNECTION_SERVER,"io socket success");
                 connectToServer();
                 getDriverPosition();
                 listenDriverArrivedUser();
                 listenDriverArrivedDestiny();
             } catch (URISyntaxException e) {
-                Log.d(TAG_CONNECTION_SERVER,"io socket failure");
+                Log.e(TAG_CONNECTION_SERVER,"io socket failure");
             }
         }
 
@@ -145,8 +144,8 @@ public class UserHome extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        finishPreviusFragments(); //added for me
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        finishPreviousFragments(); //added for me
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -360,7 +359,7 @@ public class UserHome extends AppCompatActivity
 
     //init Show Searching Driver
     public void cancelSearchingDriver(View view) {
-        finishPreviusFragments();
+        finishPreviousFragments();
         isQueryCanceled = true;
         returnOriginalState();
 
@@ -372,7 +371,7 @@ public class UserHome extends AppCompatActivity
 
     //init Show Searching Driver
     public void showSearchingDriver() {
-        finishPreviusFragments();
+        finishPreviousFragments();
         replaceFragment( new SearchingDriverFragment(), true);
     }
 
@@ -444,7 +443,7 @@ public class UserHome extends AppCompatActivity
 
 
     public void showInfoDriverAssigned(){
-        finishPreviusFragments();
+        finishPreviousFragments();
         replaceFragment(new InfoDriverAssingFragment(),true);
     }
 
@@ -458,7 +457,7 @@ public class UserHome extends AppCompatActivity
 
     //value default is error
     public void showMessageCard(){
-        finishPreviusFragments();
+        finishPreviousFragments();
         mMessageCard.setVisibility(CardView.VISIBLE);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -491,7 +490,7 @@ public class UserHome extends AppCompatActivity
 
 
     public void initTravel(){
-        finishPreviusFragments();
+        finishPreviousFragments();
         replaceFragment(new TrackingTravelFragment(),true);
     }
 
@@ -502,7 +501,7 @@ public class UserHome extends AppCompatActivity
         destinyMarker.setVisible(false);
         driverMarker.setVisible(false);
         mCardViewSearch.setVisibility(CardView.VISIBLE);
-        finishPreviusFragments();
+        finishPreviousFragments();
         Intent intent = new Intent(this, UserFinalScreen.class);
         startActivity(intent);
     }
@@ -616,7 +615,7 @@ public class UserHome extends AppCompatActivity
         return isPop;
     }
 
-    public void finishPreviusFragments() {
+    public void finishPreviousFragments() {
         if (!popFragment()) {
             finish();
         }
