@@ -72,6 +72,15 @@ public class UserHome extends AppCompatActivity
     private Location currentLocation;
     private LatLng mDestiny;
     private LatLng mOrigin;
+
+    public LatLng getmDestiny() {
+        return mDestiny;
+    }
+
+    public LatLng getmOrigin() {
+        return mOrigin;
+    }
+
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private static final float ZOOM_VALUE = 14.0f;
     private static final int locationRequestCode = 1000;
@@ -357,74 +366,6 @@ public class UserHome extends AppCompatActivity
         replaceFragment(mFragmentTest , true);
     }
 
-    //init Show Searching Driver
-    public void cancelSearchingDriver(View view) {
-        finishPreviousFragments();
-        isQueryCanceled = true;
-        returnOriginalState();
-
-        /**
-         *falta ver cancelar la query...
-         * mandar al servidor que ya no quiere el viaje...
-         */
-    }
-
-    //init Show Searching Driver
-    public void showSearchingDriver() {
-        finishPreviousFragments();
-        replaceFragment( new SearchingDriverFragment(), true);
-    }
-
-    public void getDriver(View view) {
-
-        //logic to send to server
-        //hard por ahora
-
-        Log.d("CANTIDAD_MASCOTAS","pequeños: "+mFragmentTest.getAllLittlePets()
-                + "  medianos: "+mFragmentTest.getAllMediumPets()+ "  big: "+mFragmentTest.getAllBigPets());
-
-        showSearchingDriver();
-
-        Travel travel =  new Travel("user1",mOrigin,mDestiny);
-
-        App.nodeServer.post("/travels",
-                travel, Driver.class, new Headers())
-                .run(this::handleGoodResponse, this::handleErrorResponse);
-
-    }
-
-
-    public void handleGoodResponse(Driver driver) {
-        if(!isQueryCanceled) {
-            if(driver != null){
-                Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
-                Log.i(TAG_REQUEST_SERVER, driver.toString());
-                Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
-                showInfoDriverAssigned();
-            }else{
-                Log.d(TAG_REQUEST_SERVER, "no data found");
-                showDriverNotFound();
-            }
-        }
-        isQueryCanceled = false;
-    }
-
-    public void handleErrorResponse(Exception ex) {
-        if (!isQueryCanceled) {
-            if (ex instanceof ServerError) {
-                switch (((ServerError) ex).networkResponse.statusCode) {
-                    case 500:
-                        Log.d(TAG_REQUEST_SERVER, "error to connect server");
-                        showMessageCard();
-                        break;
-                }
-            } else
-                Toast.makeText(getApplicationContext()
-                        , "Error al solicitar el viaje, intentelo más tarde"
-                        , Toast.LENGTH_LONG).show();
-            isQueryCanceled = false;
-        }
-    }
 
     public void showInfoDriverAssigned(){
         finishPreviousFragments();
