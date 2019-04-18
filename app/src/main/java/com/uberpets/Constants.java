@@ -15,6 +15,7 @@ public class Constants {
     private String URL_LOCAL;
     private String URL_BASE_PATH;
     private String URL;
+    private String URL_SOCKET;
 
     private String EVENT_POSITON_DRIVER;
     private String EVENT_DRIVER_ARRIVED_DESTINY;
@@ -25,6 +26,8 @@ public class Constants {
     private int RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY;
     private int RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY;
     private int RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY;
+
+    private final String TAG_CONSTANT = "CONSTANTS_LOAD";
 
     private String TypeUrl;
 
@@ -37,18 +40,21 @@ public class Constants {
     public void setIpToConnect(String ip) {
         switch (ip){
             case "LOCALHOST":
-                URL = URL_LOCAL + URL_BASE_PATH;
+                URL_SOCKET = URL_LOCAL;
                 break;
 
             case "SERVER_CLOUD":
-                URL = URL_REMOTE + URL_BASE_PATH;
+                URL_SOCKET = URL_REMOTE;
                 break;
 
             default:
-                URL = "http://"+ip+":8081" +URL_BASE_PATH;
+                URL_SOCKET = "http://"+ip+":8081";
         }
-    }
+        URL = URL_SOCKET + URL_BASE_PATH;
 
+        Log.i(TAG_CONSTANT,"url used to connect socket: "+URL_SOCKET);
+        Log.i(TAG_CONSTANT,"url used to connect api: "+URL);
+    }
 
     private Constants() {
         Properties prop =  new Properties();
@@ -89,17 +95,23 @@ public class Constants {
         return EVENT_POSITON_DRIVER;
     }
 
+
+
     /*public String getURL_REMOTE() {
         return URL_REMOTE;
     }
 
-    //public String getURL_BASE_PATH() {
+    public String getURL_BASE_PATH() {
         return URL_BASE_PATH;
     }
 
     public String getURL_LOCAL() {
         return URL_LOCAL;
     }*/
+
+    public String getURL_SOCKET() {
+        return URL_SOCKET;
+    }
 
     public String getURL(){
         return URL;

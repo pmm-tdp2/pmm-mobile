@@ -4,37 +4,38 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class Travel {
 
-    private LatLng currentLocation;
-    private LatLng destinyLocation;
+    private String userId;
+    private LatLng from;
+    private LatLng to;
 
-    public Travel(LatLng currentLocation, LatLng destinyLocation) {
-        this.currentLocation = currentLocation;
-        this.destinyLocation = destinyLocation;
+    public String getUserId() {
+        return userId;
     }
 
-    public LatLng getCurrentLocation() {
-        return currentLocation;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public void setCurrentLocation(LatLng currentLocation) {
-        this.currentLocation = currentLocation;
+    public LatLng getFrom() {
+        return from;
     }
 
-    public LatLng getDestinyLocation() {
-        return destinyLocation;
+    public void setFrom(LatLng from) {
+        this.from = from;
     }
 
-    public void setDestinyLocation(LatLng destinyLocation) {
-        this.destinyLocation = destinyLocation;
+    public LatLng getTo() {
+        return to;
     }
 
-    @Override
-    public String toString() {
-        return "Travel{" +
-                "currentLatitude:" + currentLocation.latitude +
-                ", currentLongitude:" + currentLocation.longitude +
-                ", destinyLatitude:" + destinyLocation.latitude +
-                ", destinyLongitude:" + destinyLocation.longitude +
-                '}';
+    public void setTo(LatLng to) {
+        this.to = to;
     }
+
+    public Travel(String userId, LatLng currentLocation, LatLng destinyLocation) {
+        this.userId = userId;
+        this.from = currentLocation;
+        this.to = destinyLocation;
+    }
+
 }

@@ -85,7 +85,7 @@ public class  DriverHome
 
     //private final String URL = "https://young-wave-26125.herokuapp.com/pmm";
     //private final String URL = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
-    private final String URL = mConstants.getURL();
+    //private final String URL = mConstants.getURL();
     private static final String[] TRANSPORTS = {
             "websocket"
     };
@@ -115,7 +115,7 @@ public class  DriverHome
             try {
                 final IO.Options options = new IO.Options();
                 options.transports = TRANSPORTS;
-                mSocket = IO.socket(URL, options);
+                mSocket = IO.socket(Constants.getInstance().getURL_SOCKET(), options);
                 Log.i(TAG_CONNECTION_SERVER,"io socket succes");
                 connectToServer();
                 listenNotificaciónTravel();

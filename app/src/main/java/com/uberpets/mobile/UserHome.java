@@ -24,13 +24,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import com.android.volley.ServerError;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -51,6 +47,10 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.uberpets.Constants;
+import com.uberpets.library.rest.Headers;
+import com.uberpets.model.Driver;
+import com.uberpets.model.Travel;
+import com.uberpets.services.App;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,8 +91,8 @@ public class UserHome extends AppCompatActivity
     private OptionsTravelFragment mFragmentTest;
     private Constants mConstants = Constants.getInstance();
     private boolean isQueryCanceled = false;
-    private String mUrl = mConstants.getURL();
-//    private String mUrl = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
+    //private String mUrl = mConstants.getURL();
+    //    private String mUrl = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
 //    private String mUrl = mConstants.getURL_LOCAL() + mConstants.getURL_BASE_PATH();
     private static final String[] TRANSPORTS = {
             "websocket"
@@ -127,7 +127,7 @@ public class UserHome extends AppCompatActivity
             try {
                 final IO.Options options = new IO.Options();
                 options.transports = TRANSPORTS;
-                mSocket = IO.socket(mUrl, options);
+                mSocket = IO.socket(Constants.getInstance().getURL_SOCKET(), options);
                 Log.i(TAG_CONNECTION_SERVER,"io socket success");
                 connectToServer();
                 getDriverPosition();
@@ -379,68 +379,52 @@ public class UserHome extends AppCompatActivity
 
         //logic to send to server
         //hard por ahora
-        Log.d("CANTIDAD_MASCOTAS","___");
+
         Log.d("CANTIDAD_MASCOTAS","pequeños: "+mFragmentTest.getAllLittlePets()
-        + "  medianos: "+mFragmentTest.getAllMediumPets()+ "  big: "+mFragmentTest.getAllBigPets());
+                + "  medianos: "+mFragmentTest.getAllMediumPets()+ "  big: "+mFragmentTest.getAllBigPets());
+
         showSearchingDriver();
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = mUrl+"/travels";
 
-        JSONObject requesTravelJSONObject = new JSONObject();
-        try{
-            requesTravelJSONObject.put("userId","user1");
-            JSONObject from = new JSONObject();
-            from.put("latitude", mOrigin.latitude);
-            from.put("longitude", mOrigin.longitude);
-            requesTravelJSONObject.put("from", from);
+        Travel travel =  new Travel("user1",mOrigin,mDestiny);
 
-            JSONObject to = new JSONObject();
-            to.put("latitude", mDestiny.latitude);
-            to.put("longitude", mDestiny.longitude);
-            requesTravelJSONObject.put("to", to);
-        }catch (JSONException e){
-            e.printStackTrace();
-        }
+        App.nodeServer.post("/travels",
+                travel, Driver.class, new Headers())
+                .run(this::handleGoodResponse, this::handleErrorResponse);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url,
-                requesTravelJSONObject, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                if(!isQueryCanceled) {
-                    Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
-                    Log.i(TAG_REQUEST_SERVER, response.toString());
-                    Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
-                    try{
-                        int status = response.getInt("status");
-                        if(status == 203){
-                            showDriverNotFound();
-                            Log.i(TAG_REQUEST_SERVER, response.toString());
-                        }else{
-                            //obtain data of driver...
-                            showInfoDriverAssigned();
-                            Log.i(TAG_REQUEST_SERVER, response.toString());
-                        }
-                    }catch(JSONException e){
-                        Log.e(TAG_REQUEST_SERVER,"Error to obtain data of response server");
-                    }
-                }
-                isQueryCanceled = false;
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if(!isQueryCanceled){
-                    Log.e(TAG_REQUEST_SERVER,error.toString());
-                    showMessageCard();
-                }
-                isQueryCanceled = false;
-            }
-        });
-
-        // Add the request to the RequestQueue
-        queue.add(jsonObjectRequest);
     }
 
+
+    public void handleGoodResponse(Driver driver) {
+        if(!isQueryCanceled) {
+            if(driver != null){
+                Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
+                Log.i(TAG_REQUEST_SERVER, driver.toString());
+                Log.i(TAG_REQUEST_SERVER, "MENSAHJEEEEEEEEEEEE");
+                showInfoDriverAssigned();
+            }else{
+                Log.d(TAG_REQUEST_SERVER, "no data found");
+                showDriverNotFound();
+            }
+        }
+        isQueryCanceled = false;
+    }
+
+    public void handleErrorResponse(Exception ex) {
+        if (!isQueryCanceled) {
+            if (ex instanceof ServerError) {
+                switch (((ServerError) ex).networkResponse.statusCode) {
+                    case 500:
+                        Log.d(TAG_REQUEST_SERVER, "error to connect server");
+                        showMessageCard();
+                        break;
+                }
+            } else
+                Toast.makeText(getApplicationContext()
+                        , "Error al solicitar el viaje, intentelo más tarde"
+                        , Toast.LENGTH_LONG).show();
+            isQueryCanceled = false;
+        }
+    }
 
     public void showInfoDriverAssigned(){
         finishPreviousFragments();

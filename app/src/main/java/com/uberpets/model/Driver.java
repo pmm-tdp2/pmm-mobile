@@ -1,41 +1,39 @@
 package com.uberpets.model;
 
-import com.google.android.gms.maps.model.LatLng;
-
 public class Driver {
 
-    private LatLng currentLocation;
-    private String photo;
-    private String name;
+    private String license;
+    private String firstName;
+    private String lastName;
 
-    public LatLng getCurrentLocation() {
-        return currentLocation;
+    public Driver(String license, String firstName, String lastName) {
+        this.license = license;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
-    public void setCurrentLocation(LatLng currentLocation) {
-        this.currentLocation = currentLocation;
+    public String getLicense() {
+        return license;
     }
 
-    public String getPhoto() {
-        return photo;
+    public void setLicense(String license) {
+        this.license = license;
     }
 
-    public void setPhoto(String photo) {
-        this.photo = photo;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public String getName() {
-        return name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getLastName() {
+        return lastName;
     }
 
-    public Driver(LatLng currentLocation, String photo, String name) {
-        this.currentLocation = currentLocation;
-        this.photo = photo;
-        this.name = name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }
 
