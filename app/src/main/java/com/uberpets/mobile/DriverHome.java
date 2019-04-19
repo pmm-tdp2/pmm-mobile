@@ -8,6 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -35,6 +36,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -54,7 +56,6 @@ import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 
-import afu.org.checkerframework.checker.nullness.qual.NonNull;
 
 public class  DriverHome
         extends AppCompatActivity
@@ -109,12 +110,11 @@ public class  DriverHome
         //is used to obtain user's location, with this our app no needs to manually manage connections
         //to Google Play Services through GoogleApiClient
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        requestPermission();
-
         {
             try {
                 final IO.Options options = new IO.Options();
                 options.transports = TRANSPORTS;
+                String uuu = Constants.getInstance().getURL_SOCKET();
                 mSocket = IO.socket(Constants.getInstance().getURL_SOCKET(), options);
                 Log.i(TAG_CONNECTION_SERVER,"io socket succes");
                 connectToServer();
@@ -123,6 +123,7 @@ public class  DriverHome
                 Log.e(TAG_CONNECTION_SERVER,"io socket failure");
             }
         }
+        requestPermission();
     }
 
     @Override
@@ -269,12 +270,11 @@ public class  DriverHome
 
                 //Adding the created the marker on the map
                 currentPositionMarker = mMap.addMarker(markerOptions);
-
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_VALUE));
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e("ERROR", "GOOGLE MAPS NOT LOADED");
+            Log.e("ERROR", "GOOGLE MAPS NOT LOADED DRIVER");
         }
     }
 

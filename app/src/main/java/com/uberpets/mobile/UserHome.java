@@ -1,9 +1,15 @@
 package com.uberpets.mobile;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -24,9 +31,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.android.volley.ServerError;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -47,10 +51,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.uberpets.Constants;
-import com.uberpets.library.rest.Headers;
-import com.uberpets.model.Driver;
-import com.uberpets.model.Travel;
-import com.uberpets.services.App;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -88,9 +88,8 @@ public class UserHome extends AppCompatActivity
 
     private Socket mSocket;
 
-    private String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
-    private String TAG_REQUEST_SERVER = "REQUEST_SERVER";
-    private String TAG_USER_HOME = "REQUEST_SERVER";
+    private final String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
+    private final String TAG_USER_HOME = "REQUEST_SERVER";
 
     private Emitter.Listener mListenerConnection;
     private Emitter.Listener mListenerPositionDriver;
@@ -235,12 +234,13 @@ public class UserHome extends AppCompatActivity
     }
 
     public void fetchLastLocation() {
-
         //check if user has granted location permission,
         // its necessary to use mFusedLocationProviderClient
-        if (ActivityCompat.checkSelfPermission(UserHome.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(UserHome.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }else{
+        if (ActivityCompat.checkSelfPermission(UserHome.this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(UserHome.this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
             // obtain the last location and save in task, that's Collection's Activities
             Task<Location> task = mFusedLocationProviderClient.getLastLocation();
             // add object OnSuccessListener, when the connection is established and the location is fetched
@@ -303,10 +303,9 @@ public class UserHome extends AppCompatActivity
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e("ERROR", "GOOGLE MAPS NOT LOADED");
+            Log.e("ERROR", "GOOGLE MAPS NOT LOADED USER");
         }
     }
-
 
 
     public void clickSearchLocations(View view) {
@@ -529,8 +528,8 @@ public class UserHome extends AppCompatActivity
     public boolean popFragment() {
         boolean isPop = false;
 
-        Fragment currentFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.options_travel);
+/*        Fragment currentFragment = getSupportFragmentManager()
+                .findFragmentById(R.id.options_travel);*/
 
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             isPop = true;

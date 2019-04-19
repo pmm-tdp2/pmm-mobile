@@ -31,6 +31,7 @@ public class TraceService {
     //private final String URL = "https://young-wave-26125.herokuapp.com";
 //    private final String URL = Constants.getInstance().getURL_REMOTE() + Constants.getInstance().getURL_BASE_PATH();
     private final String URL = Constants.getInstance().getURL();
+    private final String TAG_TRAVEL_SERVICE = "TRAVEL_SERVICE";
 
     public void saveTrace(TraceDTO traceDTO, AppCompatActivity activity) {
 
@@ -54,12 +55,12 @@ public class TraceService {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, traceJsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.i("INFORMATIVE", response.toString());
+                Log.i("TAG_TRAVEL_SERVICE", response.toString());
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("ERROR",error.toString(),error);
+                Log.e("TAG_TRAVEL_SERVICE",error.toString(),error);
             }
         });
         // Adding the request to the queue along with a unique string tag
