@@ -394,6 +394,7 @@ public class UserHome extends AppCompatActivity
         showMessageCard();
     }
 
+
     //value default is error
     public void showMessageCard(){
         finishPreviousFragments();

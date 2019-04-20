@@ -181,7 +181,7 @@ public class OptionsTravelFragment extends Fragment {
             showSearchingDriver();
             TravelConfirmationDTO travelConfirmationDTO =
                     new TravelConfirmationDTO(travelID,myActivity.ROL);
-            App.nodeServer.post("/travels/confirmation",
+            App.nodeServer.post("/travel/confirmation",
                     travelConfirmationDTO, TravelAssignedDTO.class, new Headers())
                     .onDone((s,ec)->finishFragmentExecuted())
                     .run(this::handleGoodResponse, this::handleErrorResponse);
@@ -222,10 +222,9 @@ public class OptionsTravelFragment extends Fragment {
         if (!isQueryCanceled) {
             if (ex instanceof ServerError) {
                 switch (((ServerError) ex).networkResponse.statusCode) {
-                    case 500:
+                    default:
                         Log.d(TAG_REQUEST_SERVER, "error to connect server");
                         myActivity.showMessageCard();
-                        break;
                 }
             } else
                 Toast.makeText(getContext()
