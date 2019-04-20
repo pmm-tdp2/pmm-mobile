@@ -133,7 +133,7 @@ public class UserHome extends AppCompatActivity
                 mSocket = IO.socket(Constants.getInstance().getURL_SOCKET(), options);
                 Log.i(TAG_CONNECTION_SERVER,"io socket success");
                 connectToServer();
-                getDriverPosition();
+                listenDriverPosition();
                 listenDriverArrivedUser();
                 listenDriverArrivedDestiny();
             } catch (URISyntaxException e) {
@@ -296,9 +296,12 @@ public class UserHome extends AppCompatActivity
                         .title("Estas Acá"));
 
 
+                int height = 32;
+                int width = 64;
                 BitmapDrawable bitMapCarDraw = (BitmapDrawable)
                         getResources().getDrawable(R.drawable.car);
                 Bitmap bCar = bitMapCarDraw.getBitmap();
+                Bitmap bCarSmallMarker = Bitmap.createScaledBitmap(bCar, width, height, false);
 
                 BitmapDrawable bitMapPinDraw = (BitmapDrawable)
                         getResources().getDrawable(R.drawable.ic_map_pin_36);
@@ -313,7 +316,7 @@ public class UserHome extends AppCompatActivity
                 destinyMarker.setVisible(false);
 
                 driverMarker= mMap.addMarker(new MarkerOptions().position(currentLatLng)
-                        .icon(BitmapDescriptorFactory.fromBitmap(bCar)));
+                        .icon(BitmapDescriptorFactory.fromBitmap(bCarSmallMarker)).anchor(0.5f, 0.5f));
                 driverMarker.setVisible(false);
             }
         } catch (Exception e) {
@@ -422,10 +425,22 @@ public class UserHome extends AppCompatActivity
 
 
     public void ShowPositionDriver(float latitude, float longitude){
-        LatLng latLng = new LatLng(latitude,longitude);
+
+        Location prevLocation = new Location("");
+        prevLocation.setLatitude(driverMarker.getPosition().latitude);
+        prevLocation.setLongitude(driverMarker.getPosition().longitude);
+
+        LatLng newLatLng = new LatLng(latitude,longitude);
+        Location newLocation = new Location("");
+        newLocation.setLongitude(longitude);
+        newLocation.setLatitude(latitude);
+
+        Float bearing = prevLocation.bearingTo(newLocation);
+        driverMarker.setRotation(bearing - 270);
         driverMarker.setVisible(true);
-        driverMarker.setPosition(latLng);
-        //falta la logica de girar...
+        driverMarker.setPosition(newLatLng);
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, ZOOM_VALUE));
     }
 
 
@@ -449,7 +464,7 @@ public class UserHome extends AppCompatActivity
 
     /* BEGIN OF SOCKET CONNECTION*/
 
-    public void getDriverPosition(){
+    public void listenDriverPosition(){
         mSocket.on(mConstants.getEVENT_POSITON_DRIVER(), mListenerPositionDriver = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
