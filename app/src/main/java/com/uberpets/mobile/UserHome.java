@@ -60,6 +60,8 @@ import java.net.URISyntaxException;
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
+    public final String ROL = "USER";
+    public final String TAG_ROL = "ROL";
     private GoogleMap mMap;
 
     private Marker mMarker;
@@ -99,9 +101,7 @@ public class UserHome extends AppCompatActivity
     private OptionsTravelFragment mFragmentTest;
     private Constants mConstants = Constants.getInstance();
     private boolean isQueryCanceled = false;
-    //private String mUrl = mConstants.getURL();
-    //    private String mUrl = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
-//    private String mUrl = mConstants.getURL_LOCAL() + mConstants.getURL_BASE_PATH();
+
     private static final String[] TRANSPORTS = {
             "websocket"
     };
@@ -473,13 +473,14 @@ public class UserHome extends AppCompatActivity
                 });
             }
         });
-        mSocket.emit("ROL","USER");
+        mSocket.emit(TAG_ROL,ROL);
     }
 
 
     //listen if arrive message that driver arrived to user
     public void listenDriverArrivedUser() {
-        mSocket.on(mConstants.getEVENT_DRIVER_ARRIVED_USER(), mListenerDriverArrivedToUser = new Emitter.Listener() {
+        mSocket.on(mConstants.getEVENT_DRIVER_ARRIVED_USER(),
+                mListenerDriverArrivedToUser = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {

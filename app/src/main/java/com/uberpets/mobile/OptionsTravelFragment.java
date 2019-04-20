@@ -1,6 +1,5 @@
 package com.uberpets.mobile;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -22,9 +21,11 @@ import android.widget.Toast;
 
 import com.android.volley.ServerError;
 import com.uberpets.library.rest.Headers;
-import com.uberpets.model.Driver;
 import com.uberpets.model.PetSize;
-import com.uberpets.model.Travel;
+import com.uberpets.model.TravelAssignedDTO;
+import com.uberpets.model.TravelConfirmationDTO;
+import com.uberpets.model.TravelPriceDTO;
+import com.uberpets.model.TravelDTO;
 import com.uberpets.services.App;
 
 import java.util.ArrayList;
@@ -42,11 +43,13 @@ public class OptionsTravelFragment extends Fragment {
     private boolean readyToGetTravel =false;
     private String TAG_REQUEST_SERVER="RESQUEST_SERVER_TRAVEL";
     private UserHome myActivity;
-    RecyclerView mRecyclerView;
-    FloatingActionButton mButtonFab;
-    Button mButtonGetTravel;
-    TextView mPriceText;
-    CardView mCardPrice;
+    private RecyclerView mRecyclerView;
+    private FloatingActionButton mButtonFab;
+    private Button mButtonGetTravel;
+    private TextView mPriceText;
+    private CardView mCardPrice;
+    private String travelID;
+
 
     public OptionsTravelFragment() {
         // Required empty public constructor
@@ -56,7 +59,8 @@ public class OptionsTravelFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_options_travel, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_options_travel,
+                container, false);
 
         mRecyclerView = rootView.findViewById(R.id.recycler_view_layout_recycler);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -65,7 +69,9 @@ public class OptionsTravelFragment extends Fragment {
         mAdapter.updateList();
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+                DividerItemDecoration.VERTICAL));
+
         mButtonFab = rootView.findViewById(R.id.fab);
         mButtonGetTravel =rootView.findViewById(R.id.button_travel);
         optionCompanion =rootView.findViewById(R.id.checkBox_option_companion);
@@ -92,15 +98,32 @@ public class OptionsTravelFragment extends Fragment {
 
 
 
-    //init Show Searching Driver
+    //init Show Searching Person
     public void cancelSearchingDriver() {
         isQueryCanceled = true;
 
         /**
          *falta ver cancelar la query...
          * mandar al servidor que ya no quiere el viaje...
+         * esto se puede omitir
          */
     }
+
+    /**
+     *falta hacer que si se modifica alguna de las opciones de viaje
+     * se tiene que desactivar el confirmar viaje y tiene que volver a cotizar
+     * - evaluar que no se cambie el tamaño o la cantidad de mascotas
+     * - evaluar que no se cambie el punto origen y el punto destino
+     * - evaluar que no se cambie la opción de acompañante
+     */
+
+    /*
+    public void changesOptionsTravel() {
+        mButtonGetTravel.setText("Cotizar Viaje");
+        mPriceText.setText("$0");
+        readyToGetTravel=true;
+    }*/
+
 
     public void addItem(){
         mAdapter.updateList();
@@ -109,60 +132,61 @@ public class OptionsTravelFragment extends Fragment {
 
     public void onClickButtonGetTravel() {
         if (!readyToGetTravel)
-            getPriceTravel();
+            getTravelQuote();
         else
             confirmTravel();
     }
 
-/*
-    public void changesOptionsTravel() {
-        mButtonGetTravel.setText("Cotizar Viaje");
-        mPriceText.setText("$0");
-        readyToGetTravel=true;
-    }*/
+    //user send request to get quotation of travel
+    public void getTravelQuote() {
+        TravelDTO quotation =  new TravelDTO.TravelDTOBuilder(
+                myActivity.getmOrigin(),myActivity.getmDestiny())
+                .setUserId("user1")
+                .setHasACompanion(optionCompanion.isChecked())
+                .setPetSmallAmount(mAdapter.getAllLittlePets())
+                .setPetMediumAmount(mAdapter.getAllMediumPets())
+                .setPetLargeAmount(mAdapter.getAllBigPets())
+                .build();
+
+        App.nodeServer.post("/travel/cotization",
+                quotation, TravelPriceDTO.class, new Headers())
+                .run(this::responseQuotation, this::errorQuotation);
+    }
 
 
-    //user send request to get price of travel
-    public void getPriceTravel() {
-        /*showSearchingDriver();
-        Travel travel =  new Travel("user1",myActivity.getmOrigin(),myActivity.getmDestiny());
-        App.nodeServer.post("/travels",
-                travel, Driver.class, new Headers())
-                .onDone((s,ec)->finishFragmentExecuted())
-                .run(this::handleGoodResponse, this::handleErrorResponse);*/
-        mButtonGetTravel.setText("Pedir Viaje");
-        //mButtonGetTravel.setBackgroundColor(Color.rgb(147,158,250));
-        mPriceText.setText("$200");
-        readyToGetTravel=true;
+    public void responseQuotation(TravelPriceDTO priceTravel) {
+        if (priceTravel != null) {
+            mButtonGetTravel.setText("Pedir Viaje");
+            String price = "$"+ priceTravel.getPrice();
+            mPriceText.setText(price);
+            readyToGetTravel=true;
+            travelID = priceTravel.getTravelID();
+        }
+    }
+
+    public void errorQuotation(Exception ex) {
+        /*
+        Show message of Error
+         */
+        Toast.makeText(getContext()
+                , "Error al cotizar el viaje, inténtelo más tarde"
+                , Toast.LENGTH_LONG).show();
+        isQueryCanceled = false;
     }
 
 
     //user send request to confirm travel
     public void confirmTravel() {
-        //if (readyToGetTravel){
+        if (readyToGetTravel){
             showSearchingDriver();
-            Travel travel =  new Travel("user1",myActivity.getmOrigin(),myActivity.getmDestiny());
-            App.nodeServer.post("/travels",
-                    travel, Driver.class, new Headers())
+            TravelConfirmationDTO travelConfirmationDTO =
+                    new TravelConfirmationDTO(travelID,myActivity.ROL);
+            App.nodeServer.post("/travels/confirmation",
+                    travelConfirmationDTO, TravelAssignedDTO.class, new Headers())
                     .onDone((s,ec)->finishFragmentExecuted())
                     .run(this::handleGoodResponse, this::handleErrorResponse);
-        //}
+        }
     }
-
-
-    public int getAllLittlePets() {
-        return mAdapter.getAllLittlePets();
-    }
-
-    public int getAllMediumPets() {
-        return mAdapter.getAllMediumPets();
-    }
-
-    public int getAllBigPets() {
-        return mAdapter.getAllBigPets();
-    }
-
-    public boolean includesCompanion() { return optionCompanion.isChecked(); }
 
 
     public void showSearchingDriver() {
@@ -173,7 +197,7 @@ public class OptionsTravelFragment extends Fragment {
         fragmentTransaction.commit();
     }
 
-    public void finishFragmentExecuted(){
+    public void finishFragmentExecuted() {
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.options_travel, this);
@@ -181,10 +205,10 @@ public class OptionsTravelFragment extends Fragment {
     }
 
 
-    public void handleGoodResponse(Driver driver) {
+    public void handleGoodResponse(TravelAssignedDTO travelAssignedDTO) {
         if(!isQueryCanceled) {
-            if(driver != null){
-                Log.i(TAG_REQUEST_SERVER, driver.toString());
+            if(travelAssignedDTO != null){
+                Log.i(TAG_REQUEST_SERVER, travelAssignedDTO.getDriver().toString());
                 myActivity.showInfoDriverAssigned();
             }else{
                 Log.d(TAG_REQUEST_SERVER, "no data found");
@@ -205,7 +229,7 @@ public class OptionsTravelFragment extends Fragment {
                 }
             } else
                 Toast.makeText(getContext()
-                        , "Error al solicitar el viaje, intentelo más tarde"
+                        , "Error al solicitar el viaje, inténtelo más tarde"
                         , Toast.LENGTH_LONG).show();
             isQueryCanceled = false;
         }
