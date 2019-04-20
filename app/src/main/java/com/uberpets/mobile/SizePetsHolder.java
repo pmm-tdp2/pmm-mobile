@@ -6,7 +6,6 @@ import android.widget.ImageButton;
 
 public class SizePetsHolder extends RecyclerView.ViewHolder {
     private ImageButton littlePet;
-
     private ImageButton bigPet;
     private ImageButton deleteButton;
     private ImageButton mediumPet;

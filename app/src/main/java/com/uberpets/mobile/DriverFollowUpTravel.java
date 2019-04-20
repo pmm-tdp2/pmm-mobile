@@ -7,8 +7,14 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
+import com.uberpets.library.rest.Headers;
 import com.uberpets.mobile.R;
+import com.uberpets.model.TravelAssignedDTO;
+import com.uberpets.model.TravelConfirmationDTO;
+import com.uberpets.model.TravelDTO;
+import com.uberpets.services.App;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,6 +29,10 @@ public class DriverFollowUpTravel extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private Button mButtonFinalize;
+    private Button mButtonCancel;
+    private TravelAssignedDTO mTravelAssignedDTO;
+    private String ROL;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -65,7 +75,15 @@ public class DriverFollowUpTravel extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_driver_follow_up_travel, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_driver_follow_up_travel,
+                container, false);
+
+        mButtonCancel = rootView.findViewById(R.id.button_cancel_travel);
+        mButtonFinalize = rootView.findViewById(R.id.button_finalize_travel);
+        setButtonCancel();
+        setButtonFinalize();
+
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -105,5 +123,59 @@ public class DriverFollowUpTravel extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void cancelOngoingTravel();
+        void finishTravel();
     }
+
+    public void setmTravelAssignedDTO(TravelAssignedDTO mTravelAssignedDTO) {
+        this.mTravelAssignedDTO = mTravelAssignedDTO;
+    }
+
+    public void setROL(String ROL) {
+        this.ROL = ROL;
+    }
+
+    public void setButtonCancel() {
+        mButtonCancel.setOnClickListener(view->cancelTravelFragment());
+    }
+
+    public void setButtonFinalize() {
+        mButtonFinalize.setOnClickListener(view->finalizeTravelFragment());
+    }
+
+    public void cancelTravelFragment() {
+        //TODO: show pop-up "are you sure"
+
+        /*
+        TravelConfirmationDTO travelConfirmationDTO =
+        new TravelConfirmationDTO(mTravelAssignedDTO.getTravelID(),this.ROL);
+        App.nodeServer.post("/travel/confirmation",travelConfirmationDTO,
+        Object.class, new Headers())
+        .run(this::responseRejectTravelFragment,this::errorRejectTravelFragment);
+        */
+        mListener.cancelOngoingTravel();
+    }
+
+    public void finalizeTravelFragment() {
+        if(mTravelAssignedDTO !=  null){
+            TravelConfirmationDTO travelConfirmationDTO =
+                    new TravelConfirmationDTO(mTravelAssignedDTO.getTravelID(),this.ROL);
+            App.nodeServer.post("/travel/confirmation",travelConfirmationDTO,
+                    Object.class, new Headers())
+                    .run(this::responseFinalizeTravelFragment,this::errorRejectTravelFragment);
+        }else{
+            mListener.finishTravel();
+        }
+
+    }
+
+
+    public void responseFinalizeTravelFragment(Object o) {
+        mListener.finishTravel();
+    }
+
+    public void errorRejectTravelFragment(Exception e){
+        //TODO: mandar un mensaje que no se pudo finalizar el viaje
+    }
+
 }

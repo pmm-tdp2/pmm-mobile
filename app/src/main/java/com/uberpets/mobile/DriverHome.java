@@ -45,9 +45,12 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 import com.uberpets.Constants;
 import com.uberpets.model.GeograficCoordenate;
 import com.uberpets.model.TraceDTO;
+import com.uberpets.model.TravelAssignedDTO;
+import com.uberpets.model.TravelDTO;
 import com.uberpets.services.TraceService;
 
 
@@ -66,6 +69,9 @@ public class  DriverHome
             DriverFollowUpTravel.OnFragmentInteractionListener
 {
     private GoogleMap mMap;
+    private final String ROL = "DRIVER";
+    private final String TAG_ROL = "ROL";
+    private boolean inTravel = false;
     private Location currentLocation;
     private LatLng mockLocation;
     private Marker currentPositionMarker;
@@ -100,16 +106,19 @@ public class  DriverHome
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //is used to obtain user's location, with this our app no needs to manually manage connections
+        //is used to obtain user's location, with this our app no needs
+        // to manually manage connections
         //to Google Play Services through GoogleApiClient
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        mFusedLocationProviderClient = LocationServices
+                .getFusedLocationProviderClient(this);
         {
             try {
                 final IO.Options options = new IO.Options();
@@ -188,16 +197,23 @@ public class  DriverHome
     public void requestPermission(){
         //check if user has granted location permission,
         // its necessary to use mFusedLocationProviderClient
-        if (ActivityCompat.checkSelfPermission(DriverHome.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DriverHome.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+        if (ActivityCompat.checkSelfPermission(DriverHome.this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat
+                .checkSelfPermission(DriverHome.this,
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION},locationRequestCode);
-        }else{
+        } else{
             fetchLastLocation();
         }
     }
 
     @Override
-    public void onRequestPermissionsResult (int requestCode, @NonNull String [] permissions, @NonNull int [] grantResults) {
+    public void onRequestPermissionsResult (int requestCode, @NonNull String [] permissions,
+                                            @NonNull int [] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 1000: {
@@ -213,20 +229,26 @@ public class  DriverHome
     public void fetchLastLocation() {
         //check if user has granted location permission,
         // its necessary to use mFusedLocationProviderClient
-        if (ActivityCompat.checkSelfPermission(DriverHome.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DriverHome.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }else{
+        if (ActivityCompat.checkSelfPermission(DriverHome.this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED && ActivityCompat
+                .checkSelfPermission(DriverHome.this,
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+
             // obtain the last location and save in task, that's Collection's Activities
             Task<Location> task = mFusedLocationProviderClient.getLastLocation();
-            // add object OnSuccessListener, when the connection is established and the location is fetched
+            // add object OnSuccessListener, when the connection is established
+            // and the location is fetched
             task.addOnSuccessListener(new OnSuccessListener<Location>() {
                 @Override
                 public void onSuccess(Location location) {
                     if (location != null) {
                         currentLocation = location;
-                        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-                        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                                .findFragmentById(R.id.map);
+                        // Obtain the SupportMapFragment and get notified
+                        // when the map is ready to be used.
+                        SupportMapFragment mapFragment = (SupportMapFragment)
+                                getSupportFragmentManager().findFragmentById(R.id.map);
                         mapFragment.getMapAsync(DriverHome.this);
                     }
                 }
@@ -247,31 +269,29 @@ public class  DriverHome
     @Override
     public void onMapReady(GoogleMap googleMap) {
         try {
-            if (googleMap != null) {
-                Log.d("INFO", "GOOGLE GOOD LOADED");
-                mMap = googleMap;
-                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                mockLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            Log.d("INFO", "GOOGLE GOOD LOADED");
+            mMap = googleMap;
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            mockLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
-                LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
-                int height = 32;
-                int width = 64;
-                BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.car);
-                Bitmap b = bitmapdraw.getBitmap();
-                Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+            int height = 32;
+            int width = 64;
+            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.car);
+            Bitmap b = bitmapdraw.getBitmap();
+            Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
 
-                //MarkerOptions are used to create a new Marker.You can specify location, title etc with MarkerOptions
-                MarkerOptions markerOptions = new MarkerOptions()
-                        .position(latLng)
-                        .title("Estas Acá")
-                        .icon(BitmapDescriptorFactory.fromBitmap(smallMarker))
-                        .anchor(0.5f, 0.5f);
+            //MarkerOptions are used to create a new Marker.You can specify location, title etc with MarkerOptions
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(latLng)
+                    .title("Estas Acá")
+                    .icon(BitmapDescriptorFactory.fromBitmap(smallMarker))
+                    .anchor(0.5f, 0.5f);
 
-                //Adding the created the marker on the map
-                currentPositionMarker = mMap.addMarker(markerOptions);
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_VALUE));
-            }
+            //Adding the created the marker on the map
+            currentPositionMarker = mMap.addMarker(markerOptions);
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_VALUE));
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("ERROR", "GOOGLE MAPS NOT LOADED DRIVER");
@@ -385,26 +405,35 @@ public class  DriverHome
         replaceFragment(new TravelRequestFragment(),false);
     }
 
-    public void rejectTravel(android.view.View view){
-        //TODO: mandar notificacion al server
+
+    /*
+        methods that implements from interface the fragment TravelRequestFragment
+     */
+    public void rejectTravel(){
         removeUpperSectionFragment();
+        inTravel = false;
     }
 
-    public void acceptTravel(android.view.View view){
-        //TODO: conexion con el servidor
+    public void acceptTravel(TravelAssignedDTO travelAssignedDTO){
+        //TODO: mostrar información o mandarla a otro fragment del viaje asignado
+        inTravel = true;
         replaceFragment(DriverFollowUpTravel.newInstance("",""), true);
     }
 
-    public void cancelOngoingTravel(android.view.View view){
-        //TODO: show pop-up "are you sure"
+    /*
+    * methods that are implemented by fragment interface DriverFollowUpTravel
+    * */
+    public void cancelOngoingTravel(){
         removeUpperSectionFragment();
     }
 
-    public void finishTravel(android.view.View view){
+    public void finishTravel(){
         Intent intent = new Intent(this, DriverFinalScreen.class);
         startActivity(intent);
-    }
+        //TODO: mandar notificación al server de la puntuacion
 
+        inTravel = false;
+    }
 
     /* BEGIN OF SOCKET CONNECTION*/
 
@@ -422,7 +451,7 @@ public class  DriverHome
                 });
             }
         });
-        mSocket.emit("ROL","DRIVER");
+        mSocket.emit(TAG_ROL,ROL);
     }
 
 
@@ -434,13 +463,19 @@ public class  DriverHome
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        JSONObject data = (JSONObject) args[0];
+                        if (!inTravel){
+                            String response = (String) args[0];
+                            Gson gson = new Gson();
+                            TravelDTO travelDTO = gson.fromJson(response,TravelDTO.class);
+                            //TODO: mostrar la cantidad de mascotas que tendrá el viaje
+                            //TODO: dibujar el tramo del viaje
+                            Log.d("NOTIFICATION_TRAVEL",travelDTO.toString());
 
-                        //hay q corregir el fragment seguro rompe
-                        //finishPreviusFragments();
-                        replaceFragment(new TravelRequestFragment(),false);
-                        /*View f = findViewById(R.id.requestTravelFragment);
-                        f.setAlpha(1);*/
+                            TravelRequestFragment travelRequest = new TravelRequestFragment();
+                            travelRequest.setTravelDTO(travelDTO);
+                            travelRequest.setROL(ROL);
+                            replaceFragment(new TravelRequestFragment(),false);
+                        }
                     }
                 });
             }

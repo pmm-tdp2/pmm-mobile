@@ -79,11 +79,10 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button4"
+                    android:id="@+id/button_cancel_travel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:onClick="cancelOngoingTravel"
                     android:text="@string/cancel" />
 
                 <Space
@@ -92,11 +91,10 @@
                     android:layout_weight="4" />
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/button_finalize_travel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:onClick="finishTravel"
                     android:text="@string/end_travel" />
             </LinearLayout>
 

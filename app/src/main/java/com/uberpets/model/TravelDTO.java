@@ -12,7 +12,7 @@ import com.google.android.gms.maps.model.LatLng;
 public class TravelDTO {
     private final String userId;
     private final String driverId;
-    private final String travelId;
+    private final String travelID;
     private final LatLng from;
     private final LatLng to;
     private final int petSmallAmount;
@@ -24,7 +24,7 @@ public class TravelDTO {
     public static class TravelDTOBuilder {
         private final LatLng from;
         private final LatLng to;
-        private String travelId = "";
+        private String travelID = "";
         private String userId = "";
         private String driverId = "";
         private int petSmallAmount = 0;
@@ -37,8 +37,8 @@ public class TravelDTO {
             this.to = to;
         }
 
-        public TravelDTOBuilder setTravelId(String travelId) {
-            this.travelId = travelId;
+        public TravelDTOBuilder setTravelID(String travelID) {
+            this.travelID = travelID;
             return this;
         }
 
@@ -86,7 +86,7 @@ public class TravelDTO {
         this.petSmallAmount = builder.petLargeAmount;
         this.petMediumAmount = builder.petMediumAmount;
         this.petLargeAmount = builder.petLargeAmount;
-        this.travelId = builder.travelId;
+        this.travelID = builder.travelID;
         this.userId = builder.userId;
         this.driverId = builder.driverId;
     }
@@ -123,7 +123,7 @@ public class TravelDTO {
         return driverId;
     }
 
-    public String getTravelId() {
-        return travelId;
+    public String getTravelID() {
+        return travelID;
     }
 }

@@ -1,15 +1,11 @@
 package com.uberpets.mobile;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.VectorDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,7 +14,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
@@ -278,27 +273,47 @@ public class UserHome extends AppCompatActivity
                 mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
                 LatLng mockLatLng = new LatLng(0,0);
-                driverMarker = mMap.addMarker(new MarkerOptions().position(mockLatLng).title("conductor"));
+                driverMarker = mMap.addMarker(new MarkerOptions().position(mockLatLng)
+                        .title("conductor"));
                 driverMarker.setVisible(false);
 
-                LatLng latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+                LatLng latLng = new LatLng(currentLocation.getLatitude(),currentLocation
+                        .getLongitude());
 
-                //MarkerOptions are used to create a new Marker.You can specify location, title etc with MarkerOptions
-                MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Estas Acá");
+                //MarkerOptions are used to create a new Marker.
+                // You can specify location, title etc with MarkerOptions
+                MarkerOptions markerOptions = new MarkerOptions().position(latLng)
+                        .title("Estas Acá");
 
                 //Adding the created the marker on the map
                 mMarker = mMap.addMarker(markerOptions);
 
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,ZOOM_VALUE));
 
-                LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-                mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Estas Acá"));
+                LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),
+                        currentLocation.getLongitude());
+                mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng)
+                        .title("Estas Acá"));
 
-                originMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_pin_36)));
+
+                BitmapDrawable bitMapCarDraw = (BitmapDrawable)
+                        getResources().getDrawable(R.drawable.car);
+                Bitmap bCar = bitMapCarDraw.getBitmap();
+
+                BitmapDrawable bitMapPinDraw = (BitmapDrawable)
+                        getResources().getDrawable(R.drawable.ic_map_pin_36);
+                Bitmap bPin = bitMapPinDraw.getBitmap();
+
+                originMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng)
+                        .icon(BitmapDescriptorFactory.fromBitmap(bPin)));
                 originMarker.setVisible(false);
-                destinyMarker= mMap.addMarker(new MarkerOptions().position(currentLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_pin_36)));
+
+                destinyMarker= mMap.addMarker(new MarkerOptions().position(currentLatLng)
+                        .icon(BitmapDescriptorFactory.fromBitmap(bPin)));
                 destinyMarker.setVisible(false);
-                driverMarker= mMap.addMarker(new MarkerOptions().position(currentLatLng).icon(BitmapDescriptorFactory.fromResource(R.drawable.car)));
+
+                driverMarker= mMap.addMarker(new MarkerOptions().position(currentLatLng)
+                        .icon(BitmapDescriptorFactory.fromBitmap(bCar)));
                 driverMarker.setVisible(false);
             }
         } catch (Exception e) {

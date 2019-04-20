@@ -7,7 +7,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
+
+import com.uberpets.library.rest.Headers;
+import com.uberpets.model.TravelAssignedDTO;
+import com.uberpets.model.TravelConfirmationDTO;
+import com.uberpets.model.TravelDTO;
+import com.uberpets.services.App;
 
 
 /**
@@ -23,12 +29,16 @@ public class TravelRequestFragment extends Fragment {
 
     // TODO: info should be info of the trip
     private String info;
+    private Button mButtonAccept;
+    private Button mButtonReject;
+    private TravelDTO mTravelDTO;
+    private String ROL;
 
     private OnFragmentInteractionListener mListener;
 
     public TravelRequestFragment() {
-        // Required empty public constructor
     }
+
 
     /**
      * Use this factory method to create a new instance of
@@ -53,12 +63,6 @@ public class TravelRequestFragment extends Fragment {
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_travel_request, container, false);
-    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -97,15 +101,86 @@ public class TravelRequestFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void rejectTravel();
+        void acceptTravel(TravelAssignedDTO travelAssignedDTO);
     }
 
-    public void acceptTravel(android.view.View view){
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_travel_request,
+                container, false);
+
+        mButtonAccept = rootView.findViewById(R.id.acceptTravelButton);
+        mButtonReject = rootView.findViewById(R.id.rejectTravelButton);
+
+        setButtonReject();
+        setButtonAccept();
+
+        return rootView;
+    }
+
+    public void setTravelDTO(TravelDTO mTravelDTO) {
+        this.mTravelDTO = mTravelDTO;
+        updateDataTravel();
+    }
+
+    public void setROL(String ROL) {
+        this.ROL = ROL;
+    }
+
+    public void updateDataTravel() {
+        //TODO: show info the travel
+    }
+
+    public void setButtonReject() {
+        mButtonReject.setOnClickListener(view->rejectTravelFragment());
+    }
+
+    public void setButtonAccept() {
+        mButtonAccept.setOnClickListener(view->acceptTravelFragment());
+    }
+
+    public void rejectTravelFragment() {
+       /* TravelConfirmationDTO travelConfirmationDTO =
+                new TravelConfirmationDTO(mTravelDTO.getTravelId(),this.ROL);
+        App.nodeServer.post("/travel/confirmation",travelConfirmationDTO,
+                Object.class, new Headers())
+                .run(this::responseRejectTravelFragment,this::errorRejectTravelFragment);
+                */
+        mListener.rejectTravel();
 
     }
 
-    public void rejectTravel(android.view.View view){
+    public void errorRejectTravelFragment(Exception ex){
+        //TODO: muestra que hubo un error y que vuelva a intentarlo
+    }
+
+    public void responseRejectTravelFragment(Object o){
+        mListener.rejectTravel();
+    }
+
+    public void acceptTravelFragment(){
+        if(mTravelDTO != null){
+            TravelConfirmationDTO travelConfirmationDTO =
+                    new TravelConfirmationDTO(mTravelDTO.getTravelID(),this.ROL);
+            App.nodeServer.post("/travel/confirmation",travelConfirmationDTO,
+                    TravelAssignedDTO.class, new Headers())
+                    .run(this::responseAcceptTravelFragment,this::errorAcceptTravelFragment);
+        }else{
+            //mock
+            mListener.acceptTravel(null);
+        }
 
     }
 
+    public void errorAcceptTravelFragment(Exception ex){
+        //TODO: muestra que hubo un error y que vuelva a intentarlo
+    }
+
+    public void responseAcceptTravelFragment(TravelAssignedDTO travelAssignedDTO){
+        mListener.acceptTravel(travelAssignedDTO);
+    }
 
 }
