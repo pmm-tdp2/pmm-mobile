@@ -1,6 +1,7 @@
 package com.uberpets.mobile;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -46,11 +48,15 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.uberpets.Constants;
+import com.uberpets.util.GMapV2Direction;
+import com.uberpets.util.GMapV2DirectionAsyncTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
@@ -133,7 +139,7 @@ public class UserHome extends AppCompatActivity
                 mSocket = IO.socket(Constants.getInstance().getURL_SOCKET(), options);
                 Log.i(TAG_CONNECTION_SERVER,"io socket success");
                 connectToServer();
-                getDriverPosition();
+                listenDriverPosition();
                 listenDriverArrivedUser();
                 listenDriverArrivedDestiny();
             } catch (URISyntaxException e) {
@@ -147,12 +153,13 @@ public class UserHome extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        finishPreviousFragments(); //added for me
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        if (!finishPreviousFragments()) {
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -296,24 +303,27 @@ public class UserHome extends AppCompatActivity
                         .title("Estas Acá"));
 
 
+                int height = 32;
+                int width = 64;
                 BitmapDrawable bitMapCarDraw = (BitmapDrawable)
                         getResources().getDrawable(R.drawable.car);
                 Bitmap bCar = bitMapCarDraw.getBitmap();
+                Bitmap bCarSmallMarker = Bitmap.createScaledBitmap(bCar, width, height, false);
 
                 BitmapDrawable bitMapPinDraw = (BitmapDrawable)
                         getResources().getDrawable(R.drawable.ic_map_pin_36);
                 Bitmap bPin = bitMapPinDraw.getBitmap();
 
                 originMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng)
-                        .icon(BitmapDescriptorFactory.fromBitmap(bPin)));
+                        .icon(BitmapDescriptorFactory.fromBitmap(bPin)).title("origen"));
                 originMarker.setVisible(false);
 
                 destinyMarker= mMap.addMarker(new MarkerOptions().position(currentLatLng)
-                        .icon(BitmapDescriptorFactory.fromBitmap(bPin)));
+                        .icon(BitmapDescriptorFactory.fromBitmap(bPin)).title("destino"));
                 destinyMarker.setVisible(false);
 
                 driverMarker= mMap.addMarker(new MarkerOptions().position(currentLatLng)
-                        .icon(BitmapDescriptorFactory.fromBitmap(bCar)));
+                        .icon(BitmapDescriptorFactory.fromBitmap(bCarSmallMarker)).anchor(0.5f, 0.5f));
                 driverMarker.setVisible(false);
             }
         } catch (Exception e) {
@@ -366,12 +376,30 @@ public class UserHome extends AppCompatActivity
 
 
     public void getRouteTravel() {
-        // se tiene que mejorar...
         showOptionsToTravel();
         mCardViewSearch.setVisibility(View.INVISIBLE);
-        Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
-                .clickable(false)
-                .add(mOrigin, mDestiny));
+        final Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                try {
+                    Document doc = (Document) msg.obj;
+                    GMapV2Direction md = new GMapV2Direction();
+                    ArrayList<LatLng> directionPoint = md.getDirection(doc);
+                    PolylineOptions rectLine = new PolylineOptions().width(15).color(Color.RED);
+
+                    for (int i = 0; i < directionPoint.size(); i++) {
+                        rectLine.add(directionPoint.get(i));
+                    }
+                    Polyline polylin = mMap.addPolyline(rectLine);
+                    md.getDurationText(doc);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        };
+
+        new GMapV2DirectionAsyncTask(handler, mOrigin, mDestiny,
+                GMapV2Direction.MODE_DRIVING, getApplicationContext()).execute();
     }
 
     //init fragment options travel
@@ -422,10 +450,22 @@ public class UserHome extends AppCompatActivity
 
 
     public void ShowPositionDriver(float latitude, float longitude){
-        LatLng latLng = new LatLng(latitude,longitude);
+
+        Location prevLocation = new Location("");
+        prevLocation.setLatitude(driverMarker.getPosition().latitude);
+        prevLocation.setLongitude(driverMarker.getPosition().longitude);
+
+        LatLng newLatLng = new LatLng(latitude,longitude);
+        Location newLocation = new Location("");
+        newLocation.setLongitude(longitude);
+        newLocation.setLatitude(latitude);
+
+        Float bearing = prevLocation.bearingTo(newLocation);
+        driverMarker.setRotation(bearing - 270);
         driverMarker.setVisible(true);
-        driverMarker.setPosition(latLng);
-        //falta la logica de girar...
+        driverMarker.setPosition(newLatLng);
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, ZOOM_VALUE));
     }
 
 
@@ -449,7 +489,7 @@ public class UserHome extends AppCompatActivity
 
     /* BEGIN OF SOCKET CONNECTION*/
 
-    public void getDriverPosition(){
+    public void listenDriverPosition(){
         mSocket.on(mConstants.getEVENT_POSITON_DRIVER(), mListenerPositionDriver = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
@@ -526,6 +566,26 @@ public class UserHome extends AppCompatActivity
         });
     }
 
+
+    public void fastGenerationOriginDestiny(View view) {
+        showOptionsToTravel();
+        mCardViewSearch.setVisibility(View.INVISIBLE);
+        mOrigin= new LatLng(currentLocation.getLatitude(),
+                currentLocation.getLongitude());
+        originMarker.setVisible(true);
+        originMarker.setPosition(mOrigin);
+
+        mDestiny= new LatLng(currentLocation.getLatitude()+0.01,
+                currentLocation.getLongitude()+0.01);
+        destinyMarker.setVisible(true);
+        destinyMarker.setPosition(mDestiny);
+
+        mMap.addPolyline(new PolylineOptions()
+                .clickable(false)
+                .add(mOrigin, mDestiny));
+    }
+
+
     /* END OF SOCKET CONNECTION*/
 
 
@@ -556,9 +616,12 @@ public class UserHome extends AppCompatActivity
         return isPop;
     }
 
-    public void finishPreviousFragments() {
+    public boolean finishPreviousFragments() {
         if (!popFragment()) {
-            finish();
+           return false;
+        }else{
+            returnOriginalState();
+            return true;
         }
     }
 

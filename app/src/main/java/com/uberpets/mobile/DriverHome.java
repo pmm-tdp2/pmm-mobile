@@ -137,13 +137,14 @@ public class  DriverHome
 
     @Override
     public void onBackPressed() {
-        /*finishPreviusFragments();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }*/
+        if (!finishPreviousFragments()) {
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
+        }
     }
 
     @Override
@@ -312,9 +313,12 @@ public class  DriverHome
         return isPop;
     }
 
-    public void finishPreviusFragments() {
+    public boolean finishPreviousFragments() {
         if (!popFragment()) {
-            finish();
+            return false;
+        }else{
+            //returnOriginalState();
+            return true;
         }
     }
 
@@ -350,14 +354,6 @@ public class  DriverHome
 
     public void moveLocationDown(android.view.View view){
         moveLocation(-MOVEMENT_SPEED,0);
-
-        /*
-
-        Send message to server
-
-         */
-
-
     }
 
     public void moveLocationLeft(android.view.View view){
@@ -402,7 +398,7 @@ public class  DriverHome
     }
 
     public void showNewTravelNotification(android.view.View view) {
-        replaceFragment(new TravelRequestFragment(),false);
+        replaceFragment(new TravelRequestFragment(),true);
     }
 
 
@@ -417,6 +413,7 @@ public class  DriverHome
     public void acceptTravel(TravelAssignedDTO travelAssignedDTO){
         //TODO: mostrar información o mandarla a otro fragment del viaje asignado
         inTravel = true;
+        finishPreviousFragments();
         replaceFragment(DriverFollowUpTravel.newInstance("",""), true);
     }
 
@@ -431,7 +428,6 @@ public class  DriverHome
         Intent intent = new Intent(this, DriverFinalScreen.class);
         startActivity(intent);
         //TODO: mandar notificación al server de la puntuacion
-
         inTravel = false;
     }
 
@@ -474,7 +470,7 @@ public class  DriverHome
                             TravelRequestFragment travelRequest = new TravelRequestFragment();
                             travelRequest.setTravelDTO(travelDTO);
                             travelRequest.setROL(ROL);
-                            replaceFragment(new TravelRequestFragment(),false);
+                            replaceFragment(new TravelRequestFragment(),true);
                         }
                     }
                 });

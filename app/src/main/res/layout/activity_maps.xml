@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/tools">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <fragment  xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:map="http://schemas.android.com/apk/res-auto"
+    <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -64,13 +62,14 @@
                 android:text="Se encontraron problemas en la conexión. inténtelo más tarde"
                 android:textColor="@color/quantum_white_100"
                 android:textSize="20dp"/>
+
         </android.support.v7.widget.CardView>
 
         <LinearLayout android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:id="@+id/options_travel"
-            android:orientation="vertical">
-        </LinearLayout>
+            android:orientation="vertical"/>
+
     </RelativeLayout>
 
 </FrameLayout>

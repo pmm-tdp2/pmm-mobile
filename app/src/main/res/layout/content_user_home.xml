@@ -9,6 +9,19 @@
     tools:showIn="@layout/app_bar_user_home"
     android:id="@+id/content_user_home">
 
-    <include layout="@layout/activity_maps"></include>
+    <include
+        android:id="@+id/include8"
+        layout="@layout/activity_maps" />
+
+    <Button
+        android:id="@+id/button6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="fastGenerationOriginDestiny"
+        android:text="Generar origenDestino"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
