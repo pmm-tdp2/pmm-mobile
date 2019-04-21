@@ -147,12 +147,13 @@ public class UserHome extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        finishPreviousFragments(); //added for me
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        if (!finishPreviousFragments()) {
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -571,9 +572,12 @@ public class UserHome extends AppCompatActivity
         return isPop;
     }
 
-    public void finishPreviousFragments() {
+    public boolean finishPreviousFragments() {
         if (!popFragment()) {
-            finish();
+           return false;
+        }else{
+            returnOriginalState();
+            return true;
         }
     }
 
