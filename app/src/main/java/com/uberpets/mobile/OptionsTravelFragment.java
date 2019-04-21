@@ -20,6 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.ServerError;
+import com.github.nkzawa.emitter.Emitter;
+import com.github.nkzawa.socketio.client.Socket;
+import com.google.gson.Gson;
+import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
 import com.uberpets.model.PetSize;
 import com.uberpets.model.TravelAssignedDTO;
@@ -27,6 +31,8 @@ import com.uberpets.model.TravelConfirmationDTO;
 import com.uberpets.model.TravelPriceDTO;
 import com.uberpets.model.TravelDTO;
 import com.uberpets.services.App;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -49,6 +55,9 @@ public class OptionsTravelFragment extends Fragment {
     private TextView mPriceText;
     private CardView mCardPrice;
     private String travelID;
+    private Socket socketIO;
+    private Emitter.Listener mListenerAssignDriver;
+    private Constants mConstants = Constants.getInstance();
 
 
     public OptionsTravelFragment() {
@@ -183,7 +192,7 @@ public class OptionsTravelFragment extends Fragment {
                     new TravelConfirmationDTO(travelID,myActivity.ROL);
             App.nodeServer.post("/travel/confirmation",
                     travelConfirmationDTO, TravelAssignedDTO.class, new Headers())
-                    .onDone((s,ec)->finishFragmentExecuted())
+                    //.onDone((s,ec)->finishFragmentExecuted())
                     .run(this::handleGoodResponse, this::handleErrorResponse);
         }
     }
@@ -204,14 +213,16 @@ public class OptionsTravelFragment extends Fragment {
         fragmentTransaction.commit();
     }
 
-
+//TODO: cambiar el tipo de respuesta
     public void handleGoodResponse(TravelAssignedDTO travelAssignedDTO) {
         if(!isQueryCanceled) {
             if(travelAssignedDTO != null){
-                Log.i(TAG_REQUEST_SERVER, travelAssignedDTO.getDriver().toString());
-                myActivity.showInfoDriverAssigned();
+                /*Log.i(TAG_REQUEST_SERVER, travelAssignedDTO.getDriver().toString());
+                myActivity.showInfoDriverAssigned();*/
+                listenAssignedDriver();
             }else{
                 Log.d(TAG_REQUEST_SERVER, "no data found");
+                finishFragmentExecuted();
                 myActivity.showDriverNotFound();
             }
         }
@@ -220,7 +231,9 @@ public class OptionsTravelFragment extends Fragment {
 
     public void handleErrorResponse(Exception ex) {
         if (!isQueryCanceled) {
+            finishFragmentExecuted();
             if (ex instanceof ServerError) {
+                //to evaluate future code of error
                 switch (((ServerError) ex).networkResponse.statusCode) {
                     default:
                         Log.d(TAG_REQUEST_SERVER, "error to connect server");
@@ -233,5 +246,49 @@ public class OptionsTravelFragment extends Fragment {
             isQueryCanceled = false;
         }
     }
+
+
+    public void setSocketIO(Socket socketIO) {
+        this.socketIO = socketIO;
+    }
+
+    //listen if a driver is or isn't assigned to travel
+    //requested for user
+    public void listenAssignedDriver() {
+        socketIO.on(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
+            mListenerAssignDriver = new Emitter.Listener() {
+                @Override
+                public void call(final Object... args) {
+                    myActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(!isQueryCanceled) {
+                                Log.d(TAG_REQUEST_SERVER,"I was assign a driver");
+                                finishFragmentExecuted();
+                                try{
+                                    JSONObject response = (JSONObject) args[0];
+                                    Log.i(TAG_REQUEST_SERVER, response.toString());
+                                    Gson gson =  new Gson();
+                                    TravelAssignedDTO travelAssignedDTO =
+                                            gson.fromJson(response.toString(),TravelAssignedDTO.class);
+                                    Log.i(TAG_REQUEST_SERVER, travelAssignedDTO
+                                            .getDriver().toString());
+                                    myActivity.showInfoDriverAssigned();
+
+                                }catch (Exception ex){
+                                    Log.d(TAG_REQUEST_SERVER, "no data found");
+                                    myActivity.showDriverNotFound();
+                                }
+                            }
+                            isQueryCanceled = false;
+                            socketIO.off(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
+                                    mListenerAssignDriver);
+                        }
+                    });
+                }
+        });
+    }
+
+
 
 }

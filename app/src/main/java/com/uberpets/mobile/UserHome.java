@@ -1,7 +1,6 @@
 package com.uberpets.mobile;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -64,6 +63,7 @@ public class UserHome extends AppCompatActivity
     public final String ROL = "USER";
     public final String TAG_ROL = "ROL";
     private GoogleMap mMap;
+    private Polyline mRoute;
 
     private Marker mMarker;
     private Marker originMarker;
@@ -160,6 +160,8 @@ public class UserHome extends AppCompatActivity
             } else {
                 super.onBackPressed();
             }
+        }else{
+            returnOriginalState();
         }
     }
 
@@ -389,7 +391,7 @@ public class UserHome extends AppCompatActivity
                     for (int i = 0; i < directionPoint.size(); i++) {
                         rectLine.add(directionPoint.get(i));
                     }
-                    Polyline polylin = mMap.addPolyline(rectLine);
+                    mRoute = mMap.addPolyline(rectLine);
                     md.getDurationText(doc);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -405,6 +407,7 @@ public class UserHome extends AppCompatActivity
     //init fragment options travel
     public void showOptionsToTravel() {
         mFragmentTest =new OptionsTravelFragment();
+        mFragmentTest.setSocketIO(mSocket);
         replaceFragment(mFragmentTest , true);
     }
 
@@ -431,14 +434,14 @@ public class UserHome extends AppCompatActivity
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Do something after 5000ms
+                // Do something after 2000ms
                 returnOriginalState();
             }
-        }, 5000);
+        }, 2000);
     }
 
     public void returnOriginalState(){
-        mMap.clear();
+        mRoute.remove();
         LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
         mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Estas Acá"));
         mCardViewSearch.setVisibility(View.VISIBLE);
@@ -476,7 +479,7 @@ public class UserHome extends AppCompatActivity
 
 
     public void showRatingBar(){
-        mMap.clear();
+        mRoute.remove();
         originMarker.setVisible(false);
         destinyMarker.setVisible(false);
         driverMarker.setVisible(false);
@@ -490,7 +493,7 @@ public class UserHome extends AppCompatActivity
     /* BEGIN OF SOCKET CONNECTION*/
 
     public void listenDriverPosition(){
-        mSocket.on(mConstants.getEVENT_POSITON_DRIVER(), mListenerPositionDriver = new Emitter.Listener() {
+        mSocket.on(mConstants.getEVENT_POSITION_DRIVER(), mListenerPositionDriver = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
@@ -580,7 +583,7 @@ public class UserHome extends AppCompatActivity
         destinyMarker.setVisible(true);
         destinyMarker.setPosition(mDestiny);
 
-        mMap.addPolyline(new PolylineOptions()
+        mRoute = mMap.addPolyline(new PolylineOptions()
                 .clickable(false)
                 .add(mOrigin, mDestiny));
     }
@@ -620,7 +623,6 @@ public class UserHome extends AppCompatActivity
         if (!popFragment()) {
            return false;
         }else{
-            returnOriginalState();
             return true;
         }
     }

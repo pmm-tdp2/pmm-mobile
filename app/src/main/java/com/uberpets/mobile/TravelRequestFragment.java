@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ public class TravelRequestFragment extends Fragment {
     private Button mButtonReject;
     private TravelDTO mTravelDTO;
     private String ROL;
+    private final String TAG_REQUEST_TRAVEL = "REQUEST_TRAVEL_DRIVER";
 
     private OnFragmentInteractionListener mListener;
 
@@ -163,6 +165,7 @@ public class TravelRequestFragment extends Fragment {
 
     public void acceptTravelFragment(){
         if(mTravelDTO != null){
+            Log.d(TAG_REQUEST_TRAVEL, "Driver accept travel and send message");
             TravelConfirmationDTO travelConfirmationDTO =
                     new TravelConfirmationDTO(mTravelDTO.getTravelID(),this.ROL);
             App.nodeServer.post("/travel/confirmation",travelConfirmationDTO,
@@ -170,6 +173,7 @@ public class TravelRequestFragment extends Fragment {
                     .run(this::responseAcceptTravelFragment,this::errorAcceptTravelFragment);
         }else{
             //mock
+            Log.d(TAG_REQUEST_TRAVEL, "mock accept");
             mListener.acceptTravel(null);
         }
 
@@ -180,6 +184,7 @@ public class TravelRequestFragment extends Fragment {
     }
 
     public void responseAcceptTravelFragment(TravelAssignedDTO travelAssignedDTO){
+        Log.d(TAG_REQUEST_TRAVEL,"accept travel message has arrived to server successfully");
         mListener.acceptTravel(travelAssignedDTO);
     }
 
