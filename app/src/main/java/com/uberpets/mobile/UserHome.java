@@ -1,6 +1,7 @@
 package com.uberpets.mobile;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -46,11 +48,15 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.uberpets.Constants;
+import com.uberpets.util.GMapV2Direction;
+import com.uberpets.util.GMapV2DirectionAsyncTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
@@ -309,11 +315,11 @@ public class UserHome extends AppCompatActivity
                 Bitmap bPin = bitMapPinDraw.getBitmap();
 
                 originMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng)
-                        .icon(BitmapDescriptorFactory.fromBitmap(bPin)));
+                        .icon(BitmapDescriptorFactory.fromBitmap(bPin)).title("origen"));
                 originMarker.setVisible(false);
 
                 destinyMarker= mMap.addMarker(new MarkerOptions().position(currentLatLng)
-                        .icon(BitmapDescriptorFactory.fromBitmap(bPin)));
+                        .icon(BitmapDescriptorFactory.fromBitmap(bPin)).title("destino"));
                 destinyMarker.setVisible(false);
 
                 driverMarker= mMap.addMarker(new MarkerOptions().position(currentLatLng)
@@ -370,12 +376,30 @@ public class UserHome extends AppCompatActivity
 
 
     public void getRouteTravel() {
-        // se tiene que mejorar...
         showOptionsToTravel();
         mCardViewSearch.setVisibility(View.INVISIBLE);
-        Polyline polyline1 = mMap.addPolyline(new PolylineOptions()
-                .clickable(false)
-                .add(mOrigin, mDestiny));
+        final Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                try {
+                    Document doc = (Document) msg.obj;
+                    GMapV2Direction md = new GMapV2Direction();
+                    ArrayList<LatLng> directionPoint = md.getDirection(doc);
+                    PolylineOptions rectLine = new PolylineOptions().width(15).color(Color.RED);
+
+                    for (int i = 0; i < directionPoint.size(); i++) {
+                        rectLine.add(directionPoint.get(i));
+                    }
+                    Polyline polylin = mMap.addPolyline(rectLine);
+                    md.getDurationText(doc);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        };
+
+        new GMapV2DirectionAsyncTask(handler, mOrigin, mDestiny,
+                GMapV2Direction.MODE_DRIVING, getApplicationContext()).execute();
     }
 
     //init fragment options travel
@@ -541,6 +565,26 @@ public class UserHome extends AppCompatActivity
             }
         });
     }
+
+
+    public void fastGenerationOriginDestiny(View view) {
+        showOptionsToTravel();
+        mCardViewSearch.setVisibility(View.INVISIBLE);
+        mOrigin= new LatLng(currentLocation.getLatitude(),
+                currentLocation.getLongitude());
+        originMarker.setVisible(true);
+        originMarker.setPosition(mOrigin);
+
+        mDestiny= new LatLng(currentLocation.getLatitude()+0.01,
+                currentLocation.getLongitude()+0.01);
+        destinyMarker.setVisible(true);
+        destinyMarker.setPosition(mDestiny);
+
+        mMap.addPolyline(new PolylineOptions()
+                .clickable(false)
+                .add(mOrigin, mDestiny));
+    }
+
 
     /* END OF SOCKET CONNECTION*/
 
