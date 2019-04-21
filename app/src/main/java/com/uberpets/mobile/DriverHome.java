@@ -354,14 +354,6 @@ public class  DriverHome
 
     public void moveLocationDown(android.view.View view){
         moveLocation(-MOVEMENT_SPEED,0);
-
-        /*
-
-        Send message to server
-
-         */
-
-
     }
 
     public void moveLocationLeft(android.view.View view){
@@ -436,7 +428,6 @@ public class  DriverHome
         Intent intent = new Intent(this, DriverFinalScreen.class);
         startActivity(intent);
         //TODO: mandar notificación al server de la puntuacion
-
         inTravel = false;
     }
 

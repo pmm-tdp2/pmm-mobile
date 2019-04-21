@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Seleccione las mascotas para el viaje"
-            android:textSize="15dp"
+            android:textSize="14sp"
             android:gravity="center"
             android:textColor="@color/colorAccent"
             android:layout_marginStart="5dp"
@@ -28,6 +28,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_gravity="center">
 
                 <android.support.design.widget.FloatingActionButton
@@ -42,7 +44,7 @@
                     android:id="@+id/recycler_view_layout_recycler"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginStart="10dp"
                     tools:listitem="@layout/size_pets_options"/>
 
             </LinearLayout>
