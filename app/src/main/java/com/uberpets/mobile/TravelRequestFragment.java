@@ -34,6 +34,7 @@ public class TravelRequestFragment extends Fragment {
     private Button mButtonReject;
     private TravelDTO mTravelDTO;
     private String ROL;
+    private int idDriver;
     private final String TAG_REQUEST_TRAVEL = "REQUEST_TRAVEL_DRIVER";
 
     private OnFragmentInteractionListener mListener;
@@ -132,6 +133,10 @@ public class TravelRequestFragment extends Fragment {
         this.ROL = ROL;
     }
 
+    public void setIdDriver(int idDriver) {
+        this.idDriver = idDriver;
+    }
+
     public void updateDataTravel() {
         //TODO: show info the travel
     }
@@ -167,7 +172,7 @@ public class TravelRequestFragment extends Fragment {
         if(mTravelDTO != null){
             Log.d(TAG_REQUEST_TRAVEL, "Driver accept travel and send message");
             TravelConfirmationDTO travelConfirmationDTO =
-                    new TravelConfirmationDTO(mTravelDTO.getTravelID(),this.ROL);
+                    new TravelConfirmationDTO(mTravelDTO.getTravelID(),this.ROL,this.idDriver);
             App.nodeServer.post("/travel/confirmation",travelConfirmationDTO,
                     TravelAssignedDTO.class, new Headers())
                     .run(this::responseAcceptTravelFragment,this::errorAcceptTravelFragment);

@@ -10,9 +10,9 @@ import com.google.android.gms.maps.model.LatLng;
  */
 
 public class TravelDTO {
-    private final String userId;
-    private final String driverId;
-    private final String travelID;
+    private final int userId;
+    private final int driverId;
+    private final int travelID;
     private final LatLng from;
     private final LatLng to;
     private final int petSmallAmount;
@@ -24,9 +24,9 @@ public class TravelDTO {
     public static class TravelDTOBuilder {
         private final LatLng from;
         private final LatLng to;
-        private String travelID = "";
-        private String userId = "";
-        private String driverId = "";
+        private int travelID = 0;
+        private int userId = 0;
+        private int driverId = 0;
         private int petSmallAmount = 0;
         private int petMediumAmount = 0;
         private int petLargeAmount = 0;
@@ -37,17 +37,17 @@ public class TravelDTO {
             this.to = to;
         }
 
-        public TravelDTOBuilder setTravelID(String travelID) {
+        public TravelDTOBuilder setTravelID(int travelID) {
             this.travelID = travelID;
             return this;
         }
 
-        public TravelDTOBuilder setUserId(String userId) {
+        public TravelDTOBuilder setUserId(int userId) {
             this.userId = userId;
             return this;
         }
 
-        public TravelDTOBuilder setDriverId(String driverId) {
+        public TravelDTOBuilder setDriverId(int driverId) {
             this.driverId = driverId;
             return this;
         }
@@ -91,7 +91,7 @@ public class TravelDTO {
         this.driverId = builder.driverId;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
@@ -119,11 +119,11 @@ public class TravelDTO {
         return hasACompanion;
     }
 
-    public String getDriverId() {
+    public int getDriverId() {
         return driverId;
     }
 
-    public String getTravelID() {
+    public int getTravelID() {
         return travelID;
     }
 

@@ -54,7 +54,7 @@ public class OptionsTravelFragment extends Fragment {
     private Button mButtonGetTravel;
     private TextView mPriceText;
     private CardView mCardPrice;
-    private String travelID;
+    private int travelID;
     private Socket socketIO;
     private Emitter.Listener mListenerAssignDriver;
     private Constants mConstants = Constants.getInstance();
@@ -153,7 +153,7 @@ public class OptionsTravelFragment extends Fragment {
     public void getTravelQuote() {
         TravelDTO quotation =  new TravelDTO.TravelDTOBuilder(
                 myActivity.getmOrigin(),myActivity.getmDestiny())
-                .setUserId("user1")
+                .setUserId(myActivity.getIdUSer())
                 .setHasACompanion(optionCompanion.isChecked())
                 .setPetSmallAmount(mAdapter.getAllLittlePets())
                 .setPetMediumAmount(mAdapter.getAllMediumPets())
@@ -192,7 +192,7 @@ public class OptionsTravelFragment extends Fragment {
         if (readyToGetTravel){
             showSearchingDriver();
             TravelConfirmationDTO travelConfirmationDTO =
-                    new TravelConfirmationDTO(travelID,myActivity.ROL);
+                    new TravelConfirmationDTO(travelID,myActivity.ROL,myActivity.getIdUSer());
             App.nodeServer.post("/travel/confirmation",
                     travelConfirmationDTO, TravelAssignedDTO.class, new Headers())
                     //.onDone((s,ec)->finishFragmentExecuted())
@@ -224,7 +224,7 @@ public class OptionsTravelFragment extends Fragment {
                 myActivity.showInfoDriverAssigned();*/
                 listenAssignedDriver();
             }else{
-                Log.d(TAG_REQUEST_SERVER, "no data found");
+                Log.d(TAG_REQUEST_SERVER, "no hay datos");
                 finishFragmentExecuted();
                 myActivity.showDriverNotFound();
             }

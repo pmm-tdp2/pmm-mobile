@@ -71,6 +71,7 @@ public class  DriverHome
     private GoogleMap mMap;
     private final String ROL = "DRIVER";
     private final String TAG_ROL = "ROL";
+    private int idDriver;
     private final Constants mConstant = Constants.getInstance();
     private boolean inTravel = false;
     private Location currentLocation;
@@ -374,8 +375,8 @@ public class  DriverHome
         Location newLocation = new Location("");
         newLocation.setLongitude(mockLocation.longitude);
         newLocation.setLatitude(mockLocation.latitude);
-
-        TraceDTO traceDTO = new TraceDTO("user1", "driver1", new GeograficCoordenate(String.valueOf(newLocation.getLatitude()), String.valueOf(newLocation.getLongitude())));
+        //TODO:id user esta harcodeado, ver porque se usaría asi
+        TraceDTO traceDTO = new TraceDTO(0, idDriver, new GeograficCoordenate(String.valueOf(newLocation.getLatitude()), String.valueOf(newLocation.getLongitude())));
         traceService.saveTrace(traceDTO, this);
         currentPositionMarker.setPosition(mockLocation);
 
@@ -414,7 +415,10 @@ public class  DriverHome
         //TODO: mostrar información o mandarla a otro fragment del viaje asignado
         inTravel = true;
         finishPreviousFragments();
-        replaceFragment(DriverFollowUpTravel.newInstance("",""), true);
+        DriverFollowUpTravel driverFollowUpTravel = DriverFollowUpTravel.newInstance("","");
+        driverFollowUpTravel.setROL(ROL);
+        driverFollowUpTravel.setIdDriver(idDriver);
+        replaceFragment(driverFollowUpTravel, true);
     }
 
     /*
@@ -441,8 +445,13 @@ public class  DriverHome
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        JSONObject data = (JSONObject) args[0];
+                        JSONObject response = (JSONObject) args[0];
                         Log.d(TAG_CONNECTION_SERVER, "Established Connection");
+                        try{
+                            idDriver= response.getInt("id");
+                        }catch (Exception ex){
+                            Log.e(TAG_CONNECTION_SERVER,"driver has no assigned a id");
+                        }
                     }
                 });
             }
@@ -474,6 +483,7 @@ public class  DriverHome
                             TravelRequestFragment travelRequest = new TravelRequestFragment();
                             travelRequest.setTravelDTO(travelDTO);
                             travelRequest.setROL(ROL);
+                            travelRequest.setIdDriver(idDriver);
                             replaceFragment(travelRequest,true);
                         }
                     }
