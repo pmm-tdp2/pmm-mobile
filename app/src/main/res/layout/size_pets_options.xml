@@ -2,18 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
-    android:gravity="center"
-    android:background="@drawable/layout_bg">
+    android:layout_centerInParent="true"
+    android:layout_centerHorizontal="false"
+    android:layout_centerVertical="false"
+    android:orientation="horizontal">
 
     <ImageButton
         android:id="@+id/little_pet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="12dp"
+        android:layout_margin="16dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/content_description_little_pet"
         android:src="@drawable/baseline_pets_black_24" />
 
     <ImageButton
@@ -21,8 +22,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="12dp"
+        android:layout_margin="16dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/content_description_medium_pet"
         android:src="@drawable/baseline_pets_black_36" />
 
     <ImageButton
@@ -30,8 +32,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="12dp"
+        android:layout_margin="16dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/content_description_big_pet"
         android:src="@drawable/baseline_pets_black_48" />
 
     <ImageButton
@@ -39,8 +42,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="12dp"
+        android:layout_margin="32dp"
         android:background="@android:color/transparent"
-        android:src="@android:drawable/ic_delete" />
+        android:contentDescription="@string/content_description_remove_pet"
+        android:src="@drawable/ic_delete_black_24dp" />
 
-</LinearLayout >
+</LinearLayout>

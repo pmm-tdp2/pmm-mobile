@@ -136,6 +136,9 @@ public class OptionsTravelFragment extends Fragment {
 
     public void addItem(){
         mAdapter.updateList();
+        if (mAdapter.getItemCount() == 3){
+            mButtonFab.hide();
+        }
     }
 
 

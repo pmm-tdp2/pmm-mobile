@@ -69,7 +69,6 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
                     notifyItemRemoved(position);
                     notifyDataSetChanged();
                 }
-
             }
         });
     }
@@ -121,13 +120,11 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
         holder.getBigPet().setBackgroundColor(Color.TRANSPARENT);
         holder.getMediumPet().setBackgroundColor(Color.TRANSPARENT);
     }
-
     public void setMediumPetInHolder(SizePetsHolder holder){
         holder.getLittlePet().setBackgroundColor(Color.TRANSPARENT);
         holder.getMediumPet().setBackgroundResource(R.drawable.layout_selection);
         holder.getBigPet().setBackgroundColor(Color.TRANSPARENT);
     }
-
     public void setBigPetInHolder(SizePetsHolder holder){
         holder.getLittlePet().setBackgroundColor(Color.TRANSPARENT);
         holder.getMediumPet().setBackgroundColor(Color.TRANSPARENT);
@@ -150,6 +147,5 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
             setBigPetInHolder(holder);
         else
             setBlankAllPetsInHolder(holder);
-
     }
 }
