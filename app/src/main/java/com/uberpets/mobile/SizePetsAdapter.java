@@ -2,6 +2,7 @@ package com.uberpets.mobile;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +23,11 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
     private final List<PetSize> pets;
     private static final int minNumbItems = 1;
     private static final int maxNumbItems = 3;
+    private FloatingActionButton addPetButton;
 
-    public SizePetsAdapter(ArrayList<PetSize> pets){
+    public SizePetsAdapter(ArrayList<PetSize> pets, FloatingActionButton addPetButton){
         this.pets = pets;
+        this.addPetButton = addPetButton;
     }
 
     @NonNull
@@ -68,6 +71,8 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
                     pets.remove(position);
                     notifyItemRemoved(position);
                     notifyDataSetChanged();
+                    //mostrar el fab button
+                    addPetButton.show();
                 }
             }
         });
