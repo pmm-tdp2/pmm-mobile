@@ -415,7 +415,10 @@ public class  DriverHome
         //TODO: mostrar información o mandarla a otro fragment del viaje asignado
         inTravel = true;
         finishPreviousFragments();
-        replaceFragment(DriverFollowUpTravel.newInstance("",""), true);
+        DriverFollowUpTravel driverFollowUpTravel = DriverFollowUpTravel.newInstance("","");
+        driverFollowUpTravel.setROL(ROL);
+        driverFollowUpTravel.setIdDriver(idDriver);
+        replaceFragment(driverFollowUpTravel, true);
     }
 
     /*
@@ -480,6 +483,7 @@ public class  DriverHome
                             TravelRequestFragment travelRequest = new TravelRequestFragment();
                             travelRequest.setTravelDTO(travelDTO);
                             travelRequest.setROL(ROL);
+                            travelRequest.setIdDriver(idDriver);
                             replaceFragment(travelRequest,true);
                         }
                     }

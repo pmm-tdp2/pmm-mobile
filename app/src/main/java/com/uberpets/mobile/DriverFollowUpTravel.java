@@ -33,6 +33,7 @@ public class DriverFollowUpTravel extends Fragment {
     private Button mButtonCancel;
     private TravelAssignedDTO mTravelAssignedDTO;
     private String ROL;
+    private int idDriver;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -135,6 +136,11 @@ public class DriverFollowUpTravel extends Fragment {
         this.ROL = ROL;
     }
 
+
+    public void setIdDriver(int idDriver) {
+        this.idDriver = idDriver;
+    }
+
     public void setButtonCancel() {
         mButtonCancel.setOnClickListener(view->cancelTravelFragment());
     }
@@ -159,7 +165,7 @@ public class DriverFollowUpTravel extends Fragment {
     public void finalizeTravelFragment() {
         if(mTravelAssignedDTO !=  null){
             TravelConfirmationDTO travelConfirmationDTO =
-                    new TravelConfirmationDTO(mTravelAssignedDTO.getTravelID(),this.ROL);
+                    new TravelConfirmationDTO(mTravelAssignedDTO.getTravelID(),this.ROL,this.idDriver);
             App.nodeServer.post("/travel/confirmation",travelConfirmationDTO,
                     Object.class, new Headers())
                     .run(this::responseFinalizeTravelFragment,this::errorRejectTravelFragment);

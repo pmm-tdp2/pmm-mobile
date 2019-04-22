@@ -189,7 +189,7 @@ public class OptionsTravelFragment extends Fragment {
         if (readyToGetTravel){
             showSearchingDriver();
             TravelConfirmationDTO travelConfirmationDTO =
-                    new TravelConfirmationDTO(travelID,myActivity.ROL);
+                    new TravelConfirmationDTO(travelID,myActivity.ROL,myActivity.getIdUSer());
             App.nodeServer.post("/travel/confirmation",
                     travelConfirmationDTO, TravelAssignedDTO.class, new Headers())
                     //.onDone((s,ec)->finishFragmentExecuted())
@@ -221,7 +221,7 @@ public class OptionsTravelFragment extends Fragment {
                 myActivity.showInfoDriverAssigned();*/
                 listenAssignedDriver();
             }else{
-                Log.d(TAG_REQUEST_SERVER, "no data found");
+                Log.d(TAG_REQUEST_SERVER, "no hay datos");
                 finishFragmentExecuted();
                 myActivity.showDriverNotFound();
             }
