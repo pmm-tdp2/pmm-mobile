@@ -35,8 +35,8 @@ public class TraceService {
 
     public void saveTrace(TraceDTO traceDTO, AppCompatActivity activity) {
 
-        final String userId = traceDTO.getUserId();
-        final String driverId = traceDTO.getDriverId();
+        final int userId = traceDTO.getUserId();
+        final int driverId = traceDTO.getDriverId();
         RequestQueue queue = Volley.newRequestQueue(activity);
         String url = URL + "/trace";
 

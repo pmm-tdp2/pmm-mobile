@@ -5,19 +5,19 @@ package com.uberpets.model;
  * is the response to confirmation of travel
  */
 public class TravelAssignedDTO {
-    private String travelID;
+    private int travelID;
     private String time;
     private Person user;
     private Person driver;
 
-    public TravelAssignedDTO(String travelID, String time, Person user, Person driver) {
+    public TravelAssignedDTO(int travelID, String time, Person user, Person driver) {
         this.travelID = travelID;
         this.time = time;
         this.user = user;
         this.driver = driver;
     }
 
-    public String getTravelID() {
+    public int getTravelID() {
         return travelID;
     }
 

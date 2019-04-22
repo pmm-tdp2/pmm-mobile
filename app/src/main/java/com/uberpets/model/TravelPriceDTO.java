@@ -2,9 +2,9 @@ package com.uberpets.model;
 
 public class TravelPriceDTO {
     private String price;
-    private String travelID;
+    private int travelID;
 
-    public TravelPriceDTO(String price, String travelID) {
+    public TravelPriceDTO(String price, int travelID) {
         this.price = price;
         this.travelID = travelID;
     }
@@ -13,7 +13,7 @@ public class TravelPriceDTO {
         return price;
     }
 
-    public String getTravelID() {
+    public int getTravelID() {
         return travelID;
     }
 }

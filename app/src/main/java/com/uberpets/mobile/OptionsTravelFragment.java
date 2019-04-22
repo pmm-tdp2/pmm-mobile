@@ -54,7 +54,7 @@ public class OptionsTravelFragment extends Fragment {
     private Button mButtonGetTravel;
     private TextView mPriceText;
     private CardView mCardPrice;
-    private String travelID;
+    private int travelID;
     private Socket socketIO;
     private Emitter.Listener mListenerAssignDriver;
     private Constants mConstants = Constants.getInstance();
@@ -150,7 +150,7 @@ public class OptionsTravelFragment extends Fragment {
     public void getTravelQuote() {
         TravelDTO quotation =  new TravelDTO.TravelDTOBuilder(
                 myActivity.getmOrigin(),myActivity.getmDestiny())
-                .setUserId("user1")
+                .setUserId(myActivity.getIdUSer())
                 .setHasACompanion(optionCompanion.isChecked())
                 .setPetSmallAmount(mAdapter.getAllLittlePets())
                 .setPetMediumAmount(mAdapter.getAllMediumPets())

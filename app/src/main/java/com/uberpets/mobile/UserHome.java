@@ -64,6 +64,7 @@ public class UserHome extends AppCompatActivity
     public final String TAG_ROL = "ROL";
     private GoogleMap mMap;
     private Polyline mRoute;
+    private int idUSer;
 
     private Marker mMarker;
     private Marker originMarker;
@@ -150,6 +151,9 @@ public class UserHome extends AppCompatActivity
         requestPermission();
     }
 
+    public int getIdUSer() {
+        return idUSer;
+    }
 
     @Override
     public void onBackPressed() {
@@ -525,9 +529,13 @@ public class UserHome extends AppCompatActivity
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        JSONObject data = (JSONObject) args[0];
+                        JSONObject response = (JSONObject) args[0];
                         Log.d(TAG_CONNECTION_SERVER, "Established Connection");
-                        Log.d(TAG_CONNECTION_SERVER, data.toString());
+                        try{
+                            idUSer= response.getInt("id");
+                        }catch (Exception ex){
+                            Log.e(TAG_CONNECTION_SERVER,"user has no assigned a id");
+                        }
                     }
                 });
             }
