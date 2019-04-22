@@ -126,4 +126,18 @@ public class TravelDTO {
     public String getTravelID() {
         return travelID;
     }
+
+    @Override
+    public String toString(){
+        return "userId: "+userId
+         +" driverId: "+driverId
+         +" travelID: "+travelID
+         +" from: "+from
+         +" to: "+to
+         +" petSmallAmount: "+petSmallAmount
+         +" petMediumAmount: "+petMediumAmount
+         +" petLargeAmount: "+petLargeAmount
+         +" hasACompanion: "+hasACompanion;
+
+    }
 }

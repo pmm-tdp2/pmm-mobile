@@ -71,6 +71,7 @@ public class  DriverHome
     private GoogleMap mMap;
     private final String ROL = "DRIVER";
     private final String TAG_ROL = "ROL";
+    private final Constants mConstant = Constants.getInstance();
     private boolean inTravel = false;
     private Location currentLocation;
     private LatLng mockLocation;
@@ -83,7 +84,6 @@ public class  DriverHome
 
     private Socket mSocket;
     private final String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
-    private final String EVENT_NOTIFICATION_TRAVEL = "NOTIFICATION_OF_TRAVEL";
     private final String EVENT_CONNECTION = "message";
     private Emitter.Listener mListenerConnection;
     private Emitter.Listener mListenerNotificationTravel;
@@ -453,16 +453,20 @@ public class  DriverHome
 
     //listen if arrive message that driver arrived to user
     public void listenNotificaciónTravel() {
-        mSocket.on(EVENT_NOTIFICATION_TRAVEL, mListenerNotificationTravel = new Emitter.Listener() {
+        Log.d("NOTIFICATION_TRAVEL",mConstants.getEVENT_NOTIFICATION_TRAVEL());
+        mSocket.on(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
+                mListenerNotificationTravel = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (!inTravel){
-                            String response = (String) args[0];
+                            JSONObject response = (JSONObject) args[0];
                             Gson gson = new Gson();
-                            TravelDTO travelDTO = gson.fromJson(response,TravelDTO.class);
+                            Log.d("NOTIFICATION_TRAVEL","-----------------");
+                            Log.d("NOTIFICATION_TRAVEL",response.toString());
+                            TravelDTO travelDTO = gson.fromJson(response.toString(),TravelDTO.class);
                             //TODO: mostrar la cantidad de mascotas que tendrá el viaje
                             //TODO: dibujar el tramo del viaje
                             Log.d("NOTIFICATION_TRAVEL",travelDTO.toString());
@@ -470,7 +474,7 @@ public class  DriverHome
                             TravelRequestFragment travelRequest = new TravelRequestFragment();
                             travelRequest.setTravelDTO(travelDTO);
                             travelRequest.setROL(ROL);
-                            replaceFragment(new TravelRequestFragment(),true);
+                            replaceFragment(travelRequest,true);
                         }
                     }
                 });

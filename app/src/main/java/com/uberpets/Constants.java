@@ -2,7 +2,6 @@ package com.uberpets;
 
 import android.util.Log;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,10 +16,11 @@ public class Constants {
     private String URL;
     private String URL_SOCKET;
 
-    private String EVENT_POSITON_DRIVER;
+    private String EVENT_POSITION_DRIVER;
     private String EVENT_DRIVER_ARRIVED_DESTINY;
     private String EVENT_CONNECTION;
     private String EVENT_DRIVER_ARRIVED_USER;
+    private String EVENT_NOTIFICATION_TRAVEL;
 
     private int REQUEST_AUTOCOMPLETE_ACTIVITY;
     private int RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY;
@@ -71,10 +71,11 @@ public class Constants {
             URL_LOCAL = prop.getProperty("url.local_server");
             URL_BASE_PATH = prop.getProperty("url.base_path");
 
-            EVENT_POSITON_DRIVER = prop.getProperty("event.position_driver");
+            EVENT_POSITION_DRIVER = prop.getProperty("event.position_driver");
             EVENT_DRIVER_ARRIVED_DESTINY = prop.getProperty("event.driver_arrived_destiny");
             EVENT_CONNECTION = prop.getProperty("event.connection");
             EVENT_DRIVER_ARRIVED_USER = prop.getProperty("event.driver_arrived_user");
+            EVENT_NOTIFICATION_TRAVEL = prop.getProperty("event.notification_travel");
 
             REQUEST_AUTOCOMPLETE_ACTIVITY = Integer.parseInt(prop.getProperty("intent.request_autocomplete_activity"));
             RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY = Integer.parseInt(prop.getProperty("intent.autocomplete_response_origin"));
@@ -91,8 +92,8 @@ public class Constants {
 
 
 
-    public String getEVENT_POSITON_DRIVER() {
-        return EVENT_POSITON_DRIVER;
+    public String getEVENT_POSITION_DRIVER() {
+        return EVENT_POSITION_DRIVER;
     }
 
 
@@ -108,6 +109,10 @@ public class Constants {
     public String getURL_LOCAL() {
         return URL_LOCAL;
     }*/
+
+    public String getEVENT_NOTIFICATION_TRAVEL() {
+        return EVENT_NOTIFICATION_TRAVEL;
+    }
 
     public String getURL_SOCKET() {
         return URL_SOCKET;
