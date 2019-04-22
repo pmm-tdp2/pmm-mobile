@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,13 +46,12 @@ public class OptionsTravelFragment extends Fragment {
     private SizePetsAdapter mAdapter;
     private boolean isQueryCanceled =false;
     private boolean readyToGetTravel =false;
-    private String TAG_REQUEST_SERVER="RESQUEST_SERVER_TRAVEL";
+    private String TAG_REQUEST_SERVER="REQUEST_SERVER_TRAVEL";
     private UserHome myActivity;
     private RecyclerView mRecyclerView;
     private FloatingActionButton mButtonFab;
     private Button mButtonGetTravel;
     private TextView mPriceText;
-    private CardView mCardPrice;
     private int travelID;
     private Socket socketIO;
     private Emitter.Listener mListenerAssignDriver;
@@ -88,7 +86,6 @@ public class OptionsTravelFragment extends Fragment {
         optionCompanion =rootView.findViewById(R.id.checkBox_option_companion);
 
         mPriceText = rootView.findViewById(R.id.text_price);
-        mCardPrice =  rootView.findViewById(R.id.card_price);
 
         myActivity = (UserHome) getActivity();
 
@@ -107,18 +104,6 @@ public class OptionsTravelFragment extends Fragment {
         mButtonGetTravel.setOnClickListener(view->onClickButtonGetTravel());
     }
 
-
-
-    //init Show Searching Person
-    public void cancelSearchingDriver() {
-        isQueryCanceled = true;
-
-        /**
-         *falta ver cancelar la query...
-         * mandar al servidor que ya no quiere el viaje...
-         * esto se puede omitir
-         */
-    }
 
     /**
      *falta hacer que si se modifica alguna de las opciones de viaje

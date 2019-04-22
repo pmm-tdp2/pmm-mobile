@@ -356,7 +356,7 @@ public class UserHome extends AppCompatActivity
     }
 
 
-    // Call Back method  to get the Message form other Activity
+    // Call Back method  to get the data form other Activity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == mConstants.getREQUEST_AUTOCOMPLETE_ACTIVITY()) {
@@ -459,7 +459,6 @@ public class UserHome extends AppCompatActivity
     }
 
 
-
     public void ShowPositionDriver(float latitude, float longitude){
 
         Location prevLocation = new Location("");
@@ -480,6 +479,7 @@ public class UserHome extends AppCompatActivity
     }
 
 
+    //TODO: esto falta implementar, tiene que notificar el server cuando llega el chofer al origen
     public void initTravel(){
         finishPreviousFragments();
         replaceFragment(new TrackingTravelFragment(),true);
@@ -487,12 +487,8 @@ public class UserHome extends AppCompatActivity
 
 
     public void showRatingBar(){
-        mRoute.remove();
-        originMarker.setVisible(false);
-        destinyMarker.setVisible(false);
-        driverMarker.setVisible(false);
-        mCardViewSearch.setVisibility(CardView.VISIBLE);
         finishPreviousFragments();
+        returnOriginalState();
         Intent intent = new Intent(this, UserFinalScreen.class);
         startActivity(intent);
     }
@@ -501,7 +497,8 @@ public class UserHome extends AppCompatActivity
     /* BEGIN OF SOCKET CONNECTION*/
 
     public void listenDriverPosition(){
-        mSocket.on(mConstants.getEVENT_POSITION_DRIVER(), mListenerPositionDriver = new Emitter.Listener() {
+        mSocket.on(mConstants.getEVENT_POSITION_DRIVER(),
+                mListenerPositionDriver = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
@@ -567,12 +564,14 @@ public class UserHome extends AppCompatActivity
 
     //listen if arrive message that driver arrived to destiny
     public void listenDriverArrivedDestiny() {
-        mSocket.on(mConstants.getEVENT_DRIVER_ARRIVED_DESTINY(), mListenerDriverArrivedToDestiny = new Emitter.Listener() {
+        mSocket.on(mConstants.getEVENT_DRIVER_ARRIVED_DESTINY(),
+                mListenerDriverArrivedToDestiny = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG_USER_HOME,"message finalize travel arrived");
                         JSONObject data = (JSONObject) args[0];
                         showRatingBar();
                     }

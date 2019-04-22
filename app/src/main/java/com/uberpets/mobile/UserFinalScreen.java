@@ -15,16 +15,16 @@ public class UserFinalScreen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_final_screen);
-        mRatingBar = findViewById(R.id.ratingBar_user);
+        //mRatingBar = findViewById(R.id.ratingBar_user);
     }
 
     public void sendComment(android.view.View view){
-        int numStars = mRatingBar.getNumStars();
-        if(numStars != 0) {
-            Log.i(TAG_RATING_USER,"user: idUser "+ " has scored with "+numStars );
+        //int numStars = mRatingBar.getNumStars();
+        //if(numStars != 0) {
+        //    Log.i(TAG_RATING_USER,"user: idUser "+ " has scored with "+numStars );
             //go back to activity that called it
             finish();
-        }
+        //}
     }
 
     @Override
