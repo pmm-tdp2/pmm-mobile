@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.Button;
 
 import com.uberpets.library.rest.Headers;
 import com.uberpets.mobile.R;
+import com.uberpets.model.SimpleResponse;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.TravelConfirmationDTO;
 import com.uberpets.model.TravelDTO;
@@ -34,6 +36,7 @@ public class DriverFollowUpTravel extends Fragment {
     private TravelAssignedDTO mTravelAssignedDTO;
     private String ROL;
     private int idDriver;
+    private String TAG_DRIVER_FOLLOW_UP_TRAVEL = "DRIVER_FOLLOW_UP_TRAVEL ";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -165,9 +168,10 @@ public class DriverFollowUpTravel extends Fragment {
     public void finalizeTravelFragment() {
         if(mTravelAssignedDTO !=  null){
             TravelConfirmationDTO travelConfirmationDTO =
-                    new TravelConfirmationDTO(mTravelAssignedDTO.getTravelID(),this.ROL,this.idDriver);
-            App.nodeServer.post("/travel/confirmation",travelConfirmationDTO,
-                    Object.class, new Headers())
+                    new TravelConfirmationDTO(mTravelAssignedDTO.getTravelID()
+                            ,this.ROL,this.idDriver);
+            App.nodeServer.post("/travel/finalize",travelConfirmationDTO,
+                    SimpleResponse.class, new Headers())
                     .run(this::responseFinalizeTravelFragment,this::errorRejectTravelFragment);
         }else{
             mListener.finishTravel();
@@ -176,7 +180,8 @@ public class DriverFollowUpTravel extends Fragment {
     }
 
 
-    public void responseFinalizeTravelFragment(Object o) {
+    public void responseFinalizeTravelFragment(SimpleResponse simpleResponse) {
+        Log.d(TAG_DRIVER_FOLLOW_UP_TRAVEL,simpleResponse.getMeesage());
         mListener.finishTravel();
     }
 

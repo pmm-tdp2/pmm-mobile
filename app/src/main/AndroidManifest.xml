@@ -20,6 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".DriverFinalScreen"></activity>
+        <activity android:name=".UserFinalScreen"></activity>
         <!-- activity android:name=".PlaceAutoCompleteActivity"></activity -->
         <activity
             android:name=".UserHome"

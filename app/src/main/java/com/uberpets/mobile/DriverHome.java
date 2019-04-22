@@ -304,7 +304,7 @@ public class  DriverHome
         boolean isPop = false;
 
         Fragment currentFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.upper_section_fragment);
+                .findFragmentById(R.id.layout_driver_to_replace);
 
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             isPop = true;
@@ -336,14 +336,14 @@ public class  DriverHome
                     FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
         }
-        transaction.replace(R.id.upper_section_fragment, fragment);
+        transaction.replace(R.id.layout_driver_to_replace, fragment);
         transaction.commit();
         getSupportFragmentManager().executePendingTransactions();
     }
 
     private void removeUpperSectionFragment(){
         Fragment fragment = getSupportFragmentManager()
-                .findFragmentById(R.id.upper_section_fragment);
+                .findFragmentById(R.id.layout_driver_to_replace);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.remove(fragment);
         transaction.commit();
@@ -418,6 +418,7 @@ public class  DriverHome
         DriverFollowUpTravel driverFollowUpTravel = DriverFollowUpTravel.newInstance("","");
         driverFollowUpTravel.setROL(ROL);
         driverFollowUpTravel.setIdDriver(idDriver);
+        driverFollowUpTravel.setmTravelAssignedDTO(travelAssignedDTO);
         replaceFragment(driverFollowUpTravel, true);
     }
 
