@@ -39,4 +39,5 @@
     <string name="content_description_medium_pet">mascota mediana</string>
     <string name="content_description_big_pet">mascota grande</string>
     <string name="content_description_remove_pet">borrar mascota</string>
+    <string name="recommend_better_service_checkbox">Recomiendo mejorar el servicio</string>
 </resources>
