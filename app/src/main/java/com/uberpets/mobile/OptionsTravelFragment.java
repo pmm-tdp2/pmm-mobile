@@ -193,14 +193,16 @@ public class OptionsTravelFragment extends Fragment {
         FragmentManager fragmentManager = myActivity.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.options_travel, fragment2);
-        fragmentTransaction.commit();
+        //fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
     public void finishFragmentExecuted() {
         FragmentManager fragmentManager = myActivity.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.options_travel, this);
-        fragmentTransaction.commit();
+        //fragmentTransaction.commit();
+        fragmentTransaction.commitAllowingStateLoss();
     }
 
 //TODO: cambiar el tipo de respuesta
@@ -263,7 +265,7 @@ public class OptionsTravelFragment extends Fragment {
                                             gson.fromJson(response.toString(),TravelAssignedDTO.class);
                                     Log.i(TAG_REQUEST_SERVER, travelAssignedDTO
                                             .getDriver().toString());
-                                    myActivity.showInfoDriverAssigned();
+                                    myActivity.showInfoDriverAssigned(travelAssignedDTO);
 
                                 }catch (Exception ex){
                                     Log.d(TAG_REQUEST_SERVER, "no data found");

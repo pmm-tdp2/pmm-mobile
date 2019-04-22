@@ -6,14 +6,22 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.uberpets.mobile.R;
+import com.uberpets.model.TravelAssignedDTO;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class InfoDriverAssingFragment extends Fragment {
 
+    private TravelAssignedDTO mTravelAssignedDTO;
+    private TextView textTime;
+
+    public void setmTravelAssignedDTO(TravelAssignedDTO mTravelAssignedDTO) {
+        this.mTravelAssignedDTO = mTravelAssignedDTO;
+    }
 
     public InfoDriverAssingFragment() {
         // Required empty public constructor
@@ -23,7 +31,15 @@ public class InfoDriverAssingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_info_driver_assing, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_info_driver_assing, container, false);
+
+        this.textTime = rootView.findViewById(R.id.waiting_time_for_driver);
+        if(mTravelAssignedDTO != null) {
+            this.textTime.setText(mTravelAssignedDTO.getTime());
+        }else{
+            this.textTime.setText("30.00");
+        }
+        return rootView;
     }
 
 }

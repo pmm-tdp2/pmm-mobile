@@ -47,6 +47,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.uberpets.Constants;
+import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.util.GMapV2Direction;
 import com.uberpets.util.GMapV2DirectionAsyncTask;
 
@@ -65,6 +66,7 @@ public class UserHome extends AppCompatActivity
     private GoogleMap mMap;
     private Polyline mRoute;
     private int idUSer;
+    private TextView textPrice;
 
     private Marker mMarker;
     private Marker originMarker;
@@ -132,6 +134,7 @@ public class UserHome extends AppCompatActivity
 
         mMessageCard = findViewById(R.id.card_view_message);
         mMessageCard.setVisibility(CardView.INVISIBLE);
+
 
         {
             try {
@@ -420,9 +423,11 @@ public class UserHome extends AppCompatActivity
     }
 
 
-    public void showInfoDriverAssigned(){
+    public void showInfoDriverAssigned(TravelAssignedDTO travelAssignedDTO){
         finishPreviousFragments();
-        replaceFragment(new InfoDriverAssingFragment(),true);
+        InfoDriverAssingFragment info = new InfoDriverAssingFragment();
+        info.setmTravelAssignedDTO(travelAssignedDTO);
+        replaceFragment(info,true);
     }
 
     //set text of message card
