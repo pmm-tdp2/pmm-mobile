@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#007785</color>
-    <color name="colorPrimaryDark">#004B57</color>
-    <color name="colorAccent">#DA1B30</color>
+    <!-- App Theme Colors -->
+    <color name="colorPrimary">#41CAC6</color>
+    <color name="colorPrimaryDark">#2a9592</color>
+    <color name="analogous1">#418ACA</color>
+    <color name="analogous2">#41CA82</color>
+    <color name="colorAccent">#CA4145</color>
+
+    <!-- Text color -->
+    <color name="darkText">#071918</color>
+    <color name="lightText">#F9FDFD</color>
+
 </resources>

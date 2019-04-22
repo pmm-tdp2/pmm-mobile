@@ -235,6 +235,10 @@ public class UserHome extends AppCompatActivity
         }
     }
 
+    public void cancelSearchingDriver(android.view.View view){
+        //TODO: do something
+    }
+
     public void fetchLastLocation() {
         //check if user has granted location permission,
         // its necessary to use mFusedLocationProviderClient

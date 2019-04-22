@@ -11,83 +11,88 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:background="@drawable/layout_bg">
+        android:background="@color/colorPrimary">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Seleccione las mascotas para el viaje"
-            android:textSize="14sp"
+            android:layout_marginTop="16dp"
             android:gravity="center"
-            android:textColor="@color/colorAccent"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="10dp"/>
+            android:text="@string/select_pets_message"
+            android:textColor="@color/lightText"
+            android:textSize="@dimen/places_autocomplete_prediction_primary_text" />
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_gravity="center">
+                android:clickable="true"
+                android:focusableInTouchMode="false"
+                android:src="@drawable/ic_add_black_24dp"
+                android:tint="@color/darkText"
+                android:focusable="true"
+                app:backgroundTint="@color/colorPrimary" />
 
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/fab"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="true"
-                    android:tint="@android:color/white"
-                    android:src="@android:drawable/ic_input_add" />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_layout_recycler"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                tools:listitem="@layout/size_pets_options" />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view_layout_recycler"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    tools:listitem="@layout/size_pets_options"/>
-
-            </LinearLayout>
+        </LinearLayout>
 
         <CheckBox
             android:id="@+id/checkBox_option_companion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:text="incluye acompañante" />
+            android:text="@string/includes_passenger_checkbox"
+            android:textColor="@color/lightText" />
 
-        <android.support.v7.widget.CardView
-            xmlns:android="http://schemas.android.com/apk/res/android"
+        <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:id="@+id/card_price"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            card_view:cardElevation="2dp"
+            card_view:cardBackgroundColor="@color/colorPrimary"
             card_view:cardCornerRadius="5dp"
-            card_view:cardBackgroundColor="@color/quantum_vanillablueA200"
-            android:layout_height="wrap_content">
+            card_view:cardElevation="2dp">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="5dp">
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:text="@string/amount_with_colon"
+                    android:textColor="@color/lightText"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/quantum_white_100"
-                    android:text="Importe: "/>
+                    android:textStyle="bold" />
+
                 <TextView
                     android:id="@+id/text_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:text="$0"
+                    android:textColor="@color/lightText"
                     android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/quantum_white_100"
-                    android:text="$0"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
@@ -98,7 +103,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_margin="10dp"
-            android:text="Cotizar viaje" />
+            android:background="@color/analogous1"
+            android:text="@string/get_price"
+            android:textColor="@color/lightText" />
 
     </android.support.design.widget.AppBarLayout>
 </android.support.design.widget.CoordinatorLayout>
