@@ -337,7 +337,9 @@ public class  DriverHome
 
         }
         transaction.replace(R.id.layout_driver_to_replace, fragment);
-        transaction.commit();
+        //transaction.commit();
+        //por ahora....
+        transaction.commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
     }
 

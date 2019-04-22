@@ -190,14 +190,14 @@ public class OptionsTravelFragment extends Fragment {
 
     public void showSearchingDriver() {
         SearchingDriverFragment fragment2 = new SearchingDriverFragment();
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = myActivity.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.options_travel, fragment2);
         fragmentTransaction.commit();
     }
 
     public void finishFragmentExecuted() {
-        FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = myActivity.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.options_travel, this);
         fragmentTransaction.commit();

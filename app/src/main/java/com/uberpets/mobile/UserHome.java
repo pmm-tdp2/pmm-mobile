@@ -653,7 +653,9 @@ public class UserHome extends AppCompatActivity
 
         }
         transaction.replace(R.id.options_travel, fragment);
-        transaction.commit();
+        //transaction.commit();
+        //por ahora....
+        transaction.commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
 
     }
