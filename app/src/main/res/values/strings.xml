@@ -35,4 +35,8 @@
     <string name="select_pets_message">Seleccione las mascotas para el viaje</string>
     <string name="includes_passenger_checkbox">incluye acompañante</string>
     <string name="amount_with_colon">Importe: </string>
+    <string name="content_description_little_pet">mascota pequeña</string>
+    <string name="content_description_medium_pet">mascota mediana</string>
+    <string name="content_description_big_pet">mascota grande</string>
+    <string name="content_description_remove_pet">borrar mascota</string>
 </resources>

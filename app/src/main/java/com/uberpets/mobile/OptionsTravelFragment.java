@@ -72,14 +72,16 @@ public class OptionsTravelFragment extends Fragment {
         mRecyclerView = rootView.findViewById(R.id.recycler_view_layout_recycler);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new SizePetsAdapter(new ArrayList<PetSize>(0));
+        mButtonFab = rootView.findViewById(R.id.fab);
+
+        mAdapter = new SizePetsAdapter(new ArrayList<PetSize>(0), mButtonFab);
         mAdapter.updateList();
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-                DividerItemDecoration.VERTICAL));
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
+        //        DividerItemDecoration.VERTICAL));
 
-        mButtonFab = rootView.findViewById(R.id.fab);
+
         mButtonGetTravel =rootView.findViewById(R.id.button_travel);
         optionCompanion =rootView.findViewById(R.id.checkBox_option_companion);
 
@@ -121,6 +123,9 @@ public class OptionsTravelFragment extends Fragment {
 
     public void addItem(){
         mAdapter.updateList();
+        if (mAdapter.getItemCount() == 3){
+            mButtonFab.hide();
+        }
     }
 
 

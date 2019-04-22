@@ -2,6 +2,7 @@ package com.uberpets.mobile;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +23,11 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
     private final List<PetSize> pets;
     private static final int minNumbItems = 1;
     private static final int maxNumbItems = 3;
+    private FloatingActionButton addPetButton;
 
-    public SizePetsAdapter(ArrayList<PetSize> pets){
+    public SizePetsAdapter(ArrayList<PetSize> pets, FloatingActionButton addPetButton){
         this.pets = pets;
+        this.addPetButton = addPetButton;
     }
 
     @NonNull
@@ -68,8 +71,9 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
                     pets.remove(position);
                     notifyItemRemoved(position);
                     notifyDataSetChanged();
+                    //mostrar el fab button
+                    addPetButton.show();
                 }
-
             }
         });
     }
@@ -121,13 +125,11 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
         holder.getBigPet().setBackgroundColor(Color.TRANSPARENT);
         holder.getMediumPet().setBackgroundColor(Color.TRANSPARENT);
     }
-
     public void setMediumPetInHolder(SizePetsHolder holder){
         holder.getLittlePet().setBackgroundColor(Color.TRANSPARENT);
         holder.getMediumPet().setBackgroundResource(R.drawable.layout_selection);
         holder.getBigPet().setBackgroundColor(Color.TRANSPARENT);
     }
-
     public void setBigPetInHolder(SizePetsHolder holder){
         holder.getLittlePet().setBackgroundColor(Color.TRANSPARENT);
         holder.getMediumPet().setBackgroundColor(Color.TRANSPARENT);
@@ -150,6 +152,5 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
             setBigPetInHolder(holder);
         else
             setBlankAllPetsInHolder(holder);
-
     }
 }
