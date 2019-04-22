@@ -487,6 +487,7 @@ public class UserHome extends AppCompatActivity
 
 
     public void showRatingBar(){
+        finishPreviousFragments();
         returnOriginalState();
         Intent intent = new Intent(this, UserFinalScreen.class);
         startActivity(intent);
