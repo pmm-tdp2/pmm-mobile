@@ -8,13 +8,13 @@
     <android.support.v7.widget.ContentFrameLayout
         android:id="@+id/toolbar3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorAccent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="2dp"
+            android:background="@color/colorPrimary"
             android:orientation="vertical">
 
 
@@ -22,9 +22,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:text="El chofer está en camino"
+                android:text="@string/driver_on_the_way_message"
+                android:textColor="@color/lightText"
                 android:textSize="25sp"
-                android:textColor="@color/places_text_white_alpha_87"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -37,17 +37,17 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:text="@string/arrive_in"
-                    android:textColor="@color/places_text_white_alpha_87"
+                    android:textColor="@color/lightText"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/waiting_time_for_driver"
-                    android:layout_width="match_parent"
+                    android:layout_width="55dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:textColor="@color/places_text_white_alpha_87"
-                    android:text="10 min"
+                    android:text="@string/hardcode_space"
+                    android:textColor="@color/lightText"
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
@@ -61,6 +61,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -83,6 +84,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="2dp"
                             android:orientation="vertical">
+
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -162,8 +164,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_margin="2dp"
+                android:background="@color/colorAccent"
                 android:clickable="true"
-                android:text="Cancelar" />
+                android:text="Cancelar"
+                android:textColor="@color/lightText" />
 
         </LinearLayout>
     </android.support.v7.widget.ContentFrameLayout>
