@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:id="@+id/fragment_main_map"
+    android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -8,67 +10,68 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".UserHome"/>
 
-    <RelativeLayout android:layout_height="wrap_content"
-        android:layout_width="wrap_content">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:id="@+id/card_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            card_view:cardCornerRadius="5dp"
-            android:onClick="clickSearchLocations"
             android:layout_marginStart="25dp"
-            android:layout_marginEnd="25dp"
             android:layout_marginTop="60dp"
+            android:layout_marginEnd="25dp"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:onClick="clickSearchLocations"
+            card_view:cardCornerRadius="5dp">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <ImageView
                     android:id="@+id/icon_search_cardView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/quantum_ic_search_grey600_24"
-                    android:layout_margin="10dp"/>
+                    android:layout_margin="10dp"
+                    android:src="@drawable/quantum_ic_search_grey600_24" />
+
                 <TextView
                     android:id="@+id/text_search_cardView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
                     android:text="A donde quieres ir"
-                    android:textSize="20sp"
-                    android:layout_margin="10dp"/>
+                    android:textSize="20sp" />
             </LinearLayout>
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:id="@+id/card_view_message"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="120dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="120dp"
             card_view:cardBackgroundColor="@color/quantum_googred"
             card_view:cardCornerRadius="4dp">
 
             <TextView
                 android:id="@+id/text_view_message"
-                android:layout_margin="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:text="Se encontraron problemas en la conexión. inténtelo más tarde"
                 android:textColor="@color/quantum_white_100"
-                android:textSize="20dp"/>
+                android:textSize="20dp" />
 
         </android.support.v7.widget.CardView>
-
-        <LinearLayout android:layout_height="match_parent"
-            android:layout_width="match_parent"
-            android:id="@+id/options_travel"
-            android:orientation="vertical"/>
 
     </RelativeLayout>
 

@@ -167,6 +167,7 @@ public class OptionsTravelFragment extends Fragment {
         /*
         Show message of Error
          */
+        Log.e(TAG_REQUEST_SERVER,ex.toString());
         Toast.makeText(getContext()
                 , "Error al cotizar el viaje, inténtelo más tarde"
                 , Toast.LENGTH_LONG).show();

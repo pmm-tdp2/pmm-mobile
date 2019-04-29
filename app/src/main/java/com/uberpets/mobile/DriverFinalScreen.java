@@ -13,8 +13,9 @@ public class DriverFinalScreen extends AppCompatActivity {
     }
 
     public void sendComment(android.view.View view){
-        Intent intent = new Intent(this, DriverHome.class);
-        startActivity(intent);
+        //Intent intent = new Intent(this, DriverHome.class);
+        //startActivity(intent);
+        finish();
     }
 
     @Override

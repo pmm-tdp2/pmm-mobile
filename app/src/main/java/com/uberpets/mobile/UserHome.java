@@ -26,6 +26,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -40,6 +42,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -47,6 +50,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.uberpets.Constants;
+import com.uberpets.model.Person;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.util.GMapV2Direction;
 import com.uberpets.util.GMapV2DirectionAsyncTask;
@@ -104,7 +108,6 @@ public class UserHome extends AppCompatActivity
 
     private OptionsTravelFragment mFragmentTest;
     private Constants mConstants = Constants.getInstance();
-    private boolean isQueryCanceled = false;
 
     private static final String[] TRANSPORTS = {
             "websocket"
@@ -380,6 +383,7 @@ public class UserHome extends AppCompatActivity
                     destinyMarker.setVisible(true);
                     destinyMarker.setPosition(mDestiny);
                     getRouteTravel();
+                    //mockDrawLine();
                 }else{
                     Log.d(TAG_USER_HOME,"no data is returned from activity PLACEAUTOCOMPLETEACTIVITY");
                 }
@@ -425,9 +429,59 @@ public class UserHome extends AppCompatActivity
 
     public void showInfoDriverAssigned(TravelAssignedDTO travelAssignedDTO){
         finishPreviousFragments();
-        InfoDriverAssingFragment info = new InfoDriverAssingFragment();
+        InfoDriverAssignFragment info = new InfoDriverAssignFragment();
         info.setmTravelAssignedDTO(travelAssignedDTO);
         replaceFragment(info,true);
+        showRouteFullInAssignTravel();
+    }
+
+    public void showRouteFullInAssignTravel(){
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Do something after 50ms
+                try{
+                    int heightScreen = getResources().getDisplayMetrics().heightPixels;
+                    int padding = heightScreen/20; //space in px between box edges
+                    LatLngBounds.Builder bc = new LatLngBounds.Builder();
+                    bc.include(mOrigin);
+                    bc.include(mDestiny);
+                    FrameLayout mapLayout = findViewById(R.id.include_user_map);
+                    int widthMap = mapLayout.getWidth();
+                    int heightMap = mapLayout.getHeight();
+                    LinearLayout optionLayout = findViewById(R.id.options_travel);
+                    int heightOption = optionLayout.getHeight();
+
+                    int newHeight = heightMap-heightOption;
+                    Log.d("DIMENSION","width: "+widthMap+ "  "+" height: "+newHeight);
+
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bc.build(),widthMap,newHeight,padding));
+                    //other magic number
+                    mMap.animateCamera(CameraUpdateFactory.scrollBy(0,heightOption/2));
+                }catch (Exception ex){
+                    Log.e(TAG_USER_HOME,ex.toString());
+                }
+            }
+        }, 50);
+
+    }
+
+
+    public void generateMockDriverAssign(View view){
+        Fragment mapFragment = (Fragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        int width = mapFragment.getView().getMeasuredWidth();
+        int height = mapFragment.getView().getMeasuredHeight();
+        Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
+        width = getResources().getDisplayMetrics().widthPixels;
+        height = getResources().getDisplayMetrics().heightPixels;
+        Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
+        Person user = new Person(1,"usuario ","perez");
+        Person driver = new Person(1,"chofer ","gonzales");
+        TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20",user,driver);
+        mCardViewSearch.setVisibility(View.INVISIBLE);
+        fastGenerationOriginDestiny(view);
+        showInfoDriverAssigned(travelAssignedDTO);
     }
 
     //set text of message card
@@ -506,21 +560,17 @@ public class UserHome extends AppCompatActivity
                 mListenerPositionDriver = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            JSONObject data = (JSONObject) args[0];
-                            String latitude;
-                            String longitude;
-                            latitude = data.getString("latitude");
-                            longitude = data.getString("longitude");
-                            Log.d(TAG_CONNECTION_SERVER,"position driver received");
-                            ShowPositionDriver(Float.parseFloat(latitude),Float.parseFloat(longitude));
-                        } catch (JSONException e) {
-                            return;
-                        }
-
+                runOnUiThread( ()-> {
+                    try {
+                        JSONObject data = (JSONObject) args[0];
+                        String latitude;
+                        String longitude;
+                        latitude = data.getString("latitude");
+                        longitude = data.getString("longitude");
+                        Log.d(TAG_CONNECTION_SERVER,"position driver received");
+                        ShowPositionDriver(Float.parseFloat(latitude),Float.parseFloat(longitude));
+                    } catch (JSONException e) {
+                        return;
                     }
                 });
             }
@@ -556,12 +606,9 @@ public class UserHome extends AppCompatActivity
                 mListenerDriverArrivedToUser = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        JSONObject data = (JSONObject) args[0];
-                        initTravel();
-                    }
+                runOnUiThread( () -> {
+                    JSONObject data = (JSONObject) args[0];
+                    initTravel();
                 });
             }
         });
@@ -585,17 +632,28 @@ public class UserHome extends AppCompatActivity
         });
     }
 
+    public void mockDrawLine(){
+        Person user = new Person(1,"usuario ","perez");
+        Person driver = new Person(1,"chofer ","gonzales");
+        TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20",user,driver);
+        showInfoDriverAssigned(travelAssignedDTO);
+        mRoute = mMap.addPolyline(new PolylineOptions()
+                .clickable(false)
+                .add(mOrigin, mDestiny));
+    }
 
     public void fastGenerationOriginDestiny(View view) {
         showOptionsToTravel();
         mCardViewSearch.setVisibility(View.INVISIBLE);
-        mOrigin= new LatLng(currentLocation.getLatitude(),
+        mOrigin= new LatLng(currentLocation.getLatitude()-0.05,
                 currentLocation.getLongitude());
+        //mOrigin =  new LatLng(-34.59427772830024,-58.36834330111742);
         originMarker.setVisible(true);
         originMarker.setPosition(mOrigin);
 
-        mDestiny= new LatLng(currentLocation.getLatitude()+0.01,
-                currentLocation.getLongitude()+0.01);
+        mDestiny= new LatLng(currentLocation.getLatitude()+0.06,
+                currentLocation.getLongitude());
+        //mDestiny =  new LatLng(-34.67436210470961,-58.42358440160751);
         destinyMarker.setVisible(true);
         destinyMarker.setPosition(mDestiny);
 
@@ -636,11 +694,7 @@ public class UserHome extends AppCompatActivity
     }
 
     public boolean finishPreviousFragments() {
-        if (!popFragment()) {
-           return false;
-        }else{
-            return true;
-        }
+        return popFragment();
     }
 
 

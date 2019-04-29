@@ -14,7 +14,7 @@ import com.uberpets.model.TravelAssignedDTO;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class InfoDriverAssingFragment extends Fragment {
+public class InfoDriverAssignFragment extends Fragment {
 
     private TravelAssignedDTO mTravelAssignedDTO;
     private TextView textTime;
@@ -23,7 +23,7 @@ public class InfoDriverAssingFragment extends Fragment {
         this.mTravelAssignedDTO = mTravelAssignedDTO;
     }
 
-    public InfoDriverAssingFragment() {
+    public InfoDriverAssignFragment() {
         // Required empty public constructor
     }
 

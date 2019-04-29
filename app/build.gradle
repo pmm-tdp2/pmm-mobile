@@ -12,9 +12,13 @@ android {
     }
     buildTypes {
         debug {
+            // uses in android 9, because security no accept request http
+            manifestPlaceholders = [usesCleartextTraffic:"true"]
             debuggable true
         }
         release {
+            // uses in android 9, because security no accept request http
+            manifestPlaceholders = [usesCleartextTraffic:"false"]
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -36,6 +40,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.android.gms:play-services-plus:16.0.0'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
+    implementation 'com.android.support:support-annotations:28.0.0'
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.3'
