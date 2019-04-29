@@ -79,6 +79,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void goToLoginView(View view){
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
     public static synchronized MainActivity getInstance() {
         return mInstance;
     }

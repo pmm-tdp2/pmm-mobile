@@ -39,4 +39,6 @@
     <string name="content_description_medium_pet">mascota mediana</string>
     <string name="content_description_big_pet">mascota grande</string>
     <string name="content_description_remove_pet">borrar mascota</string>
+    <string name="facebook_app_id">1721301084683439</string>
+    <string name="fb_login_protocol_scheme">fb1721301084683439</string>
 </resources>
