@@ -120,13 +120,13 @@ public class TravelRequestFragment extends Fragment {
 
         setButtonReject();
         setButtonAccept();
+        updateDataTravel();
 
         return rootView;
     }
 
     public void setTravelDTO(TravelDTO mTravelDTO) {
         this.mTravelDTO = mTravelDTO;
-        updateDataTravel();
     }
 
     public void setROL(String ROL) {
@@ -139,6 +139,7 @@ public class TravelRequestFragment extends Fragment {
 
     public void updateDataTravel() {
         //TODO: show info the travel
+        Log.d(TAG_REQUEST_TRAVEL,"TravelDTO: "+mTravelDTO.toString());
     }
 
     public void setButtonReject() {

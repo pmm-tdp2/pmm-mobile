@@ -26,7 +26,7 @@
     <string name="user_comment_hint">Ingrese un comentario para el chofer</string>
     <string name="send">Enviar</string>
     <string name="pets_are_on_way">Tus mascotas están en camino</string>
-    <string name="arrive_in">llegarán a destino en </string>
+    <string name="arrive_in">llegará a destino en </string>
     <string name="name_and_colon">nombre:</string>
     <string name="driver_on_the_way_message">El chofer está en camino</string>
     <string name="hardcode_space"> </string>
@@ -40,4 +40,6 @@
     <string name="content_description_big_pet">mascota grande</string>
     <string name="content_description_remove_pet">borrar mascota</string>
     <string name="recommend_better_service_checkbox">Recomiendo mejorar el servicio</string>
+    <string name="error_quotation">Error al cotizar el viaje, inténtelo más tarde</string>
+    <string name="continue_button">Continuar</string>
 </resources>

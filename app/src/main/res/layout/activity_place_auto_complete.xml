@@ -41,6 +41,7 @@
                     android:id="@+id/text_search_cardView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/places_text_white_alpha_87"
                     android:text="Selecciona la ubicación "
                     android:textSize="20sp"
                     android:layout_margin="10dp"/>
@@ -147,7 +148,7 @@
             android:layout_margin="10dp"
             android:layout_gravity="center"
             android:layout_height="wrap_content"
-            android:text="Ver ruta"
+            android:text="@string/continue_button"
             android:onClick="showRoute"/>
 
     </LinearLayout>

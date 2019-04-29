@@ -1,12 +1,12 @@
 package com.uberpets.mobile;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,7 +24,6 @@ import com.github.nkzawa.socketio.client.Socket;
 import com.google.gson.Gson;
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
-import com.uberpets.model.PetSize;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.TravelConfirmationDTO;
 import com.uberpets.model.TravelPriceDTO;
@@ -44,11 +43,9 @@ public class OptionsTravelFragment extends Fragment {
 
     private CheckBox optionCompanion;
     private SizePetsAdapter mAdapter;
-    private boolean isQueryCanceled =false;
     private boolean readyToGetTravel =false;
-    private String TAG_REQUEST_SERVER="REQUEST_SERVER_TRAVEL";
+    private final String TAG_REQUEST_SERVER="REQUEST_SERVER_TRAVEL";
     private UserHome myActivity;
-    private RecyclerView mRecyclerView;
     private FloatingActionButton mButtonFab;
     private Button mButtonGetTravel;
     private TextView mPriceText;
@@ -69,18 +66,14 @@ public class OptionsTravelFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_options_travel,
                 container, false);
 
-        mRecyclerView = rootView.findViewById(R.id.recycler_view_layout_recycler);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view_layout_recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         mButtonFab = rootView.findViewById(R.id.fab);
 
-        mAdapter = new SizePetsAdapter(new ArrayList<PetSize>(0), mButtonFab);
+        mAdapter = new SizePetsAdapter(new ArrayList<>(0), mButtonFab);
         mAdapter.updateList();
-        mRecyclerView.setAdapter(mAdapter);
-
-        //mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(),
-        //        DividerItemDecoration.VERTICAL));
-
+        recyclerView.setAdapter(mAdapter);
 
         mButtonGetTravel =rootView.findViewById(R.id.button_travel);
         optionCompanion =rootView.findViewById(R.id.checkBox_option_companion);
@@ -169,9 +162,8 @@ public class OptionsTravelFragment extends Fragment {
          */
         Log.e(TAG_REQUEST_SERVER,ex.toString());
         Toast.makeText(getContext()
-                , "Error al cotizar el viaje, inténtelo más tarde"
+                , getString(R.string.error_quotation)
                 , Toast.LENGTH_LONG).show();
-        isQueryCanceled = false;
     }
 
 
@@ -208,36 +200,26 @@ public class OptionsTravelFragment extends Fragment {
 
 //TODO: cambiar el tipo de respuesta
     public void handleGoodResponse(TravelAssignedDTO travelAssignedDTO) {
-        if(!isQueryCanceled) {
-            if(travelAssignedDTO != null){
-                /*Log.i(TAG_REQUEST_SERVER, travelAssignedDTO.getDriver().toString());
-                myActivity.showInfoDriverAssigned();*/
-                listenAssignedDriver();
-            }else{
-                Log.d(TAG_REQUEST_SERVER, "no hay datos");
-                finishFragmentExecuted();
-                myActivity.showDriverNotFound();
-            }
+        if(travelAssignedDTO != null){
+            /*Log.i(TAG_REQUEST_SERVER, travelAssignedDTO.getDriver().toString());
+            myActivity.showInfoDriverAssigned();*/
+            listenAssignedDriver();
+        }else{
+            Log.d(TAG_REQUEST_SERVER, "no hay datos");
+            finishFragmentExecuted();
+            myActivity.showDriverNotFound();
         }
-        isQueryCanceled = false;
     }
 
     public void handleErrorResponse(Exception ex) {
-        if (!isQueryCanceled) {
-            finishFragmentExecuted();
-            if (ex instanceof ServerError) {
-                //to evaluate future code of error
-                switch (((ServerError) ex).networkResponse.statusCode) {
-                    default:
-                        Log.d(TAG_REQUEST_SERVER, "error to connect server");
-                        myActivity.showMessageCard();
-                }
-            } else
-                Toast.makeText(getContext()
-                        , "Error al solicitar el viaje, inténtelo más tarde"
-                        , Toast.LENGTH_LONG).show();
-            isQueryCanceled = false;
-        }
+        finishFragmentExecuted();
+        if (ex instanceof ServerError) {
+            Log.d(TAG_REQUEST_SERVER, "error to connect server");
+            myActivity.showMessageCard();
+        } else
+            Toast.makeText(getContext()
+                    , getString(R.string.error_quotation)
+                    , Toast.LENGTH_LONG).show();
     }
 
 
@@ -252,31 +234,26 @@ public class OptionsTravelFragment extends Fragment {
             mListenerAssignDriver = new Emitter.Listener() {
                 @Override
                 public void call(final Object... args) {
-                    myActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if(!isQueryCanceled) {
-                                Log.d(TAG_REQUEST_SERVER,"I was assign a driver");
-                                finishFragmentExecuted();
-                                try{
-                                    JSONObject response = (JSONObject) args[0];
-                                    Log.i(TAG_REQUEST_SERVER, response.toString());
-                                    Gson gson =  new Gson();
-                                    TravelAssignedDTO travelAssignedDTO =
-                                            gson.fromJson(response.toString(),TravelAssignedDTO.class);
-                                    Log.i(TAG_REQUEST_SERVER, travelAssignedDTO
-                                            .getDriver().toString());
-                                    myActivity.showInfoDriverAssigned(travelAssignedDTO);
+                    myActivity.runOnUiThread( () -> {
+                        Log.d(TAG_REQUEST_SERVER,"I was assign a driver");
+                        finishFragmentExecuted();
+                        try{
+                            JSONObject response = (JSONObject) args[0];
+                            Log.i(TAG_REQUEST_SERVER, response.toString());
+                            Gson gson =  new Gson();
+                            TravelAssignedDTO travelAssignedDTO =
+                                    gson.fromJson(response.toString(),TravelAssignedDTO.class);
+                            Log.i(TAG_REQUEST_SERVER, travelAssignedDTO
+                                    .getDriver().toString());
+                            myActivity.showInfoDriverAssigned(travelAssignedDTO);
 
-                                }catch (Exception ex){
-                                    Log.d(TAG_REQUEST_SERVER, "no data found");
-                                    myActivity.showDriverNotFound();
-                                }
-                            }
-                            isQueryCanceled = false;
-                            socketIO.off(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
-                                    mListenerAssignDriver);
+                        }catch (Exception ex){
+                            Log.d(TAG_REQUEST_SERVER, "no data found");
+                            myActivity.showDriverNotFound();
                         }
+
+                        socketIO.off(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
+                            mListenerAssignDriver);
                     });
                 }
         });

@@ -93,8 +93,8 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment_destiny);
 
 
-        mAutocompleteSupportFragmentOrigin.setHint("Ingrese Origen");
-        mAutocompleteSupportFragmentDestiny.setHint("Ingrese Destino");
+        mAutocompleteSupportFragmentOrigin.setHint("Origen");
+        mAutocompleteSupportFragmentDestiny.setHint("Destino");
 
         // Create a new Places client instance.
         PlacesClient placesClient = Places.createClient(this);

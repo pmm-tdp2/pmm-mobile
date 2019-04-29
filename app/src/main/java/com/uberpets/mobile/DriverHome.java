@@ -315,12 +315,7 @@ public class  DriverHome
     }
 
     public boolean finishPreviousFragments() {
-        if (!popFragment()) {
-            return false;
-        }else{
-            //returnOriginalState();
-            return true;
-        }
+        return popFragment();
     }
 
     public void replaceFragment(Fragment fragment, boolean addToBackStack) {
@@ -432,6 +427,7 @@ public class  DriverHome
     }
 
     public void finishTravel(){
+        finishPreviousFragments();
         Intent intent = new Intent(this, DriverFinalScreen.class);
         startActivity(intent);
         //TODO: mandar notificación al server de la puntuacion
@@ -463,7 +459,7 @@ public class  DriverHome
     }
 
 
-    //listen if arrive message that driver arrived to user
+    //listen request of travel
     public void listenNotificaciónTravel() {
         Log.d("NOTIFICATION_TRAVEL",mConstants.getEVENT_NOTIFICATION_TRAVEL());
         mSocket.on(mConstants.getEVENT_NOTIFICATION_TRAVEL(),

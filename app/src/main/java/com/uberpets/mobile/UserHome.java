@@ -99,7 +99,7 @@ public class UserHome extends AppCompatActivity
     private Socket mSocket;
 
     private final String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
-    private final String TAG_USER_HOME = "REQUEST_SERVER";
+    private final String TAG_USER_HOME = "USER_HOME";
 
     private Emitter.Listener mListenerConnection;
     private Emitter.Listener mListenerPositionDriver;
@@ -238,7 +238,6 @@ public class UserHome extends AppCompatActivity
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 1000: {
-                // Si se cancela la solicitud, las matrices de resultados están vacías.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     fetchLastLocation();
@@ -430,16 +429,14 @@ public class UserHome extends AppCompatActivity
     public void showInfoDriverAssigned(TravelAssignedDTO travelAssignedDTO){
         finishPreviousFragments();
         InfoDriverAssignFragment info = new InfoDriverAssignFragment();
-        info.setmTravelAssignedDTO(travelAssignedDTO);
+        info.setTravelAssignedDTO(travelAssignedDTO);
         replaceFragment(info,true);
         showRouteFullInAssignTravel();
     }
 
     public void showRouteFullInAssignTravel(){
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        handler.postDelayed( () -> {
                 // Do something after 50ms
                 try{
                     int heightScreen = getResources().getDisplayMetrics().heightPixels;
@@ -462,26 +459,30 @@ public class UserHome extends AppCompatActivity
                 }catch (Exception ex){
                     Log.e(TAG_USER_HOME,ex.toString());
                 }
-            }
         }, 50);
 
     }
 
 
     public void generateMockDriverAssign(View view){
-        Fragment mapFragment = (Fragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        int width = mapFragment.getView().getMeasuredWidth();
-        int height = mapFragment.getView().getMeasuredHeight();
-        Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
-        width = getResources().getDisplayMetrics().widthPixels;
-        height = getResources().getDisplayMetrics().heightPixels;
-        Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
-        Person user = new Person(1,"usuario ","perez");
-        Person driver = new Person(1,"chofer ","gonzales");
-        TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20",user,driver);
-        mCardViewSearch.setVisibility(View.INVISIBLE);
-        fastGenerationOriginDestiny(view);
-        showInfoDriverAssigned(travelAssignedDTO);
+        try{
+            Fragment mapFragment = (Fragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            int width = mapFragment.getView().getMeasuredWidth();
+            int height = mapFragment.getView().getMeasuredHeight();
+            Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
+            width = getResources().getDisplayMetrics().widthPixels;
+            height = getResources().getDisplayMetrics().heightPixels;
+            Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
+            Person user = new Person(1,"Juan Fernando ","Perez Gonzales");
+            Person driver = new Person(1,"Chano Santiago ","Moreno Charpentier");
+            TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20 minutos",user,driver);
+            mCardViewSearch.setVisibility(View.INVISIBLE);
+            fastGenerationOriginDestiny(view);
+            showInfoDriverAssigned(travelAssignedDTO);
+        }catch (Exception ex){
+            Log.e(TAG_USER_HOME,"Error to generate mock Driver Assign");
+        }
+
     }
 
     //set text of message card
@@ -498,12 +499,9 @@ public class UserHome extends AppCompatActivity
         finishPreviousFragments();
         mMessageCard.setVisibility(CardView.VISIBLE);
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Do something after 2000ms
-                returnOriginalState();
-            }
+        handler.postDelayed(() -> {
+            // Do something after 2000ms
+            returnOriginalState();
         }, 2000);
     }
 
@@ -534,7 +532,7 @@ public class UserHome extends AppCompatActivity
         driverMarker.setVisible(true);
         driverMarker.setPosition(newLatLng);
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, ZOOM_VALUE));
+        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, ZOOM_VALUE));
     }
 
 
@@ -620,27 +618,15 @@ public class UserHome extends AppCompatActivity
                 mListenerDriverArrivedToDestiny = new Emitter.Listener() {
             @Override
             public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d(TAG_USER_HOME,"message finalize travel arrived");
-                        JSONObject data = (JSONObject) args[0];
-                        showRatingBar();
-                    }
+                runOnUiThread( () -> {
+                    Log.d(TAG_USER_HOME,"message finalize travel arrived");
+                    JSONObject data = (JSONObject) args[0];
+                    showRatingBar();
                 });
             }
         });
     }
 
-    public void mockDrawLine(){
-        Person user = new Person(1,"usuario ","perez");
-        Person driver = new Person(1,"chofer ","gonzales");
-        TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20",user,driver);
-        showInfoDriverAssigned(travelAssignedDTO);
-        mRoute = mMap.addPolyline(new PolylineOptions()
-                .clickable(false)
-                .add(mOrigin, mDestiny));
-    }
 
     public void fastGenerationOriginDestiny(View view) {
         showOptionsToTravel();

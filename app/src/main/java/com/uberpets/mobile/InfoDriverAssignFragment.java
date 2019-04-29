@@ -18,8 +18,11 @@ public class InfoDriverAssignFragment extends Fragment {
 
     private TravelAssignedDTO mTravelAssignedDTO;
     private TextView textTime;
+    private TextView textName;
+    private TextView textLastname;
 
-    public void setmTravelAssignedDTO(TravelAssignedDTO mTravelAssignedDTO) {
+
+    public void setTravelAssignedDTO(TravelAssignedDTO mTravelAssignedDTO) {
         this.mTravelAssignedDTO = mTravelAssignedDTO;
     }
 
@@ -34,12 +37,17 @@ public class InfoDriverAssignFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_info_driver_assing, container, false);
 
         this.textTime = rootView.findViewById(R.id.waiting_time_for_driver);
-        if(mTravelAssignedDTO != null) {
-            this.textTime.setText(mTravelAssignedDTO.getTime());
-        }else{
-            this.textTime.setText("30.00");
-        }
+        this.textName = rootView.findViewById(R.id.driver_name);
+        this.textLastname =  rootView.findViewById(R.id.driver_last_name);
+        updateDisplayedDataDriver();
+
         return rootView;
+    }
+
+    public void updateDisplayedDataDriver() {
+        this.textTime.setText(this.mTravelAssignedDTO.getTime());
+        this.textName.setText(this.mTravelAssignedDTO.getDriver().getFirstName());
+        this.textLastname.setText(this.mTravelAssignedDTO.getDriver().getLastName());
     }
 
 }
