@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="@color/colorPrimary"
         app:cardElevation="4dp">
 
         <LinearLayout
@@ -36,7 +37,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                card_view:cardBackgroundColor="@color/quantum_bluegrey50"
+                card_view:cardBackgroundColor="@color/quantum_teal300"
+                card_view:cardCornerRadius="10dp"
+                card_view:contentPadding="5dp"
                 android:background="@drawable/bg_actionbar"
                 android:layout_marginBottom="?attr/dialogPreferredPadding">
                 <LinearLayout
@@ -52,12 +55,11 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Cantidad de mascotas pequeñas: "/>
+                            android:text="Mascotas pequeñas: "/>
                         <TextView
                             android:id="@+id/amount_little_pets"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="0"/>
+                            android:layout_height="wrap_content"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -67,12 +69,11 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Cantidad de mascotas medianas: "/>
+                            android:text="Mascotas medianas: "/>
                         <TextView
                             android:id="@+id/amount_medium_pets"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="0"/>
+                            android:layout_height="wrap_content"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -82,12 +83,11 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Cantidad de mascotas grandes: "/>
+                            android:text="Mascotas grandes: "/>
                         <TextView
                             android:id="@+id/amount_big_pets"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="0"/>
+                            android:layout_height="wrap_content"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -101,8 +101,7 @@
                         <TextView
                             android:id="@+id/has_companion"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="No"/>
+                            android:layout_height="wrap_content"/>
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>

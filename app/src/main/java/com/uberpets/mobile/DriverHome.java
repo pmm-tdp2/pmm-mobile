@@ -396,7 +396,14 @@ public class  DriverHome
     }
 
     public void showNewTravelNotification(android.view.View view) {
-        replaceFragment(new TravelRequestFragment(),true);
+        TravelDTO mockTravelDTO = new TravelDTO.TravelDTOBuilder(
+                new LatLng(1.0,1.0), new LatLng(1.5,1.5))
+                .setTravelID(1).setDriverId(1).setHasACompanion(true)
+                .setPetLargeAmount(0).setPetSmallAmount(1).setPetMediumAmount(0)
+                .setUserId(-1).build();
+        TravelRequestFragment travelRequestFragment= new TravelRequestFragment();
+        travelRequestFragment.setTravelDTO(mockTravelDTO);
+        replaceFragment(travelRequestFragment,true);
     }
 
 

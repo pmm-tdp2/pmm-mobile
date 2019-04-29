@@ -42,4 +42,6 @@
     <string name="recommend_better_service_checkbox">Recomiendo mejorar el servicio</string>
     <string name="error_quotation">Error al cotizar el viaje, inténtelo más tarde</string>
     <string name="continue_button">Continuar</string>
+    <string name="yes_string">Si</string>
+    <string name="no_string">No</string>
 </resources>

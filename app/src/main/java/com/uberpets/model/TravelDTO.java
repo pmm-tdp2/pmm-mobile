@@ -83,7 +83,7 @@ public class TravelDTO {
         this.from = builder.from;
         this.to = builder.to;
         this.hasACompanion = builder.hasACompanion;
-        this.petSmallAmount = builder.petLargeAmount;
+        this.petSmallAmount = builder.petSmallAmount;
         this.petMediumAmount = builder.petMediumAmount;
         this.petLargeAmount = builder.petLargeAmount;
         this.travelID = builder.travelID;

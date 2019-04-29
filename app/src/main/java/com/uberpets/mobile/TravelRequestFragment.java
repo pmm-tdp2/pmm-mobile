@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.TextView;
 
 import com.uberpets.library.rest.Headers;
 import com.uberpets.model.TravelAssignedDTO;
@@ -120,7 +122,7 @@ public class TravelRequestFragment extends Fragment {
 
         setButtonReject();
         setButtonAccept();
-        updateDataTravel();
+        updateDataTravel(rootView);
 
         return rootView;
     }
@@ -137,9 +139,22 @@ public class TravelRequestFragment extends Fragment {
         this.idDriver = idDriver;
     }
 
-    public void updateDataTravel() {
+    public void updateDataTravel(View rootView) {
         //TODO: show info the travel
         Log.d(TAG_REQUEST_TRAVEL,"TravelDTO: "+mTravelDTO.toString());
+        TextView bigPets =rootView.findViewById(R.id.amount_big_pets);
+        bigPets.setText(String.valueOf(mTravelDTO.getPetLargeAmount()));
+
+        TextView mediumPets =rootView.findViewById(R.id.amount_medium_pets);
+        mediumPets.setText(String.valueOf(mTravelDTO.getPetMediumAmount()));
+
+        TextView littlePets =rootView.findViewById(R.id.amount_little_pets);
+        littlePets.setText(String.valueOf(mTravelDTO.getPetSmallAmount()));
+
+        TextView hasCompanion =rootView.findViewById(R.id.has_companion);
+        hasCompanion.setText(mTravelDTO.isHasACompanion() ? getString(R.string.yes_string):
+                getString(R.string.no_string));
+
     }
 
     public void setButtonReject() {
@@ -170,7 +185,7 @@ public class TravelRequestFragment extends Fragment {
     }
 
     public void acceptTravelFragment(){
-        if(mTravelDTO != null){
+        if(mTravelDTO != null && mTravelDTO.getUserId() >0){
             Log.d(TAG_REQUEST_TRAVEL, "Driver accept travel and send message");
             TravelConfirmationDTO travelConfirmationDTO =
                     new TravelConfirmationDTO(mTravelDTO.getTravelID(),this.ROL,this.idDriver);
@@ -178,7 +193,7 @@ public class TravelRequestFragment extends Fragment {
                     TravelAssignedDTO.class, new Headers())
                     .run(this::responseAcceptTravelFragment,this::errorAcceptTravelFragment);
         }else{
-            //mock
+            //in mock userId is -1
             Log.d(TAG_REQUEST_TRAVEL, "mock accept");
             mListener.acceptTravel(null);
         }
