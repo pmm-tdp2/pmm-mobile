@@ -44,4 +44,6 @@
     <string name="continue_button">Continuar</string>
     <string name="yes_string">Si</string>
     <string name="no_string">No</string>
+    <string name="facebook_app_id">1721301084683439</string>
+    <string name="fb_login_protocol_scheme">fb1721301084683439</string>
 </resources>
