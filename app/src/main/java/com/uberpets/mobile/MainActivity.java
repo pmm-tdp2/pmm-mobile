@@ -34,15 +34,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Hola!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         Button driverButton = findViewById(R.id.driverButton);
         radioLocalHost = findViewById(R.id.local_host);
         radioCloudServer = findViewById(R.id.cloud_server);
@@ -81,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToLoginView(View view){
         Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToTab(View view){
+        Intent intent = new Intent(this, TabLoginActivity.class);
         startActivity(intent);
     }
 

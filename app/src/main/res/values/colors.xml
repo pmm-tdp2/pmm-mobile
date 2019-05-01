@@ -6,6 +6,8 @@
     <color name="analogous1">#418ACA</color>
     <color name="analogous2">#41CA82</color>
     <color name="colorAccent">#CA4145</color>
+    <color name="loginUser">#3FCAE8</color>
+    <color name="loginDriver">#99CA00</color>
 
     <!-- Text color -->
     <color name="darkText">#071918</color>

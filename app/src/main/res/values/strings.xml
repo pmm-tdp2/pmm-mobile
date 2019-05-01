@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">tpd2-1c-2019-mobile</string>
+    <string name="app_name">UberPets</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_main">UberPets</string>
     <string name="action_settings">Settings</string>
@@ -46,4 +46,10 @@
     <string name="no_string">No</string>
     <string name="facebook_app_id">1721301084683439</string>
     <string name="fb_login_protocol_scheme">fb1721301084683439</string>
+    <string name="title_activity_tab_login">TabLoginActivity</string>
+    <string name="tab_text_1">Soy Usuario</string>
+    <string name="tab_text_2">Soy Conductor</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -66,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
         dataDisplayed.setText("ID USER: "+
                 loginResult.getAccessToken().getUserId() + "\n" +
                 "TOKEN: "+loginResult.getAccessToken().getToken());
+
+        //handle if redirect to register or home of user
     }
 
     private void handleCancelEvent() {
