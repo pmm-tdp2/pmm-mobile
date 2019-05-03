@@ -20,10 +20,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="${usesCleartextTraffic}">
+        <activity android:name=".WelcomeToAppActivity"></activity>
+        <activity android:name=".DriverRegisterActivity" />
+        <activity android:name=".UserRegisterActivity" />
         <activity
             android:name=".TabLoginActivity"
             android:label="@string/title_activity_tab_login"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".DriverFinalScreen" />
         <activity android:name=".UserFinalScreen" /> <!-- activity android:name=".PlaceAutoCompleteActivity"></activity -->

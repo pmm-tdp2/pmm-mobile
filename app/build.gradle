@@ -13,12 +13,12 @@ android {
     buildTypes {
         debug {
             // uses in android 9, because security no accept request http
-            manifestPlaceholders = [usesCleartextTraffic:"true"]
+            manifestPlaceholders = [usesCleartextTraffic: "true"]
             debuggable true
         }
         release {
             // uses in android 9, because security no accept request http
-            manifestPlaceholders = [usesCleartextTraffic:"false"]
+            manifestPlaceholders = [usesCleartextTraffic: "false"]
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

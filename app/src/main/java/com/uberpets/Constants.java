@@ -27,6 +27,10 @@ public class Constants {
     private int RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY;
     private int RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY;
 
+    private String ID_ROL;
+    private String ID_USERS;
+    private String ID_DRIVERS;
+
     private final String TAG_CONSTANT = "CONSTANTS_LOAD";
 
     private String TypeUrl;
@@ -83,6 +87,11 @@ public class Constants {
             RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY = Integer.parseInt(prop.getProperty("intent.autocomplete_response_route"));
 
             SOCKET_IO_TRANSPORT = new String[] {prop.getProperty("socket.io.transport")};
+
+            ID_ROL = prop.getProperty("code.id_rol");
+            ID_USERS = prop.getProperty("code.id_users");
+            ID_DRIVERS = prop.getProperty("code.id_drivers");
+
         } catch (IOException ex) {
             ex.printStackTrace();
             Log.e("CONSTANTS",ex.getMessage());
@@ -154,4 +163,16 @@ public class Constants {
         return SOCKET_IO_TRANSPORT;
     }
 
+
+    public String getID_ROL() {
+        return ID_ROL;
+    }
+
+    public String getID_USERS() {
+        return ID_USERS;
+    }
+
+    public String getID_DRIVERS() {
+        return ID_DRIVERS;
+    }
 }

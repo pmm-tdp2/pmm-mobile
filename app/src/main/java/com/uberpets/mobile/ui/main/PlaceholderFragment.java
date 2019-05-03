@@ -1,26 +1,36 @@
 package com.uberpets.mobile.ui.main;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.support.annotation.Nullable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.uberpets.Constants;
 import com.uberpets.mobile.R;
+import com.uberpets.mobile.WelcomeToAppActivity;
+import com.uberpets.model.DataFacebook;
+import com.uberpets.model.SimpleResponse;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -29,14 +39,12 @@ public class PlaceholderFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
-    private PageViewModel pageViewModel;
-    private static final int ID_USER_TAB = 1;
-    private static final int ID_DRIVER_TAB = 1;
-    private int mIdTab;
-    private int idWhoHasLogged;
+    private String mIdTab;
+    private String idWhoHasLogged = "";
     private LoginButton mLoginButton;
     private TextView dataDisplayed;
     private CallbackManager mCallbackManager;
+    private Constants mConstant = Constants.getInstance();
     private final String TAG_LOGIN = "LOGIN_FACEBOOK";
 
     public static PlaceholderFragment newInstance(int index) {
@@ -50,11 +58,14 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pageViewModel = ViewModelProviders.of(this).get(PageViewModel.class);
+        PageViewModel pageViewModel = ViewModelProviders.of(this).get(PageViewModel.class);
         int index = 1;
         if (getArguments() != null) {
             index = getArguments().getInt(ARG_SECTION_NUMBER);
-            mIdTab =  index;
+            if(index == 1)
+                mIdTab = mConstant.getID_USERS();
+            else
+                mIdTab = mConstant.getID_DRIVERS();
         }
         pageViewModel.setIndex(index);
     }
@@ -65,20 +76,21 @@ public class PlaceholderFragment extends Fragment {
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_tab_login, container, false);
 
-        if (mIdTab == ID_USER_TAB) {
-            root.setBackgroundColor(getResources().getColor(R.color.loginUser));
-        }else{
-            root.setBackgroundColor(getResources().getColor(R.color.loginDriver));
-        }
+        root.setBackgroundColor(getResources().getColor(
+                mIdTab.equals( mConstant.getID_USERS() ) ?
+                        R.color.loginUser : R.color.loginDriver));
 
         mLoginButton = root.findViewById(R.id.login_button_facebook);
         dataDisplayed = root.findViewById(R.id.data_displayed_login);
         mCallbackManager = CallbackManager.Factory.create();
 
         mLoginButton.setReadPermissions("email");
+        mLoginButton.setReadPermissions("user_friends");
+        //mLoginButton.setReadPermissions("user_photos");
+
+
         registerCallback();
         setListenerButtonLogin();
-
 
         /*final TextView textView = root.findViewById(R.id.section_label);
         pageViewModel.getText().observe(this, new Observer<String>() {
@@ -92,24 +104,24 @@ public class PlaceholderFragment extends Fragment {
 
 
     public void setListenerButtonLogin() {
-        mLoginButton.setOnClickListener( view -> {
+        mLoginButton.setOnClickListener( view ->{
             idWhoHasLogged = mIdTab;
-            //mLoginButton.setOnClickListener(null);
-        });
+            /*LoginManager.getInstance().logInWithReadPermissions(this,
+                    Arrays.asList("public_profile","user_friends"));*/
+            }
+        );
     }
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(idWhoHasLogged == mIdTab)
+        if(idWhoHasLogged.equals(mIdTab))
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     public void registerCallback() {
         mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
-            public void onSuccess(LoginResult loginResult) {
-                handleSuccessEvent(loginResult);
-            }
+            public void onSuccess(LoginResult loginResult) { handleSuccessEvent(loginResult); }
 
             @Override
             public void onCancel() {
@@ -124,11 +136,17 @@ public class PlaceholderFragment extends Fragment {
     }
 
     private void handleSuccessEvent(@NonNull LoginResult loginResult) {
-        dataDisplayed.setText("ID USER: "+
+        /*dataDisplayed.setText("ID USER: "+
                 loginResult.getAccessToken().getUserId() + "\n" +
-                "TOKEN: "+loginResult.getAccessToken().getToken());
+                "TOKEN: "+loginResult.getAccessToken().getToken());*/
 
-        //handle if redirect to register or home of user
+        //pegarle al server con el id del usuario para ver si está registrado
+        //si no está registrado registrar
+        //si está registrado go to home
+
+        //App.nodeServer.get()
+        idWhoHasLogged = "";
+        validateAccount(loginResult);
     }
 
     private void handleCancelEvent() {
@@ -139,6 +157,87 @@ public class PlaceholderFragment extends Fragment {
         dataDisplayed.setText("Error en el Login");
         Log.e(TAG_LOGIN,error.getMessage());
     }
+
+
+    private void handleGoodResponse(SimpleResponse response) {
+
+    }
+
+    private void handleErrorResponse(Exception ex) {
+
+    }
+
+
+    public void validateAccount(@NonNull LoginResult loginResult) {
+
+        /*GraphRequest requestFriends = GraphRequest.newMyFriendsRequest(
+                loginResult.getAccessToken(),
+                new GraphRequest.GraphJSONArrayCallback() {
+
+                    @Override
+                    public void onCompleted(JSONArray jsonArray2, GraphResponse response2) {
+                        Log.v(this.getClass().getName(), response2.toString());
+                    }
+                });
+
+        Bundle parametersFriend = new Bundle();
+        parametersFriend.putString("fields", "summary");
+        requestFriends.setParameters(parametersFriend);
+        requestFriends.executeAsync();*/
+
+        /*new GraphRequest(
+                loginResult.getAccessToken().getCurrentAccessToken(),
+                "/"+loginResult.getAccessToken().getUserId()+"/accounts",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        Log.v(this.getClass().getName(), response.toString());
+
+                    }
+                }
+        ).executeAsync();*/
+        getDataLoginFacebook(loginResult);
+    }
+
+    public void getDataLoginFacebook(@NonNull LoginResult loginResult) {
+        GraphRequest request = GraphRequest.newMeRequest(
+                loginResult.getAccessToken(),
+            new GraphRequest.GraphJSONObjectCallback() {
+
+                @Override
+                public void onCompleted(JSONObject object, GraphResponse response) {
+                    Log.v(this.getClass().getName(), response.toString());
+                    try {
+                        DataFacebook dataFacebook =  new DataFacebook.DataFacebookBuilder()
+                                .setName(object.getString("name"))
+                                //.setPictureUrl(object.getJSONObject("picture").getJSONObject("data")
+                                  //  .getString("url"))
+                                .setPictureUrl("https://graph.facebook.com/" +
+                                        loginResult.getAccessToken().getUserId() + "/picture?type=large")
+                                .build();
+
+                        Log.d(this.getClass().getName(),dataFacebook.getPictureUrl());
+
+                        Intent intent = new Intent(getActivity(), WelcomeToAppActivity.class);
+                        intent.putExtra(mConstant.getID_ROL(),mIdTab);
+                        intent.putExtra("DATA",dataFacebook);
+                        startActivity(intent);
+
+                    }catch (Exception ex){
+                        Log.e(this.getClass().getName(),"Error to obtain data of facebook");
+                    }
+
+                }
+            });
+
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "name, picture");
+        request.setParameters(parameters);
+        request.executeAsync();
+
+    }
+
 
 
 }

@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.facebook.CallbackManager;
 import com.uberpets.mobile.ui.main.SectionsPagerAdapter;
 
 public class TabLoginActivity extends AppCompatActivity {
