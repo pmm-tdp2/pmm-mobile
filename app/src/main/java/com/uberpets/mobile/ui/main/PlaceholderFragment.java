@@ -169,8 +169,8 @@ public class PlaceholderFragment extends Fragment {
 
 
     public void validateAccount(@NonNull LoginResult loginResult) {
-        //getDataLoginFacebook(loginResult);
-        validateDatePicture(loginResult);
+        getDataLoginFacebook(loginResult);
+        //validateDatePicture(loginResult);
     }
 
     public void validateAmountFriends(@NonNull LoginResult loginResult) {
