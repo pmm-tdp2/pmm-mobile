@@ -6,14 +6,151 @@
     android:layout_height="match_parent"
     tools:context="com.uberpets.mobile.DriverRegisterActivity">
 
-    <TextView
+    <EditText
+        android:id="@+id/name_driver_facebook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SOY UN CHOFER"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/name"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/dni_driver"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <EditText
+        android:id="@+id/dni_driver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:ems="10"
+        android:hint="@string/document_number"
+        android:inputType="number"
+        app:layout_constraintBottom_toTopOf="@id/layout_upload_photo_car"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_driver_facebook" />
+
+    <LinearLayout
+        android:id="@+id/layout_upload_photo_car"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        app:layout_constraintTop_toBottomOf="@id/dni_driver"
+        app:layout_constraintBottom_toTopOf="@id/layout_upload_photo_license"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/upload_photo_car"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:background="@drawable/layout_bg"
+            android:text="@string/button_upload"
+            android:textAllCaps="false"
+            tools:layout_editor_absoluteX="53dp"
+            tools:layout_editor_absoluteY="148dp" />
+
+        <TextView
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="foto del auto" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_upload_photo_license"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        app:layout_constraintTop_toBottomOf="@+id/layout_upload_photo_car"
+        app:layout_constraintBottom_toTopOf="@id/layout_upload_photo_insurance"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/upload_photo_license"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:background="@drawable/layout_bg"
+            android:text="@string/button_upload"
+            android:textAllCaps="false"
+            tools:layout_editor_absoluteX="53dp"
+            tools:layout_editor_absoluteY="204dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="foto de licencia" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_upload_photo_insurance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        app:layout_constraintTop_toBottomOf="@id/layout_upload_photo_license"
+        app:layout_constraintBottom_toTopOf="@+id/layout_upload_photo_profile_driver"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/upload_photo_insurance"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:background="@drawable/layout_bg"
+            android:text="@string/button_upload"
+            android:textAllCaps="false"
+            tools:layout_editor_absoluteX="53dp"
+            tools:layout_editor_absoluteY="268dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="foto de seguro de auto" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_upload_photo_profile_driver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        app:layout_constraintTop_toBottomOf="@+id/layout_upload_photo_insurance"
+        app:layout_constraintBottom_toTopOf="@+id/button_continue_end_register"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/upload_photo_profile_driver"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:background="@drawable/layout_bg"
+            android:text="@string/button_upload"
+            android:textAllCaps="false"
+            tools:layout_editor_absoluteX="53dp"
+            tools:layout_editor_absoluteY="330dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="foto de perfil" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_continue_end_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/com_facebook_blue"
+        android:text="@string/continue_button"
+        android:textAllCaps="false"
+        android:textColor="@color/places_text_white_alpha_87"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_upload_photo_profile_driver" />
 
 </android.support.constraint.ConstraintLayout>

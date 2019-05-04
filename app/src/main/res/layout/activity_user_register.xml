@@ -6,14 +6,64 @@
     android:layout_height="match_parent"
     tools:context="com.uberpets.mobile.UserRegisterActivity">
 
-    <TextView
+    <EditText
+        android:id="@+id/name_user_facebook"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SOY UN USUARIO"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="128dp"
+        android:layout_marginBottom="24dp"
+        android:ems="10"
+        android:hint="@string/name"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toTopOf="@+id/layout_upload_photo_profile_user"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/layout_upload_photo_profile_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="256dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/name_user_facebook">
+
+        <Button
+            android:id="@+id/upload_optional_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:background="@drawable/layout_bg"
+            android:text="@string/button_upload"
+            android:textAllCaps="false"
+            tools:layout_editor_absoluteX="53dp"
+            tools:layout_editor_absoluteY="148dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="cambiar foto de perfil" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/button_continue_end_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/com_facebook_blue"
+        android:text="@string/continue_button"
+        android:textAllCaps="false"
+        android:textColor="@color/places_text_white_alpha_87"
+        app:layout_constraintTop_toBottomOf="@+id/layout_upload_photo_profile_user"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>

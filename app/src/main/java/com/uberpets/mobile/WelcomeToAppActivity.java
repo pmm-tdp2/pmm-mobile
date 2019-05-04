@@ -38,6 +38,10 @@ public class WelcomeToAppActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_to_app);
         mDataFacebook = (DataFacebook) getIntent().getSerializableExtra("DATA");
+
+        TextView textView = findViewById(R.id.ROL_TEXT);
+        textView.setText(getIntent().getStringExtra(mConstant.getID_ROL()));
+
         setProfileToView();
     }
 
@@ -62,6 +66,7 @@ public class WelcomeToAppActivity extends AppCompatActivity {
         Intent intent = new Intent(this,
                 idRol.equals(mConstant.getID_USERS()) ?
                         UserRegisterActivity.class : DriverRegisterActivity.class);
+        intent.putExtra("DATA",mDataFacebook);
         startActivity(intent);
     }
 

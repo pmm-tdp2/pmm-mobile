@@ -26,8 +26,10 @@
     <string name="user_comment_hint">Ingrese un comentario para el chofer</string>
     <string name="send">Enviar</string>
     <string name="pets_are_on_way">Tus mascotas están en camino</string>
-    <string name="arrive_in">llegará a destino en </string>
+    <string name="arrive_in">llegará a destino en</string>
     <string name="name_and_colon">nombre:</string>
+    <string name="name">nombre</string>
+    <string name="document_number">Dni</string>
     <string name="driver_on_the_way_message">El chofer está en camino</string>
     <string name="hardcode_space"> </string>
     <string name="searching_driver">Buscando chofer...</string>
@@ -42,6 +44,7 @@
     <string name="recommend_better_service_checkbox">Recomiendo mejorar el servicio</string>
     <string name="error_quotation">Error al cotizar el viaje, inténtelo más tarde</string>
     <string name="continue_button">Continuar</string>
+    <string name="button_out">Salir</string>
     <string name="yes_string">Si</string>
     <string name="no_string">No</string>
     <string name="facebook_app_id">1721301084683439</string>
@@ -49,6 +52,9 @@
     <string name="title_activity_tab_login">TabLoginActivity</string>
     <string name="tab_text_1">Soy Usuario</string>
     <string name="tab_text_2">Soy Conductor</string>
+    <string name="welcome_message">Bienvenido</string>
+    <string name="button_upload">Agregar</string>
+    <string name="description_photo_profile">Imagen de foto de perfil de facebook</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

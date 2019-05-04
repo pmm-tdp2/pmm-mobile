@@ -7,6 +7,7 @@
     tools:context="com.uberpets.mobile.WelcomeToAppActivity">
 
     <ImageView
+        android:contentDescription="@string/description_photo_profile"
         android:id="@+id/image_user_register"
         android:layout_width="200dp"
         android:layout_height="200dp"
@@ -36,7 +37,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bienvenido "
+            android:text="@string/welcome_message"
             android:textSize="20sp" />
 
         <TextView
@@ -79,7 +80,7 @@
     </LinearLayout>
 
 
-    <android.support.v7.widget.AppCompatButton
+    <Button
         android:id="@+id/button_continue_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -89,8 +90,7 @@
         android:layout_marginBottom="8dp"
         android:onClick="buttonContinueRegister"
         android:backgroundTint="@color/com_facebook_blue"
-        android:paddingHorizontal="@dimen/activity_horizontal_margin"
-        android:text="Continuar"
+        android:text="@string/continue_button"
         android:textAllCaps="false"
         android:textColor="@color/places_text_white_alpha_87"
         app:layout_constraintBottom_toTopOf="@+id/logout_button_facebook"
@@ -103,16 +103,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="64dp"
         android:onClick="logoutInRegister"
-        android:text="Salir"
+        android:text="@string/button_out"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button_continue_register" />
+
+    <TextView
+        android:id="@+id/ROL_TEXT"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="14dp"
+        app:layout_constraintBottom_toTopOf="@+id/image_user_register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>

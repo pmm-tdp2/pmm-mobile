@@ -29,7 +29,6 @@ import com.uberpets.model.SimpleResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 /**
@@ -45,7 +44,6 @@ public class PlaceholderFragment extends Fragment {
     private TextView dataDisplayed;
     private CallbackManager mCallbackManager;
     private Constants mConstant = Constants.getInstance();
-    private final String TAG_LOGIN = "LOGIN_FACEBOOK";
 
     public static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
@@ -86,7 +84,7 @@ public class PlaceholderFragment extends Fragment {
 
         mLoginButton.setReadPermissions("email");
         mLoginButton.setReadPermissions("user_friends");
-        //mLoginButton.setReadPermissions("user_photos");
+        mLoginButton.setReadPermissions("user_photos");
 
 
         registerCallback();
@@ -106,16 +104,16 @@ public class PlaceholderFragment extends Fragment {
     public void setListenerButtonLogin() {
         mLoginButton.setOnClickListener( view ->{
             idWhoHasLogged = mIdTab;
-            /*LoginManager.getInstance().logInWithReadPermissions(this,
-                    Arrays.asList("public_profile","user_friends"));*/
             }
         );
     }
 
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(idWhoHasLogged.equals(mIdTab))
+        if(idWhoHasLogged.equals(mIdTab)){
+            idWhoHasLogged = "";
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     public void registerCallback() {
@@ -145,17 +143,19 @@ public class PlaceholderFragment extends Fragment {
         //si está registrado go to home
 
         //App.nodeServer.get()
-        idWhoHasLogged = "";
+        Log.d(this.getClass().getName(),"Success event: "+loginResult.toString());
         validateAccount(loginResult);
     }
 
     private void handleCancelEvent() {
         dataDisplayed.setText("El login fue cancelado");
+        Log.d(this.getClass().getName(),"Cancel event: ");
+
     }
 
     private void handleErrorEvent(FacebookException error) {
         dataDisplayed.setText("Error en el Login");
-        Log.e(TAG_LOGIN,error.getMessage());
+        Log.e(this.getClass().getName(),error.getMessage());
     }
 
 
@@ -169,35 +169,41 @@ public class PlaceholderFragment extends Fragment {
 
 
     public void validateAccount(@NonNull LoginResult loginResult) {
+        //getDataLoginFacebook(loginResult);
+        validateDatePicture(loginResult);
+    }
 
-        /*GraphRequest requestFriends = GraphRequest.newMyFriendsRequest(
+    public void validateAmountFriends(@NonNull LoginResult loginResult) {
+        GraphRequest requestFriends = GraphRequest.newMyFriendsRequest(
                 loginResult.getAccessToken(),
                 new GraphRequest.GraphJSONArrayCallback() {
 
                     @Override
-                    public void onCompleted(JSONArray jsonArray2, GraphResponse response2) {
-                        Log.v(this.getClass().getName(), response2.toString());
+                    public void onCompleted(JSONArray jsonArray, GraphResponse response) {
+                        Log.v(this.getClass().getName(), response.toString());
                     }
                 });
 
         Bundle parametersFriend = new Bundle();
         parametersFriend.putString("fields", "summary");
         requestFriends.setParameters(parametersFriend);
-        requestFriends.executeAsync();*/
+        requestFriends.executeAsync();
+    }
 
-        /*new GraphRequest(
-                loginResult.getAccessToken().getCurrentAccessToken(),
-                "/"+loginResult.getAccessToken().getUserId()+"/accounts",
+    public void validateDatePicture(@NonNull LoginResult loginResult) {
+        new GraphRequest(
+                loginResult.getAccessToken(),
+                "/"+loginResult.getAccessToken().getUserId()+
+                        "/albums?fields=created_time",
                 null,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
+                        /* handle the result */
                         Log.v(this.getClass().getName(), response.toString());
-
                     }
                 }
-        ).executeAsync();*/
-        getDataLoginFacebook(loginResult);
+        ).executeAsync();
     }
 
     public void getDataLoginFacebook(@NonNull LoginResult loginResult) {
@@ -211,10 +217,9 @@ public class PlaceholderFragment extends Fragment {
                     try {
                         DataFacebook dataFacebook =  new DataFacebook.DataFacebookBuilder()
                                 .setName(object.getString("name"))
-                                //.setPictureUrl(object.getJSONObject("picture").getJSONObject("data")
-                                  //  .getString("url"))
                                 .setPictureUrl("https://graph.facebook.com/" +
-                                        loginResult.getAccessToken().getUserId() + "/picture?type=large")
+                                        loginResult.getAccessToken().getUserId()
+                                        + "/picture?type=large")
                                 .build();
 
                         Log.d(this.getClass().getName(),dataFacebook.getPictureUrl());
@@ -225,7 +230,7 @@ public class PlaceholderFragment extends Fragment {
                         startActivity(intent);
 
                     }catch (Exception ex){
-                        Log.e(this.getClass().getName(),"Error to obtain data of facebook");
+                        Log.e(this.getClass().getName(),ex.toString());
                     }
 
                 }
@@ -235,6 +240,8 @@ public class PlaceholderFragment extends Fragment {
         parameters.putString("fields", "name, picture");
         request.setParameters(parameters);
         request.executeAsync();
+
+
 
     }
 
