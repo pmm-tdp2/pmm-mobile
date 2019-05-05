@@ -31,6 +31,9 @@ public class Constants {
     private String ID_USERS;
     private String ID_DRIVERS;
 
+    private long MINIMUM_TIME_ACCOUNT;
+    private int MINIMUM_FRIENDS_ACCOUNT;
+
     private final String TAG_CONSTANT = "CONSTANTS_LOAD";
 
     private String TypeUrl;
@@ -91,6 +94,9 @@ public class Constants {
             ID_ROL = prop.getProperty("code.id_rol");
             ID_USERS = prop.getProperty("code.id_users");
             ID_DRIVERS = prop.getProperty("code.id_drivers");
+
+            MINIMUM_TIME_ACCOUNT = Long.parseLong(prop.getProperty("validation.minimum_time"));
+            MINIMUM_FRIENDS_ACCOUNT = Integer.parseInt(prop.getProperty("validation.minimum_friends"));
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -174,5 +180,13 @@ public class Constants {
 
     public String getID_DRIVERS() {
         return ID_DRIVERS;
+    }
+
+    public long getMINIMUM_TIME_ACCOUNT() {
+        return MINIMUM_TIME_ACCOUNT;
+    }
+
+    public int getMINIMUM_FRIENDS_ACCOUNT() {
+        return MINIMUM_FRIENDS_ACCOUNT;
     }
 }

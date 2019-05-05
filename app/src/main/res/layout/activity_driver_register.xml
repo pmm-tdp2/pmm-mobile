@@ -47,6 +47,7 @@
             android:background="@drawable/layout_bg"
             android:text="@string/button_upload"
             android:textAllCaps="false"
+            android:onClick="uploadImageCar"
             tools:layout_editor_absoluteX="53dp"
             tools:layout_editor_absoluteY="148dp" />
 
@@ -73,6 +74,7 @@
             android:background="@drawable/layout_bg"
             android:text="@string/button_upload"
             android:textAllCaps="false"
+            android:onClick="uploadImageLicense"
             tools:layout_editor_absoluteX="53dp"
             tools:layout_editor_absoluteY="204dp" />
 
@@ -100,6 +102,7 @@
             android:background="@drawable/layout_bg"
             android:text="@string/button_upload"
             android:textAllCaps="false"
+            android:onClick="uploadImageInsurance"
             tools:layout_editor_absoluteX="53dp"
             tools:layout_editor_absoluteY="268dp" />
 
@@ -127,6 +130,7 @@
             android:background="@drawable/layout_bg"
             android:text="@string/button_upload"
             android:textAllCaps="false"
+            android:onClick="uploadImageProfile"
             tools:layout_editor_absoluteX="53dp"
             tools:layout_editor_absoluteY="330dp" />
 
@@ -147,6 +151,7 @@
         android:backgroundTint="@color/com_facebook_blue"
         android:text="@string/continue_button"
         android:textAllCaps="false"
+        android:onClick="buttonFinishRegister"
         android:textColor="@color/places_text_white_alpha_87"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -2,6 +2,8 @@ package com.uberpets.mobile.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +18,6 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.uberpets.Constants;
@@ -29,7 +29,9 @@ import com.uberpets.model.SimpleResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.Arrays;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -44,6 +46,8 @@ public class PlaceholderFragment extends Fragment {
     private TextView dataDisplayed;
     private CallbackManager mCallbackManager;
     private Constants mConstant = Constants.getInstance();
+    private CardView mCardMessage;
+    private TextView mTextCard;
 
     public static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
@@ -86,17 +90,12 @@ public class PlaceholderFragment extends Fragment {
         mLoginButton.setReadPermissions("user_friends");
         mLoginButton.setReadPermissions("user_photos");
 
-
+        mCardMessage = root.findViewById(R.id.card_showMessage_register);
+        mCardMessage.setVisibility(View.INVISIBLE);
+        mTextCard = root.findViewById(R.id.text_message_register);
         registerCallback();
         setListenerButtonLogin();
 
-        /*final TextView textView = root.findViewById(R.id.section_label);
-        pageViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });*/
         return root;
     }
 
@@ -104,8 +103,8 @@ public class PlaceholderFragment extends Fragment {
     public void setListenerButtonLogin() {
         mLoginButton.setOnClickListener( view ->{
             idWhoHasLogged = mIdTab;
-            }
-        );
+            mCardMessage.setVisibility(View.INVISIBLE);
+        });
     }
 
 
@@ -144,7 +143,7 @@ public class PlaceholderFragment extends Fragment {
 
         //App.nodeServer.get()
         Log.d(this.getClass().getName(),"Success event: "+loginResult.toString());
-        validateAccount(loginResult);
+        validateAmountFriends(loginResult);
     }
 
     private void handleCancelEvent() {
@@ -158,29 +157,41 @@ public class PlaceholderFragment extends Fragment {
         Log.e(this.getClass().getName(),error.getMessage());
     }
 
-
+/*
     private void handleGoodResponse(SimpleResponse response) {
 
     }
 
-    private void handleErrorResponse(Exception ex) {
+    private void handleErrorResponse(Exception e) {
 
     }
-
-
-    public void validateAccount(@NonNull LoginResult loginResult) {
-        getDataLoginFacebook(loginResult);
-        //validateDatePicture(loginResult);
-    }
+*/
 
     public void validateAmountFriends(@NonNull LoginResult loginResult) {
+        int minimumNumberFriends = mConstant.getMINIMUM_FRIENDS_ACCOUNT();
         GraphRequest requestFriends = GraphRequest.newMyFriendsRequest(
                 loginResult.getAccessToken(),
                 new GraphRequest.GraphJSONArrayCallback() {
 
                     @Override
                     public void onCompleted(JSONArray jsonArray, GraphResponse response) {
-                        Log.v(this.getClass().getName(), response.toString());
+                        try{
+                            Log.v(this.getClass().getName(), response.toString());
+                            String value = response.getJSONObject().
+                                    getJSONObject("summary").getString("total_count");
+                            int amountFriends = Integer.parseInt(value);
+
+                            if(amountFriends >= minimumNumberFriends) {
+                                Log.d(this.getClass().getName(),
+                                        "Amount Friends validated successfully");
+                                getAllDateAlbumsToValidate(loginResult);
+                            }else
+                                showErrorInRegister("");
+
+                        }catch (Exception ex){
+                            Log.e(this.getClass().getName(), ex.toString());
+                        }
+
                     }
                 });
 
@@ -190,21 +201,107 @@ public class PlaceholderFragment extends Fragment {
         requestFriends.executeAsync();
     }
 
-    public void validateDatePicture(@NonNull LoginResult loginResult) {
-        new GraphRequest(
+
+    public void getAllDateAlbumsToValidate(@NonNull LoginResult loginResult) {
+
+        final Boolean[] isValid = {false};
+        final Boolean[] hasNextPage = {true};
+        final String[] afterPage = {""};
+        int maxIteration = 20;
+        int iterations =0;
+        do{
+            GraphRequest request = GraphRequest.newMeRequest(
                 loginResult.getAccessToken(),
-                "/"+loginResult.getAccessToken().getUserId()+
-                        "/albums?fields=created_time",
-                null,
-                HttpMethod.GET,
-                new GraphRequest.Callback() {
-                    public void onCompleted(GraphResponse response) {
-                        /* handle the result */
-                        Log.v(this.getClass().getName(), response.toString());
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        try{
+                            Log.v(this.getClass().getName(), response.toString());
+                            isValid[0] = validateAlbumDate(object);
+
+                            String after = object.getJSONObject("albums")
+                                    .getJSONObject("paging").getJSONObject("cursors")
+                                    .getString("after");
+
+                            String nextPage = object.getJSONObject("albums")
+                                    .getString("next");
+
+                            if (nextPage == null)
+                                hasNextPage[0]=false;
+                            else
+                                afterPage[0]=after;
+
+                        }catch(Exception ex){
+                            Log.d(this.getClass().getName(),ex.toString());
+                            hasNextPage[0]=false;
+                        }
                     }
-                }
-        ).executeAsync();
+                });
+
+            Bundle parameters = new Bundle();
+            parameters.putString("fields", "albums");
+            parameters.putString("next", afterPage[0]);
+            request.setParameters(parameters);
+
+            Thread t = new Thread(request::executeAndWait);
+            t.start();
+            try {
+                t.join();
+            }catch (Exception e){
+                Log.e(this.getClass().getName(),e.toString());
+            }
+
+            iterations++;
+
+        }while(!isValid[0] && hasNextPage[0] && iterations < maxIteration);
+
+        if(isValid[0]) {
+            Log.d(this.getClass().getName(),"Account has been validated successfully");
+            Log.d(this.getClass().getName(),"Iterations in almbus: "+iterations);
+            getDataLoginFacebook(loginResult);
+        }else{
+            showErrorInRegister("");
+        }
+
     }
+
+
+    public void showErrorInRegister(String text) {
+        if (text.length() > 0){
+            mTextCard.setText(text);
+        }
+        mCardMessage.setVisibility(View.VISIBLE);
+    }
+
+
+    public boolean validateAlbumDate( @NonNull JSONObject object){
+        long minimumTimeAccount = mConstant.getMINIMUM_TIME_ACCOUNT();
+
+        try {
+            JSONArray albums = object.getJSONObject("albums")
+                    .getJSONArray("data");
+
+              for (int i = 0, len = albums.length(); i < len; i++) {
+                  JSONObject item = albums.getJSONObject(i);
+
+                  Date dateNow = new Date();
+
+                  //String dateCreationAlbum = "2015-02-28T05:29:36+0000";
+                  String dateCreationAlbum = item.getString("created_time");
+                  DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                  Date result1 = df1.parse(dateCreationAlbum);
+                  long difference = dateNow.getTime()-result1.getTime();
+                  if (difference >= minimumTimeAccount)
+                      return true;
+              }
+
+        }catch (Exception ex){
+            Log.e(this.getClass().getName(), ex.toString());
+        }
+        return false;
+    }
+
+
 
     public void getDataLoginFacebook(@NonNull LoginResult loginResult) {
         GraphRequest request = GraphRequest.newMeRequest(
@@ -241,10 +338,7 @@ public class PlaceholderFragment extends Fragment {
         request.setParameters(parameters);
         request.executeAsync();
 
-
-
     }
-
 
 
 }
