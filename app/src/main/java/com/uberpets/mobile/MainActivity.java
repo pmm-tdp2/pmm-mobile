@@ -70,10 +70,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void goToLoginView(View view){
+/*    public void goToLoginView(View view){
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
-    }
+    }*/
 
     public void goToTab(View view){
         Intent intent = new Intent(this, TabLoginActivity.class);
@@ -109,6 +109,17 @@ public class MainActivity extends AppCompatActivity {
     */
     public void cancelAllRequests(String tag) {
         getRequestQueue().cancelAll(tag);
+    }
+
+
+    public void goRegisterDriver(View view){
+        Intent intent = new Intent(this, DriverRegisterActivity.class);
+        startActivity(intent);
+    }
+
+    public void goRegisterUser(View view){
+        Intent intent = new Intent(this, UserRegisterActivity.class);
+        startActivity(intent);
     }
 
 }

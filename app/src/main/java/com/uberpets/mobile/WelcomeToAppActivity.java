@@ -37,7 +37,8 @@ public class WelcomeToAppActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_to_app);
-        mDataFacebook = (DataFacebook) getIntent().getSerializableExtra("DATA");
+        if (getIntent().hasExtra("DATA"))
+            mDataFacebook = (DataFacebook)getIntent().getSerializableExtra("DATA");
 
         TextView textView = findViewById(R.id.ROL_TEXT);
         textView.setText(getIntent().getStringExtra(mConstant.getID_ROL()));
@@ -56,9 +57,11 @@ public class WelcomeToAppActivity extends AppCompatActivity {
 
 
     public void setProfileToView() {
-        TextView name = findViewById(R.id.name_facebook);
-        name.setText(mDataFacebook.getName());
-        new TaskPictureProfile(this).execute();
+        if( mDataFacebook != null ) {
+            TextView name = findViewById(R.id.name_facebook);
+            name.setText(mDataFacebook.getName());
+            new TaskPictureProfile(this).execute();
+        }
     }
 
     public void buttonContinueRegister(View view) {
