@@ -24,7 +24,6 @@ import com.uberpets.Constants;
 import com.uberpets.mobile.R;
 import com.uberpets.mobile.WelcomeToAppActivity;
 import com.uberpets.model.DataFacebook;
-import com.uberpets.model.SimpleResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -147,13 +146,13 @@ public class PlaceholderFragment extends Fragment {
     }
 
     private void handleCancelEvent() {
-        dataDisplayed.setText("El login fue cancelado");
+        showErrorInRegister("El login fue cancelado");
         Log.d(this.getClass().getName(),"Cancel event: ");
 
     }
 
     private void handleErrorEvent(FacebookException error) {
-        dataDisplayed.setText("Error en el Login");
+        showErrorInRegister("Hubo un error en el Login, inténtelo ,más tarde");
         Log.e(this.getClass().getName(),error.getMessage());
     }
 
@@ -271,6 +270,11 @@ public class PlaceholderFragment extends Fragment {
             mTextCard.setText(text);
         }
         mCardMessage.setVisibility(View.VISIBLE);
+        Handler handler = new Handler();
+        handler.postDelayed(() -> {
+            // Do something after 2500ms
+            mCardMessage.setVisibility(View.INVISIBLE);
+        }, 2500);
     }
 
 
