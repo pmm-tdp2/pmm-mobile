@@ -18,6 +18,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.uberpets.Constants;
@@ -143,6 +144,7 @@ public class PlaceholderFragment extends Fragment {
         //App.nodeServer.get()
         Log.d(this.getClass().getName(),"Success event: "+loginResult.toString());
         validateAmountFriends(loginResult);
+        //getAllDateAlbumsToValidate(loginResult);
     }
 
     private void handleCancelEvent() {
@@ -189,6 +191,7 @@ public class PlaceholderFragment extends Fragment {
 
                         }catch (Exception ex){
                             Log.e(this.getClass().getName(), ex.toString());
+                            showErrorInRegister("hubo un problema con el registro");
                         }
 
                     }
@@ -207,8 +210,10 @@ public class PlaceholderFragment extends Fragment {
         final Boolean[] hasNextPage = {true};
         final String[] afterPage = {""};
         int maxIteration = 20;
-        int iterations =0;
+        int iterationsAlbums =0;
+
         do{
+
             GraphRequest request = GraphRequest.newMeRequest(
                 loginResult.getAccessToken(),
                 new GraphRequest.GraphJSONObjectCallback() {
@@ -216,19 +221,20 @@ public class PlaceholderFragment extends Fragment {
                     public void onCompleted(JSONObject object, GraphResponse response) {
                         try{
                             Log.v(this.getClass().getName(), response.toString());
-                            isValid[0] = validateAlbumDate(object);
+                            isValid[0] = validateAlbumAndPhotosDate(object);
 
-                            String after = object.getJSONObject("albums")
-                                    .getJSONObject("paging").getJSONObject("cursors")
-                                    .getString("after");
+                            try{
+                                String after = object.getJSONObject("albums")
+                                        .getJSONObject("paging").getJSONObject("cursors")
+                                        .getString("after");
 
-                            String nextPage = object.getJSONObject("albums")
-                                    .getString("next");
+                                object.getJSONObject("albums")
+                                        .getString("next");
+                                    afterPage[0]=after;
 
-                            if (nextPage == null)
-                                hasNextPage[0]=false;
-                            else
-                                afterPage[0]=after;
+                            }catch (Exception e){
+                                    hasNextPage[0]=false;
+                            }
 
                         }catch(Exception ex){
                             Log.d(this.getClass().getName(),ex.toString());
@@ -237,10 +243,10 @@ public class PlaceholderFragment extends Fragment {
                     }
                 });
 
-            Bundle parameters = new Bundle();
-            parameters.putString("fields", "albums");
-            parameters.putString("next", afterPage[0]);
-            request.setParameters(parameters);
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "albums.fields(photos)");
+        parameters.putString("after", afterPage[0]);
+        request.setParameters(parameters);
 
             Thread t = new Thread(request::executeAndWait);
             t.start();
@@ -250,13 +256,13 @@ public class PlaceholderFragment extends Fragment {
                 Log.e(this.getClass().getName(),e.toString());
             }
 
-            iterations++;
+            iterationsAlbums++;
 
-        }while(!isValid[0] && hasNextPage[0] && iterations < maxIteration);
+        }while(!isValid[0] && hasNextPage[0] && iterationsAlbums < maxIteration);
 
         if(isValid[0]) {
             Log.d(this.getClass().getName(),"Account has been validated successfully");
-            Log.d(this.getClass().getName(),"Iterations in almbus: "+iterations);
+            Log.d(this.getClass().getName(),"Iterations in albums: "+iterationsAlbums);
             getDataLoginFacebook(loginResult);
         }else{
             showErrorInRegister("");
@@ -278,29 +284,51 @@ public class PlaceholderFragment extends Fragment {
     }
 
 
-    public boolean validateAlbumDate( @NonNull JSONObject object){
-        long minimumTimeAccount = mConstant.getMINIMUM_TIME_ACCOUNT();
+    public boolean validateAlbumAndPhotosDate( @NonNull JSONObject object){
 
+        long minimumTimeAccount = mConstant.getMINIMUM_TIME_ACCOUNT();
         try {
             JSONArray albums = object.getJSONObject("albums")
                     .getJSONArray("data");
 
-              for (int i = 0, len = albums.length(); i < len; i++) {
-                  JSONObject item = albums.getJSONObject(i);
+                  for (int i = 0, lenAlbum = albums.length(); i < lenAlbum; i++) {
+                      JSONObject itemAlbum = albums.getJSONObject(i);
+                      //evaluateDatePhotoAlbum(itemAlbum);
+                      //iteration over photos
+                      try{
+                          JSONArray photos = itemAlbum.getJSONObject("photos")
+                                  .getJSONArray("data");
+                          for ( int j= 0, lenPhoto = albums.length(); j < lenPhoto; j++) {
 
-                  Date dateNow = new Date();
+                              JSONObject itemPhoto = photos.getJSONObject(j);
+                              if( evaluateDatePhoto(itemPhoto,minimumTimeAccount) )
+                                  return true;
+                          }
+                      }catch (Exception e){
+                          Log.e(this.getClass().getName(), "Error in iteration of photos "+
+                                  e.toString());
+                      }
+                  }
 
-                  //String dateCreationAlbum = "2015-02-28T05:29:36+0000";
-                  String dateCreationAlbum = item.getString("created_time");
-                  DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                  Date result1 = df1.parse(dateCreationAlbum);
-                  long difference = dateNow.getTime()-result1.getTime();
-                  if (difference >= minimumTimeAccount)
-                      return true;
-              }
+        }catch (Exception e){
+            Log.e(this.getClass().getName(), "Error in iteration of albums "+e.toString());
+        }
+        return false;
+    }
 
-        }catch (Exception ex){
-            Log.e(this.getClass().getName(), ex.toString());
+
+    private boolean evaluateDatePhoto(JSONObject item,long minimumTimeAccount ) {
+        Date dateNow = new Date();
+        //String dateCreationAlbum = "2015-02-28T05:29:36+0000";
+        try{
+            String dateCreationAlbum = item.getString("created_time");
+            DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+            Date result1 = df1.parse(dateCreationAlbum);
+            long difference = dateNow.getTime()-result1.getTime();
+            if (difference >= minimumTimeAccount)
+                return true;
+        }catch (Exception e){
+            Log.d(this.getClass().getName(),"error in evaluation date photo" + e.toString());
         }
         return false;
     }
