@@ -1,6 +1,8 @@
 package com.uberpets.mobile;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -154,7 +156,21 @@ public class DriverFollowUpTravel extends Fragment {
 
     public void cancelTravelFragment() {
         //TODO: show pop-up "are you sure"
-
+        Log.i("Fede:", "Cancel!");
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.are_you_sure)
+                .setPositiveButton(R.string.yes_string, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // FIRE ZE MISSILES!
+                    }
+                })
+                .setNegativeButton(R.string.no_string, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
         /*
         TravelConfirmationDTO travelConfirmationDTO =
         new TravelConfirmationDTO(mTravelAssignedDTO.getTravelID(),this.ROL);

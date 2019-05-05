@@ -57,6 +57,8 @@
     <string name="description_photo_profile">Imagen de foto de perfil de facebook</string>
     <string name="message_register_invalid">La cuenta no cumple con los estándares para la registración</string>
     <string name="message_welcome_register">Necesitamos que ingreses algunos datos para poder completar el registro</string>
+    <string name="are_you_sure">¿Estás seguro?</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
