@@ -21,14 +21,17 @@ public class DriverRegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_register);
-        mDataFacebook = (DataFacebook)getIntent().getSerializableExtra("DATA");
+        if (getIntent().hasExtra("DATA"))
+            mDataFacebook = (DataFacebook)getIntent().getSerializableExtra("DATA");
+
         editNameDriver = findViewById(R.id.name_driver_facebook);
         editDniDriver = findViewById(R.id.dni_driver);
         addName();
     }
 
     private void addName() {
-        editNameDriver.setText(mDataFacebook.getName());
+        if( mDataFacebook != null)
+            editNameDriver.setText(mDataFacebook.getName());
     }
 
 

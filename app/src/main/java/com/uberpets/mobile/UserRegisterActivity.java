@@ -17,13 +17,16 @@ public class UserRegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_register);
-        mDataFacebook = (DataFacebook) getIntent().getSerializableExtra("DATA");
+        if (getIntent().hasExtra("DATA"))
+            mDataFacebook = (DataFacebook)getIntent().getSerializableExtra("DATA");
         addName();
     }
 
     private void addName() {
-        EditText editName = findViewById(R.id.name_user_facebook);
-        editName.setText(mDataFacebook.getName());
+        if(mDataFacebook != null) {
+            EditText editName = findViewById(R.id.name_user_facebook);
+            editName.setText(mDataFacebook.getName());
+        }
     }
 
 }
