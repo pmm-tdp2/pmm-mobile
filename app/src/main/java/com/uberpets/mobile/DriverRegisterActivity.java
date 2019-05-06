@@ -29,16 +29,19 @@ import static android.media.MediaRecorder.VideoSource.CAMERA;
 
 public class DriverRegisterActivity extends AppCompatActivity {
     private DataFacebook mDataFacebook;
-    private ImageView imageview;
+    private ImageView imageviewCar;
+    private ImageView imageviewCarInusrance;
+    private ImageView imageviewLicense;
     private boolean isUploadedCarImage = false;
     private boolean isUploadedLicenseImage = false;
     private boolean isUploadedInsuranceImage = false;
     private boolean isUploadedProfileImage = false;
     private EditText editNameDriver;
     private EditText editDniDriver;
-    private Button btnUploadCarImage;
     private static final String IMAGE_DIRECTORY = "/demonuts";
-    private int GALLERY = 1, CAMERA = 2;
+    private int GALLERY_CAR = 1, CAMERA_CAR = 2;
+    private int GALLERY_LICENSE = 3, CAMERA_LICENSE = 4;
+    private int GALLERY_INSURANCE = 5, CAMERA_INSURANCE = 6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +53,12 @@ public class DriverRegisterActivity extends AppCompatActivity {
         editNameDriver = findViewById(R.id.name_driver_facebook);
         editDniDriver = findViewById(R.id.dni_driver);
         addName();
-        imageview = findViewById(R.id.iv);
-        btnUploadCarImage = findViewById(R.id.upload_photo_car_btn);
-        btnUploadCarImage.setOnClickListener(view -> uploadImageCar(view));
+        imageviewCar = findViewById(R.id.imageview_car);
+        imageviewCar.setOnClickListener(view -> uploadImageCar(view));
+        imageviewCarInusrance = findViewById(R.id.imageview_car_insurance);
+        imageviewCarInusrance.setOnClickListener(view -> uploadImageCarInsurance(view));
+        imageviewLicense = findViewById(R.id.imageview_license);
+        imageviewLicense.setOnClickListener(view -> uploadImageLicense(view));
     }
 
     private void addName() {
@@ -61,39 +67,36 @@ public class DriverRegisterActivity extends AppCompatActivity {
     }
 
 
-    private void showPictureDialog(){
+    private void showPictureDialog(int code){
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
         pictureDialog.setTitle("Select Action");
         String[] pictureDialogItems = {
                 "Select photo from gallery",
                 "Capture photo from camera" };
         pictureDialog.setItems(pictureDialogItems,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                choosePhotoFromGallery();
-                                break;
-                            case 1:
-                                takePhotoFromCamera();
-                                break;
-                        }
+                (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            choosePhotoFromGallery(code);
+                            break;
+                        case 1:
+                            takePhotoFromCamera(code+1);
+                            break;
                     }
                 });
         pictureDialog.show();
     }
 
-    public void choosePhotoFromGallery() {
+    public void choosePhotoFromGallery(int code) {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 
-        startActivityForResult(galleryIntent, GALLERY);
+        startActivityForResult(galleryIntent, code);
     }
 
-    private void takePhotoFromCamera() {
+    private void takePhotoFromCamera(int code) {
         Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, CAMERA);
+        startActivityForResult(intent, code);
     }
 
     @Override
@@ -102,23 +105,28 @@ public class DriverRegisterActivity extends AppCompatActivity {
         if (resultCode == this.RESULT_CANCELED) {
             return;
         }
-        if (requestCode == GALLERY) {
+        if (requestCode % 2 != 0) {
             if (data != null) {
                 Uri contentURI = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
                     String path = saveImage(bitmap);
                     Toast.makeText(DriverRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-                    imageview.setImageBitmap(bitmap);
+
+                    if (requestCode == GALLERY_CAR) imageviewCar.setImageBitmap(bitmap);
+                    else if (requestCode == GALLERY_LICENSE) imageviewLicense.setImageBitmap(bitmap);
+                    else if (requestCode == GALLERY_INSURANCE) imageviewCarInusrance.setImageBitmap(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(DriverRegisterActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                 }
             }
 
-        } else if (requestCode == CAMERA) {
+        } else if (requestCode % 2 == 0) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            imageview.setImageBitmap(thumbnail);
+            if (requestCode == CAMERA_CAR) imageviewCar.setImageBitmap(thumbnail);
+            else if (requestCode == CAMERA_LICENSE) imageviewCar.setImageBitmap(thumbnail);
+            else if (requestCode == CAMERA_INSURANCE) imageviewCar.setImageBitmap(thumbnail);
             saveImage(thumbnail);
             Toast.makeText(DriverRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
         }
@@ -154,25 +162,27 @@ public class DriverRegisterActivity extends AppCompatActivity {
     }
 
     public void uploadImageCar(View view) {
-        showPictureDialog();
+        showPictureDialog(GALLERY_CAR);
         isUploadedCarImage = true;
+    }
+
+    public void uploadImageCarInsurance(View view) {
+        showPictureDialog(GALLERY_INSURANCE);
+        isUploadedInsuranceImage = true;
+    }
+
+    public void uploadImageLicense(View view) {
+        showPictureDialog(GALLERY_LICENSE);
+        isUploadedLicenseImage = true;
     }
 
     public void uploadImageProfile(View view) {
         isUploadedProfileImage = true;
     }
 
-    public void uploadImageInsurance(View view) {
-        isUploadedInsuranceImage = true;
-    }
-
-    public void uploadImageLicense(View view) {
-        isUploadedLicenseImage = true;
-    }
-
     public void buttonFinishRegister(View view) {
         if (isUploadedCarImage && isUploadedLicenseImage
-                && isUploadedInsuranceImage && isUploadedProfileImage
+                && isUploadedInsuranceImage
                 && editNameDriver.getText().length() > 0
                 && editDniDriver.getText().length() > 0) {
             Intent intent = new Intent(this, DriverHome.class);
