@@ -11,13 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.uberpets.library.rest.Headers;
-import com.uberpets.mobile.R;
 import com.uberpets.model.SimpleResponse;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.TravelConfirmationDTO;
-import com.uberpets.model.TravelDTO;
 import com.uberpets.services.App;
 
 /**
@@ -141,7 +140,6 @@ public class DriverFollowUpTravel extends Fragment {
         this.ROL = ROL;
     }
 
-
     public void setIdDriver(int idDriver) {
         this.idDriver = idDriver;
     }
@@ -155,30 +153,32 @@ public class DriverFollowUpTravel extends Fragment {
     }
 
     public void cancelTravelFragment() {
-        //TODO: show pop-up "are you sure"
-        Log.i("Fede:", "Cancel!");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.are_you_sure)
+        builder.setMessage(R.string.cancel_travel_information)
+                .setTitle(R.string.are_you_sure)
                 .setPositiveButton(R.string.yes_string, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // FIRE ZE MISSILES!
+                        //Cancelo el viaje
+                        cancelTravelRequest();
                     }
                 })
                 .setNegativeButton(R.string.no_string, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
+                        // Continuo con el viaje
                     }
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-        /*
-        TravelConfirmationDTO travelConfirmationDTO =
-        new TravelConfirmationDTO(mTravelAssignedDTO.getTravelID(),this.ROL);
-        App.nodeServer.post("/travel/confirmation",travelConfirmationDTO,
-        Object.class, new Headers())
-        .run(this::responseRejectTravelFragment,this::errorRejectTravelFragment);
-        */
-        mListener.cancelOngoingTravel();
+    }
+
+    public void cancelTravelRequest(){
+        String rol = this.ROL == null ? "driver" : this.ROL;
+        int driverId = this.idDriver;
+        int travelId = mTravelAssignedDTO == null ? 9999 : mTravelAssignedDTO.getTravelID();
+        TravelConfirmationDTO travelCancelDTO = new TravelConfirmationDTO(
+                travelId, rol, driverId);
+        App.nodeServer.post("/travel/cancel", travelCancelDTO, SimpleResponse.class, new Headers())
+                .run(this::responseCancelTravel, this::errorCancelTravel);
     }
 
     public void finalizeTravelFragment() {
@@ -195,14 +195,30 @@ public class DriverFollowUpTravel extends Fragment {
 
     }
 
-
     public void responseFinalizeTravelFragment(SimpleResponse simpleResponse) {
-        Log.d(TAG_DRIVER_FOLLOW_UP_TRAVEL,simpleResponse.getMeesage());
+        Log.d(TAG_DRIVER_FOLLOW_UP_TRAVEL,simpleResponse.getMessage());
         mListener.finishTravel();
     }
 
     public void errorRejectTravelFragment(Exception e){
         //TODO: mandar un mensaje que no se pudo finalizar el viaje
+    }
+
+    public void responseCancelTravel(SimpleResponse response) {
+        Log.d(TAG_DRIVER_FOLLOW_UP_TRAVEL, response.getMessage());
+        if (response.getStatus() == 200){
+            //cancelo el viaje
+            Toast.makeText(getActivity(), "Se ha cancelado su viaje",
+                    Toast.LENGTH_LONG).show();
+            mListener.cancelOngoingTravel();
+        }else{
+            //TODO: ocurrió un error con el servidor y no se pudo cancelar el viaje
+        }
+    }
+
+    public void errorCancelTravel(Exception e){
+        Log.d(TAG_DRIVER_FOLLOW_UP_TRAVEL, e.getMessage());
+        //TODO: no se ha podido finalizar el viaje
     }
 
 }

@@ -41,7 +41,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/upload_photo_car"
+            android:id="@+id/upload_photo_car_btn"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:background="@drawable/layout_bg"
@@ -56,6 +56,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="foto del auto" />
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:scaleType="fitXY"
+            android:src="@mipmap/ic_launcher"
+            android:id="@+id/iv"/>
     </LinearLayout>
 
     <LinearLayout
