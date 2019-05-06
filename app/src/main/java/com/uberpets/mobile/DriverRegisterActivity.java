@@ -70,7 +70,6 @@ public class DriverRegisterActivity extends AppCompatActivity {
             editNameDriver.setText(mDataFacebook.getName());
     }
 
-
     private void showPictureDialog(int code){
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
         pictureDialog.setTitle("Select Action");
