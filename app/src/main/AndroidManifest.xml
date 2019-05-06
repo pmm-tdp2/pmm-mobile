@@ -13,6 +13,12 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature
+        android:name="android.hardware.camera.any"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
 
     <application
         android:name="com.uberpets.services.App"
@@ -24,7 +30,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="${usesCleartextTraffic}">
         <activity android:name=".WelcomeToAppActivity"></activity>
-        <activity android:name=".DriverRegisterActivity" />
+        <activity
+            android:name=".DriverRegisterActivity"
+            android:exported="true"/>
         <activity android:name=".UserRegisterActivity" />
         <activity
             android:name=".TabLoginActivity"
