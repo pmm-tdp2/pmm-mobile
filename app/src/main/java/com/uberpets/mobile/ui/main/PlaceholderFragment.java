@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -56,7 +57,7 @@ public class PlaceholderFragment extends Fragment {
     private CardView mCardMessage;
     private TextView mTextCard;
     private LoginResult mLoginResult;
-    private AccountSession mAccountSession =  AccountSession.getInstance();
+    //private AccountSession mAccountSession =  AccountSession.getInstance();
 
 
     public static PlaceholderFragment newInstance(int index) {
@@ -92,7 +93,7 @@ public class PlaceholderFragment extends Fragment {
          * before to init the application valid
          * if user has init session previously and avoid login again
          */
-        mAccountSession.evaluateSessionAccount(getContext());
+        //mAccountSession.evaluateSessionAccount(getContext());
 
         root.setBackgroundColor(getResources().getColor(
                 mIdTab.equals( mConstant.getID_USERS() ) ?
@@ -180,7 +181,7 @@ public class PlaceholderFragment extends Fragment {
 
     private void handleServerSuccessfulResponse(SimpleResponse response) {
 
-        Log.d(this.getClass().getName(),"data response login: "+response.toString());
+        Log.d(this.getClass().getName(),"data response login: "+response.getStatus());
         switch (response.getStatus()){
             case 200:
                 goToHome();
@@ -193,11 +194,12 @@ public class PlaceholderFragment extends Fragment {
     }
 
     private void goToHome() {
-        mAccountSession.saveSessionAccount(mIdTab);
+        //mAccountSession.saveSessionAccount(mIdTab);
         Intent intent = new Intent(getActivity(),
                 mIdTab.equals(mConstant.getID_USERS()) ?
                         UserHome.class : DriverHome.class);
         startActivity(intent);
+        getActivity().finish();
     }
 
     private void initRegister() {

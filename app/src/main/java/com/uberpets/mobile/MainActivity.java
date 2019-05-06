@@ -115,13 +115,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void goRegisterDriver(View view){
-        Intent intent = new Intent(this, DriverRegisterActivity.class);
-        startActivity(intent);
+        if(isIpServerSelected()){
+            Intent intent = new Intent(this, DriverRegisterActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void goRegisterUser(View view){
-        Intent intent = new Intent(this, UserRegisterActivity.class);
-        startActivity(intent);
+        if(isIpServerSelected()){
+            Intent intent = new Intent(this, UserRegisterActivity.class);
+            startActivity(intent);
+        }
     }
 
 }

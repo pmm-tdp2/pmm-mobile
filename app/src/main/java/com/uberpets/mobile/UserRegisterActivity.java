@@ -39,9 +39,6 @@ public class UserRegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_register);
-        if (getIntent().hasExtra("DATA"))
-            mDataFacebook = (DataFacebook)getIntent().getSerializableExtra("DATA");
-        addName();
 
         imageviewProfile = findViewById(R.id.imageview_profile);
         imageviewProfile.setOnClickListener(view -> uploadImageProfile(view));
@@ -50,6 +47,10 @@ public class UserRegisterActivity extends AppCompatActivity {
         continueButton.setOnClickListener(view -> finishRegister(view));
 
         editName = findViewById(R.id.name_user_facebook);
+
+        if (getIntent().hasExtra("DATA"))
+            mDataFacebook = (DataFacebook)getIntent().getSerializableExtra("DATA");
+        addName();
     }
 
     private void addName() {

@@ -50,12 +50,9 @@ public class DriverRegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_register);
-        if (getIntent().hasExtra("DATA"))
-            mDataFacebook = (DataFacebook)getIntent().getSerializableExtra("DATA");
 
         editNameDriver = findViewById(R.id.name_driver_facebook);
         editDniDriver = findViewById(R.id.dni_driver);
-        addName();
         imageviewCar = findViewById(R.id.imageview_car);
         imageviewCar.setOnClickListener(view -> uploadImageCar(view));
         imageviewCarInusrance = findViewById(R.id.imageview_car_insurance);
@@ -67,6 +64,10 @@ public class DriverRegisterActivity extends AppCompatActivity {
 
         continueButton = findViewById(R.id.end_register_driver_btn);
         continueButton.setOnClickListener(view -> finishRegister(view));
+
+        if (getIntent().hasExtra("DATA"))
+            mDataFacebook = (DataFacebook)getIntent().getSerializableExtra("DATA");
+        addName();
     }
 
     private void addName() {
