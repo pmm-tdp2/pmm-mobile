@@ -13,7 +13,7 @@ public class SimpleResponse {
         return status;
     }
 
-    public String getMeesage() {
+    public String getMessage() {
         return message;
     }
 }

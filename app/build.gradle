@@ -30,6 +30,12 @@ android {
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
     }
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        // abortOnError false
+    }
 }
 
 dependencies {
@@ -53,4 +59,5 @@ dependencies {
     implementation 'com.facebook.android:facebook-login:[4,5)'
     implementation 'org.apache.httpcomponents:httpclient:4.5.6'
     implementation 'org.jetbrains:annotations:15.0'
+    implementation 'com.karumi:dexter:5.0.0'
 }
