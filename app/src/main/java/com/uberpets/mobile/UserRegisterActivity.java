@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,6 +29,8 @@ import java.util.Calendar;
 public class UserRegisterActivity extends AppCompatActivity {
     private DataFacebook mDataFacebook;
     private ImageView imageviewProfile;
+    private Button continueButton;
+    private EditText editName;
     private boolean isUploadedProfileImage;
     private static final String IMAGE_DIRECTORY = "/demonuts";
     private int GALLERY = 1, CAMERA = 2;
@@ -39,13 +42,18 @@ public class UserRegisterActivity extends AppCompatActivity {
         if (getIntent().hasExtra("DATA"))
             mDataFacebook = (DataFacebook)getIntent().getSerializableExtra("DATA");
         addName();
+
         imageviewProfile = findViewById(R.id.imageview_profile);
         imageviewProfile.setOnClickListener(view -> uploadImageProfile(view));
+
+        continueButton = findViewById(R.id.end_register_user_btn);
+        continueButton.setOnClickListener(view -> finishRegister(view));
+
+        editName = findViewById(R.id.name_user_facebook);
     }
 
     private void addName() {
         if(mDataFacebook != null) {
-            EditText editName = findViewById(R.id.name_user_facebook);
             editName.setText(mDataFacebook.getName());
         }
     }
@@ -141,6 +149,18 @@ public class UserRegisterActivity extends AppCompatActivity {
             e1.printStackTrace();
         }
         return "";
+    }
+
+    public void finishRegister(View view){
+        if ( isUploadedProfileImage
+        && editName.length() >0 ){
+            Intent intent = new Intent(this, UserHome.class);
+            startActivity(intent);
+        }else{
+            Toast.makeText(this, "Tenes que completar todos los campos para continuar",
+                    Toast.LENGTH_LONG).show();
+        }
+
     }
 
 }

@@ -33,6 +33,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private ImageView imageviewCarInusrance;
     private ImageView imageviewLicense;
     private ImageView imageviewProfile;
+    private Button continueButton;
     private boolean isUploadedCarImage = false;
     private boolean isUploadedLicenseImage = false;
     private boolean isUploadedInsuranceImage = false;
@@ -63,6 +64,9 @@ public class DriverRegisterActivity extends AppCompatActivity {
         imageviewLicense.setOnClickListener(view -> uploadImageLicense(view));
         imageviewProfile = findViewById(R.id.imageview_profile);
         imageviewProfile.setOnClickListener(view -> uploadImageProfile(view));
+
+        continueButton = findViewById(R.id.end_register_driver_btn);
+        continueButton.setOnClickListener(view -> finishRegister(view));
     }
 
     private void addName() {
@@ -186,13 +190,18 @@ public class DriverRegisterActivity extends AppCompatActivity {
         isUploadedProfileImage = true;
     }
 
-    public void buttonFinishRegister(View view) {
+    public void finishRegister(View view) {
         if (isUploadedCarImage && isUploadedLicenseImage
-                && isUploadedInsuranceImage) {
-            //&& editNameDriver.getText().length() > 0
-            //&& editDniDriver.getText().length() > 0
+                && isUploadedInsuranceImage && isUploadedProfileImage
+                && editNameDriver.getText().length() > 0
+                && editDniDriver.getText().length() > 0) {
+
             Intent intent = new Intent(this, DriverHome.class);
             startActivity(intent);
+        }
+        else{
+            Toast.makeText(this, "Tenes que completar todos los campos para continuar",
+                    Toast.LENGTH_LONG).show();
         }
     }
 
