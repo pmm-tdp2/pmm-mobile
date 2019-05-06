@@ -32,6 +32,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private ImageView imageviewCar;
     private ImageView imageviewCarInusrance;
     private ImageView imageviewLicense;
+    private ImageView imageviewProfile;
     private boolean isUploadedCarImage = false;
     private boolean isUploadedLicenseImage = false;
     private boolean isUploadedInsuranceImage = false;
@@ -42,6 +43,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private int GALLERY_CAR = 1, CAMERA_CAR = 2;
     private int GALLERY_LICENSE = 3, CAMERA_LICENSE = 4;
     private int GALLERY_INSURANCE = 5, CAMERA_INSURANCE = 6;
+    private int GALLERY_PROFILE = 7, CAMERA_PROFILE = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,8 @@ public class DriverRegisterActivity extends AppCompatActivity {
         imageviewCarInusrance.setOnClickListener(view -> uploadImageCarInsurance(view));
         imageviewLicense = findViewById(R.id.imageview_license);
         imageviewLicense.setOnClickListener(view -> uploadImageLicense(view));
+        imageviewProfile = findViewById(R.id.imageview_profile);
+        imageviewProfile.setOnClickListener(view -> uploadImageProfile(view));
     }
 
     private void addName() {
@@ -116,6 +120,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
                     if (requestCode == GALLERY_CAR) imageviewCar.setImageBitmap(bitmap);
                     else if (requestCode == GALLERY_LICENSE) imageviewLicense.setImageBitmap(bitmap);
                     else if (requestCode == GALLERY_INSURANCE) imageviewCarInusrance.setImageBitmap(bitmap);
+                    else if (requestCode == GALLERY_PROFILE) imageviewProfile.setImageBitmap(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(DriverRegisterActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
@@ -127,6 +132,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
             if (requestCode == CAMERA_CAR) imageviewCar.setImageBitmap(thumbnail);
             else if (requestCode == CAMERA_LICENSE) imageviewCar.setImageBitmap(thumbnail);
             else if (requestCode == CAMERA_INSURANCE) imageviewCar.setImageBitmap(thumbnail);
+            else if (requestCode == CAMERA_PROFILE) imageviewProfile.setImageBitmap(thumbnail);
             saveImage(thumbnail);
             Toast.makeText(DriverRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
         }
@@ -177,14 +183,15 @@ public class DriverRegisterActivity extends AppCompatActivity {
     }
 
     public void uploadImageProfile(View view) {
+        showPictureDialog(GALLERY_PROFILE);
         isUploadedProfileImage = true;
     }
 
     public void buttonFinishRegister(View view) {
         if (isUploadedCarImage && isUploadedLicenseImage
-                && isUploadedInsuranceImage
-                && editNameDriver.getText().length() > 0
-                && editDniDriver.getText().length() > 0) {
+                && isUploadedInsuranceImage) {
+            //&& editNameDriver.getText().length() > 0
+            //&& editDniDriver.getText().length() > 0
             Intent intent = new Intent(this, DriverHome.class);
             startActivity(intent);
         }
