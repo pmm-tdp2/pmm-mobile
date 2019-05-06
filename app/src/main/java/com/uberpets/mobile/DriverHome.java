@@ -2,6 +2,7 @@ package com.uberpets.mobile;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.facebook.login.LoginManager;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -52,6 +54,7 @@ import com.uberpets.model.TraceDTO;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.TravelDTO;
 import com.uberpets.services.TraceService;
+import com.uberpets.util.AccountSession;
 
 
 import org.json.JSONException;
@@ -188,6 +191,9 @@ public class  DriverHome
 
         } else if (id == R.id.nav_send) {
 
+        }else if (id == R.id.logout_from_home_account_driver) {
+            AccountSession.getInstance().finalizeSessionAccount();
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

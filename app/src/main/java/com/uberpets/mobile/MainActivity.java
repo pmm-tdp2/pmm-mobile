@@ -76,8 +76,10 @@ public class MainActivity extends AppCompatActivity {
     }*/
 
     public void goToTab(View view){
-        Intent intent = new Intent(this, TabLoginActivity.class);
-        startActivity(intent);
+        if (isIpServerSelected()){
+            Intent intent = new Intent(this, TabLoginActivity.class);
+            startActivity(intent);
+        }
     }
 
     public static synchronized MainActivity getInstance() {

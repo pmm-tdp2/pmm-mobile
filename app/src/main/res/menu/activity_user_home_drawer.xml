@@ -35,4 +35,13 @@
         </menu>
     </item>
 
+    <item android:title="Account">
+        <menu>
+            <item
+                android:id="@+id/logout_from_home_account_user"
+                android:icon="@drawable/ic_menu_logout"
+                android:title="Cerrar sesión" />
+        </menu>
+    </item>
+
 </menu>
