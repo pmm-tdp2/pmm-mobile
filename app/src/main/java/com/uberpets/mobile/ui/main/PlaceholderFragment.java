@@ -1,7 +1,6 @@
 package com.uberpets.mobile.ui.main;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.CardView;
@@ -25,10 +24,8 @@ import com.facebook.login.widget.LoginButton;
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
 import com.uberpets.mobile.DriverHome;
-import com.uberpets.mobile.DriverRegisterActivity;
 import com.uberpets.mobile.R;
 import com.uberpets.mobile.UserHome;
-import com.uberpets.mobile.UserRegisterActivity;
 import com.uberpets.mobile.WelcomeToAppActivity;
 import com.uberpets.model.DataFacebook;
 import com.uberpets.model.LoginDTO;
@@ -43,7 +40,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -357,7 +353,7 @@ public class PlaceholderFragment extends Fragment {
      * This method obtain picture profile and name of user/driver
      * if these fields are not obtained the field name is empty
      * and picture is picture by default
-     * @param loginResult
+     * @param loginResult is object that contain token, id of facebook account
      */
     public void getDataLoginFacebook(@NonNull LoginResult loginResult) {
         GraphRequest request = GraphRequest.newMeRequest(
