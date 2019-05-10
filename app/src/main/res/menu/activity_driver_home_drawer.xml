@@ -40,7 +40,7 @@
             <item
                 android:id="@+id/logout_from_home_account_driver"
                 android:icon="@drawable/ic_menu_logout"
-                android:title="Cerrar sesión" />
+                android:title="@string/logout_account" />
         </menu>
     </item>
 

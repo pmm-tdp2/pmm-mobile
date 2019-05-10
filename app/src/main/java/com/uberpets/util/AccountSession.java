@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.facebook.login.LoginManager;
+
 public class AccountSession {
     private static final String APP_SETTINGS = "APP_SETTINGS";
     private static final String LOGIN_STATUS_VALUE = "Login";
@@ -43,6 +45,7 @@ public class AccountSession {
 
     public static void finalizeSession(Context context) {
         Log.d(AccountSession.class.getName(),"finalize session");
+        LoginManager.getInstance().logOut();
         final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.putString(ROL_LOGGED_VALUE , "");
         editor.putBoolean(LOGIN_STATUS_VALUE,false);
