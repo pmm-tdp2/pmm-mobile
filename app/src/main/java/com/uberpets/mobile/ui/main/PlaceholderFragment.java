@@ -57,8 +57,6 @@ public class PlaceholderFragment extends Fragment {
     private CardView mCardMessage;
     private TextView mTextCard;
     private LoginResult mLoginResult;
-    //private AccountSession mAccountSession =  AccountSession.getInstance();
-
 
     public static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
@@ -71,7 +69,8 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PageViewModel pageViewModel = ViewModelProviders.of(this).get(PageViewModel.class);
+        PageViewModel pageViewModel = ViewModelProviders.of(this)
+                .get(PageViewModel.class);
         int index = 1;
         if (getArguments() != null) {
             index = getArguments().getInt(ARG_SECTION_NUMBER);
@@ -93,11 +92,12 @@ public class PlaceholderFragment extends Fragment {
          * before to init the application valid
          * if user has init session previously and avoid login again
          */
-        //mAccountSession.evaluateSessionAccount(getContext());
 
         root.setBackgroundColor(getResources().getColor(
                 mIdTab.equals( mConstant.getID_USERS() ) ?
                         R.color.loginUser : R.color.loginDriver));
+
+        evaluateSession();
 
         mLoginButton = root.findViewById(R.id.login_button_facebook);
         mCallbackManager = CallbackManager.Factory.create();
@@ -113,6 +113,17 @@ public class PlaceholderFragment extends Fragment {
         setListenerButtonLogin();
 
         return root;
+    }
+
+    private void evaluateSession() {
+        if(AccountSession.getLoginStatusValue(getContext()) &&
+        AccountSession.getRolLoggedValue(getContext()).equals(this.mIdTab)) {
+            Intent intent = new Intent(getContext(),
+                    AccountSession.getRolLoggedValue(getContext()).equals(mConstant.getID_USERS())
+                     ?  UserHome.class : DriverHome.class);
+            startActivity(intent);
+            getActivity().finish();
+        }
     }
 
     public void setListenerButtonLogin() {
@@ -133,15 +144,18 @@ public class PlaceholderFragment extends Fragment {
     public void registerCallback() {
         mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
-            public void onSuccess(LoginResult loginResult) { handleSuccessLoginFacebook(loginResult); }
+            public void onSuccess(LoginResult loginResult) {
+                handleSuccessLoginFacebook(loginResult); }
 
             @Override
             public void onCancel() {
+
                 handleCancelLoginFacebook();
             }
 
             @Override
             public void onError(FacebookException error) {
+
                 handleErrorLoginFacebook(error);
             }
         });
@@ -162,7 +176,9 @@ public class PlaceholderFragment extends Fragment {
         mLoginResult = loginResult;
 
         //TODO: hay que quitar el hardcodeo
-        /*LoginDTO loginDTO = new LoginDTO(loginResult
+
+        /*Log.i(this.getClass().getName(),loginResult.getAccessToken().getUserId());
+        LoginDTO loginDTO = new LoginDTO(loginResult
                 .getAccessToken().getUserId());*/
         LoginDTO loginDTO = new LoginDTO("12345678");
 
@@ -194,7 +210,11 @@ public class PlaceholderFragment extends Fragment {
     }
 
     private void goToHome() {
-        //mAccountSession.saveSessionAccount(mIdTab);
+        // when user is registered and access successfully
+        //go to home and save session
+        AccountSession.setRolLoggedValue(getContext(),this.mIdTab);
+        AccountSession.setLoginStatusValue(getContext(),true);
+
         Intent intent = new Intent(getActivity(),
                 mIdTab.equals(mConstant.getID_USERS()) ?
                         UserHome.class : DriverHome.class);

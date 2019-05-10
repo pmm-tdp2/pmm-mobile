@@ -18,7 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
+import com.uberpets.Constants;
 import com.uberpets.model.DataFacebook;
+import com.uberpets.util.AccountSession;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -155,6 +157,10 @@ public class UserRegisterActivity extends AppCompatActivity {
     public void finishRegister(View view){
         if ( isUploadedProfileImage
         && editName.length() >0 ){
+            //save session of user
+            AccountSession.setRolLoggedValue(this,
+                    Constants.getInstance().getID_USERS());
+            AccountSession.setLoginStatusValue(this,true);
             Intent intent = new Intent(this, UserHome.class);
             startActivity(intent);
         }else{

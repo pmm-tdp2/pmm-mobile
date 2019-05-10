@@ -219,7 +219,9 @@ public class UserHome extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }else if (id == R.id.logout_from_home_account_user) {
-            //AccountSession.getInstance().finalizeSessionAccount();
+            AccountSession.finalizeSession(this);
+            Intent intent = new Intent(this, TabLoginActivity.class);
+            startActivity(intent);
             finish();
         }
 

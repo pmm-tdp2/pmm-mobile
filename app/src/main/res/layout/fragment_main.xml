@@ -41,8 +41,8 @@
 
     <RadioGroup
         android:id="@+id/radioGroup2"
-        android:layout_width="170dp"
-        android:layout_height="132dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="70dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="64dp"
@@ -59,13 +59,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Cloud Server" />
-
-        <RadioButton
-            android:id="@+id/local_host"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="LocalHost Server" />
 
         <RadioButton
             android:id="@+id/local_ip_configurable"
@@ -87,7 +80,7 @@
         android:ems="10"
         android:hint="Ingresa la Ip con la 3ra opcion"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/button_redirect_login"
+        app:layout_constraintBottom_toTopOf="@+id/button_redirect_login_driver"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup2" />
