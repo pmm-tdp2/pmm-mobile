@@ -18,12 +18,15 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.uberpets.model.DataFacebook;
+import com.uberpets.model.RegisterDTO;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.media.MediaRecorder.VideoSource.CAMERA;
 
@@ -45,6 +48,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private int GALLERY_LICENSE = 3, CAMERA_LICENSE = 4;
     private int GALLERY_INSURANCE = 5, CAMERA_INSURANCE = 6;
     private int GALLERY_PROFILE = 7, CAMERA_PROFILE = 8;
+    private Map<Integer,String> imagesPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +71,8 @@ public class DriverRegisterActivity extends AppCompatActivity {
 
         continueButton = findViewById(R.id.end_register_driver_btn);
         continueButton.setOnClickListener(view -> finishRegister(view));
+
+        imagesPath =  new HashMap<>();
     }
 
     private void addName() {
@@ -117,7 +123,8 @@ public class DriverRegisterActivity extends AppCompatActivity {
                 Uri contentURI = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    String path = saveImage(bitmap);
+                    String absolutePath = saveImage(bitmap);
+                    imagesPath.put(requestCode,absolutePath);
                     Toast.makeText(DriverRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
 
                     if (requestCode == GALLERY_CAR) imageviewCar.setImageBitmap(bitmap);
@@ -136,7 +143,8 @@ public class DriverRegisterActivity extends AppCompatActivity {
             else if (requestCode == CAMERA_LICENSE) imageviewCar.setImageBitmap(thumbnail);
             else if (requestCode == CAMERA_INSURANCE) imageviewCar.setImageBitmap(thumbnail);
             else if (requestCode == CAMERA_PROFILE) imageviewProfile.setImageBitmap(thumbnail);
-            saveImage(thumbnail);
+            String absolutePath = saveImage(thumbnail);
+            imagesPath.put(requestCode,absolutePath);
             Toast.makeText(DriverRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
         }
     }
@@ -168,6 +176,26 @@ public class DriverRegisterActivity extends AppCompatActivity {
             e1.printStackTrace();
         }
         return "";
+    }
+
+    private RegisterDTO getRegisterDTO(){
+       return new RegisterDTO.RegisterDTOBuilder(
+                this.editNameDriver.getText().toString(),
+                imagesPath.containsKey(GALLERY_PROFILE) ?
+                        imagesPath.get(GALLERY_PROFILE): imagesPath.get(CAMERA_PROFILE))
+                .setDni(this.editDniDriver.getText().toString())
+                .setPhone("algun numero")
+                .setPhotoCar(imagesPath.containsKey(GALLERY_CAR)?
+                        imagesPath.get(GALLERY_CAR) : imagesPath.get(CAMERA_CAR))
+                .setPhotoInsurance(imagesPath.containsKey(GALLERY_INSURANCE)?
+                        imagesPath.get(GALLERY_INSURANCE): imagesPath.get(CAMERA_INSURANCE))
+                .setPhotoLicense(imagesPath.containsKey(GALLERY_LICENSE)?
+                        imagesPath.get(GALLERY_LICENSE): imagesPath.get(CAMERA_LICENSE))
+                .build();
+    }
+
+    private void sendDataToServer() {
+
     }
 
     public void uploadImageCar(View view) {
