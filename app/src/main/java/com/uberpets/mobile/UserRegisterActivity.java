@@ -19,7 +19,11 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.uberpets.Constants;
+import com.uberpets.library.rest.Headers;
 import com.uberpets.model.DataFacebook;
+import com.uberpets.model.RegisterDTO;
+import com.uberpets.model.SimpleResponse;
+import com.uberpets.services.App;
 import com.uberpets.util.AccountSession;
 
 import java.io.ByteArrayOutputStream;
@@ -33,7 +37,8 @@ public class UserRegisterActivity extends AppCompatActivity {
     private ImageView imageviewProfile;
     private Button continueButton;
     private EditText editName;
-    private boolean isUploadedProfileImage;
+    private String absolutePathPhotoProfile;
+    private boolean isUploadedPhotoProfile;
     private static final String IMAGE_DIRECTORY = "/demonuts";
     private int GALLERY = 1, CAMERA = 2;
 
@@ -50,9 +55,23 @@ public class UserRegisterActivity extends AppCompatActivity {
 
         editName = findViewById(R.id.name_user_facebook);
 
+        getExtrasPreviousActivity();
+        addName();
+
+
+    }
+
+
+    private void getExtrasPreviousActivity() {
         if (getIntent().hasExtra("DATA"))
             mDataFacebook = (DataFacebook)getIntent().getSerializableExtra("DATA");
-        addName();
+
+        // if photo profile of user is captured
+        // no is required that user uploaded photo
+        if (getIntent().hasExtra("PROFILE")) {
+            this.absolutePathPhotoProfile = getIntent().getStringExtra("PROFILE");
+            isUploadedPhotoProfile = true;
+        }
     }
 
     private void addName() {
@@ -63,7 +82,7 @@ public class UserRegisterActivity extends AppCompatActivity {
 
     public void uploadImageProfile(View view) {
         showPictureDialog(GALLERY);
-        isUploadedProfileImage = true;
+        isUploadedPhotoProfile = true;
     }
 
     private void showPictureDialog(int code){
@@ -109,7 +128,7 @@ public class UserRegisterActivity extends AppCompatActivity {
                 Uri contentURI = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    String path = saveImage(bitmap);
+                    this.absolutePathPhotoProfile = saveImage(bitmap);
                     Toast.makeText(UserRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
                     imageviewProfile.setImageBitmap(bitmap);
                 } catch (IOException e) {
@@ -120,7 +139,7 @@ public class UserRegisterActivity extends AppCompatActivity {
 
         } else if (requestCode == CAMERA) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");imageviewProfile.setImageBitmap(thumbnail);
-            saveImage(thumbnail);
+            this.absolutePathPhotoProfile = saveImage(thumbnail);
             Toast.makeText(UserRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
         }
     }
@@ -155,19 +174,45 @@ public class UserRegisterActivity extends AppCompatActivity {
     }
 
     public void finishRegister(View view){
-        if ( isUploadedProfileImage
-        && editName.length() >0 ){
+        if ( editName.length() >0 &&
+                isUploadedPhotoProfile){
+            sendDataToServer();
+        }else{
+            Toast.makeText(this, "Tu nombre no puede estar incompleto",
+                    Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void sendDataToServer() {
+        App.nodeServer.post("/userCredentials/register",
+                getRegisterDTO(), SimpleResponse.class, new Headers())
+                .run(this::handleResponseRegister,this::handleErrorRegister);
+    }
+
+    private RegisterDTO getRegisterDTO(){
+        return new RegisterDTO.RegisterDTOBuilder(editName.getText().toString(),
+                this.absolutePathPhotoProfile).build();
+    }
+
+    private void handleResponseRegister(SimpleResponse simpleResponse) {
+        if(simpleResponse.getStatus() == 200) {
+            //TODO: mostrar mensaje de que el registro fue exitoso y luego de un delay redirigir
             //save session of user
             AccountSession.setRolLoggedValue(this,
                     Constants.getInstance().getID_USERS());
             AccountSession.setLoginStatusValue(this,true);
             Intent intent = new Intent(this, UserHome.class);
             startActivity(intent);
-        }else{
-            Toast.makeText(this, "Tenes que completar todos los campos para continuar",
-                    Toast.LENGTH_LONG).show();
         }
-
     }
+
+    private void handleErrorRegister(Exception e) {
+        Log.e(this.getClass().getName(),"Error in driver register");
+        Log.e(this.getClass().getName(),e.toString());
+        Toast.makeText(this,"Hubo un problema al registrar, inentelo más tarde",
+                Toast.LENGTH_LONG).show();
+    }
+
 
 }
