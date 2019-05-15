@@ -9,8 +9,10 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -133,8 +135,8 @@ public class DriverRegisterActivity extends AppCompatActivity {
                 Uri contentURI = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    String absolutePath = saveImage(bitmap);
-                    imagesPath.put(requestCode,absolutePath);
+                    saveImage(bitmap);
+                    imagesPath.put(requestCode,generatePhotoProfileCoded(bitmap));
                     Toast.makeText(DriverRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
 
                     if (requestCode == GALLERY_CAR) imageviewCar.setImageBitmap(bitmap);
@@ -153,8 +155,8 @@ public class DriverRegisterActivity extends AppCompatActivity {
             else if (requestCode == CAMERA_LICENSE) imageviewCar.setImageBitmap(thumbnail);
             else if (requestCode == CAMERA_INSURANCE) imageviewCar.setImageBitmap(thumbnail);
             else if (requestCode == CAMERA_PROFILE) imageviewProfile.setImageBitmap(thumbnail);
-            String absolutePath = saveImage(thumbnail);
-            imagesPath.put(requestCode,absolutePath);
+            saveImage(thumbnail);
+            imagesPath.put(requestCode,generatePhotoProfileCoded(thumbnail));
             Toast.makeText(DriverRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
         }
     }
@@ -247,6 +249,13 @@ public class DriverRegisterActivity extends AppCompatActivity {
     public void uploadImageProfile(View view) {
         showPictureDialog(GALLERY_PROFILE);
         isUploadedProfileImage = true;
+    }
+
+    private String generatePhotoProfileCoded(@NonNull Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 90, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
     public void finishRegister(View view) {

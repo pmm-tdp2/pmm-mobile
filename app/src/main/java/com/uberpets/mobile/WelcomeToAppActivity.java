@@ -34,7 +34,7 @@ public class WelcomeToAppActivity extends AppCompatActivity {
 
     private Constants mConstant = Constants.getInstance();
     private DataFacebook mDataFacebook;
-    private String absolutePathProfile;
+    private String photoProfileCoded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +73,7 @@ public class WelcomeToAppActivity extends AppCompatActivity {
                 idRol.equals(mConstant.getID_USERS()) ?
                         UserRegisterActivity.class : DriverRegisterActivity.class);
         intent.putExtra("DATA",this.mDataFacebook);
-        intent.putExtra("PROFILE",this.absolutePathProfile);
+        intent.putExtra("PROFILE",this.photoProfileCoded);
         startActivity(intent);
     }
 
@@ -123,16 +123,16 @@ public class WelcomeToAppActivity extends AppCompatActivity {
             // modify the activity's UI
             ImageView photo = activity.findViewById(R.id.image_user_register);
             photo.setImageBitmap(bitmap);
-            activity.generateAbsolutePathProfile(bitmap);
+            activity.generatePhotoProfileCoded(bitmap);
         }
 
     }
 
-    private void generateAbsolutePathProfile(Bitmap bitmap) {
+    private void generatePhotoProfileCoded(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, byteArrayOutputStream);
         byte[] byteArray = byteArrayOutputStream .toByteArray();
-        this.absolutePathProfile = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        this.photoProfileCoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
 }

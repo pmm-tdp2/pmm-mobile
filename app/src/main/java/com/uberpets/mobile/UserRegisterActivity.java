@@ -7,8 +7,10 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -37,7 +39,7 @@ public class UserRegisterActivity extends AppCompatActivity {
     private ImageView imageviewProfile;
     private Button continueButton;
     private EditText editName;
-    private String absolutePathPhotoProfile;
+    private String photoProfileCoded;
     private boolean isUploadedPhotoProfile;
     private static final String IMAGE_DIRECTORY = "/demonuts";
     private int GALLERY = 1, CAMERA = 2;
@@ -69,7 +71,7 @@ public class UserRegisterActivity extends AppCompatActivity {
         // if photo profile of user is captured
         // no is required that user uploaded photo
         if (getIntent().hasExtra("PROFILE")) {
-            this.absolutePathPhotoProfile = getIntent().getStringExtra("PROFILE");
+            this.photoProfileCoded = getIntent().getStringExtra("PROFILE");
             isUploadedPhotoProfile = true;
         }
     }
@@ -128,7 +130,8 @@ public class UserRegisterActivity extends AppCompatActivity {
                 Uri contentURI = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    this.absolutePathPhotoProfile = saveImage(bitmap);
+                    saveImage(bitmap);
+                    this.photoProfileCoded = generatePhotoProfileCoded(bitmap);
                     Toast.makeText(UserRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
                     imageviewProfile.setImageBitmap(bitmap);
                 } catch (IOException e) {
@@ -139,10 +142,19 @@ public class UserRegisterActivity extends AppCompatActivity {
 
         } else if (requestCode == CAMERA) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");imageviewProfile.setImageBitmap(thumbnail);
-            this.absolutePathPhotoProfile = saveImage(thumbnail);
+            saveImage(thumbnail);
+            this.photoProfileCoded = generatePhotoProfileCoded(thumbnail);
             Toast.makeText(UserRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private String generatePhotoProfileCoded(@NonNull Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 90, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream .toByteArray();
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
 
     public String saveImage(Bitmap myBitmap) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -192,7 +204,7 @@ public class UserRegisterActivity extends AppCompatActivity {
 
     private RegisterDTO getRegisterDTO(){
         return new RegisterDTO.RegisterDTOBuilder(editName.getText().toString(),
-                this.absolutePathPhotoProfile).build();
+                this.photoProfileCoded).build();
     }
 
     private void handleResponseRegister(SimpleResponse simpleResponse) {
