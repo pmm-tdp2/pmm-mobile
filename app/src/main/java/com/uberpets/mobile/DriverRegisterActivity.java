@@ -1,5 +1,6 @@
 package com.uberpets.mobile;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,8 +18,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.NetworkResponse;
+import com.uberpets.library.rest.Headers;
 import com.uberpets.model.DataFacebook;
 import com.uberpets.model.RegisterDTO;
+import com.uberpets.model.SimpleResponse;
+import com.uberpets.services.App;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,6 +48,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private boolean isUploadedProfileImage = false;
     private EditText editNameDriver;
     private EditText editDniDriver;
+    private EditText editPhoneDriver;
     private static final String IMAGE_DIRECTORY = "/demonuts";
     private int GALLERY_CAR = 1, CAMERA_CAR = 2;
     private int GALLERY_LICENSE = 3, CAMERA_LICENSE = 4;
@@ -59,6 +65,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
 
         editNameDriver = findViewById(R.id.name_driver_facebook);
         editDniDriver = findViewById(R.id.dni_driver);
+        editPhoneDriver = findViewById(R.id.phone_driver);
         addName();
         imageviewCar = findViewById(R.id.imageview_car);
         imageviewCar.setOnClickListener(view -> uploadImageCar(view));
@@ -184,7 +191,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
                 imagesPath.containsKey(GALLERY_PROFILE) ?
                         imagesPath.get(GALLERY_PROFILE): imagesPath.get(CAMERA_PROFILE))
                 .setDni(this.editDniDriver.getText().toString())
-                .setPhone("algun numero")
+                .setPhone(editPhoneDriver.getText().toString())
                 .setPhotoCar(imagesPath.containsKey(GALLERY_CAR)?
                         imagesPath.get(GALLERY_CAR) : imagesPath.get(CAMERA_CAR))
                 .setPhotoInsurance(imagesPath.containsKey(GALLERY_INSURANCE)?
@@ -195,7 +202,26 @@ public class DriverRegisterActivity extends AppCompatActivity {
     }
 
     private void sendDataToServer() {
+        App.nodeServer.post("/userCredentials/register",
+                getRegisterDTO(), SimpleResponse.class, new Headers())
+                .run(this::handleResponseRegister,this::handleErrorRegister);
+    }
 
+    private void handleResponseRegister(SimpleResponse simpleResponse) {
+        if(simpleResponse.getStatus() == 200) {
+            //TODO: mostrar mensaje de que el registro fue exitoso y luego de un delay redirigir
+            Intent intent = new Intent(this,DriverHome.class);
+            startActivity(intent);
+            //TODO: guardar la sessión del usuario..
+            finish();
+        }
+    }
+
+    private void handleErrorRegister(Exception e) {
+        Log.e(this.getClass().getName(),"Error in driver register");
+        Log.e(this.getClass().getName(),e.toString());
+        Toast.makeText(this,"Hubo un problema al registrar, inentelo más tarde",
+                Toast.LENGTH_LONG).show();
     }
 
     public void uploadImageCar(View view) {
@@ -222,10 +248,10 @@ public class DriverRegisterActivity extends AppCompatActivity {
         if (isUploadedCarImage && isUploadedLicenseImage
                 && isUploadedInsuranceImage && isUploadedProfileImage
                 && editNameDriver.getText().length() > 0
-                && editDniDriver.getText().length() > 0) {
+                && editDniDriver.getText().length() > 0
+                && editPhoneDriver.getText().length() > 0) {
 
-            Intent intent = new Intent(this, DriverHome.class);
-            startActivity(intent);
+            sendDataToServer();
         }
         else{
             Toast.makeText(this, "Tenes que completar todos los campos para continuar",
