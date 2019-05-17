@@ -61,7 +61,7 @@
     <string name="cancel_travel_information">Al cancelar el viaje tendrás una calificación de 0 puntos.</string>
 
     <string name="your_travel_has_been_canceled_title">Su viaje ha sido cancelado</string>
-    <string name="your_travel_has_been_canceled_body">El chofer ha cancelado el viaje. Volvé a pedir uno nuevo!</string>
+    <string name="your_travel_has_been_canceled_body">Lamentamos informarle que el chofer a cancelado su viaje. El mismo será penalizado. Nuevamente le pedimos disculpas. Puede gestionar un nuevo viaje desde la pantalla de inicio.</string>
 
     <string name="logout_account">Cerar sesión</string>
     <string name="number_phone">Teléfono celular</string>
