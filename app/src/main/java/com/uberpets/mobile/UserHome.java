@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -106,6 +107,7 @@ public class UserHome extends AppCompatActivity
     private Emitter.Listener mListenerPositionDriver;
     private Emitter.Listener mListenerDriverArrivedToUser;
     private Emitter.Listener mListenerDriverArrivedToDestiny;
+    private Emitter.Listener mListenerDriverCancelTravel;
 
     private OptionsTravelFragment mFragmentTest;
     private Constants mConstants = Constants.getInstance();
@@ -150,6 +152,7 @@ public class UserHome extends AppCompatActivity
                 listenDriverPosition();
                 listenDriverArrivedUser();
                 listenDriverArrivedDestiny();
+                listenCancelTravel();
             } catch (URISyntaxException e) {
                 Log.e(TAG_CONNECTION_SERVER,"io socket failure");
             }
@@ -611,8 +614,7 @@ public class UserHome extends AppCompatActivity
             @Override
             public void call(final Object... args) {
                 runOnUiThread( () -> {
-                    JSONObject data = (JSONObject) args[0];
-                    initTravel();
+                    Log.d(this.getClass().getName(),"the driver has arrived to user");
                 });
             }
         });
@@ -631,6 +633,25 @@ public class UserHome extends AppCompatActivity
                 });
             }
         });
+    }
+
+    //listen if arrive message that driver arrived to destiny
+    public void listenCancelTravel() {
+        UserHome userHome = this;
+        mSocket.on(mConstants.getEVENT_CANCEL_TRAVEL(),
+                mListenerDriverCancelTravel = new Emitter.Listener() {
+                    @Override
+                    public void call(final Object... args) {
+                        runOnUiThread( () -> {
+                            Log.d(this.getClass().getName(),"message finalize travel arrived");
+                            Log.d(this.getClass().getName(),args[0].toString());
+                            Toast.makeText(userHome,"Su viaje ha sido cancelado",
+                                    Toast.LENGTH_LONG).show();
+                            finishPreviousFragments();
+                            returnOriginalState();
+                        });
+                    }
+                });
     }
 
 
