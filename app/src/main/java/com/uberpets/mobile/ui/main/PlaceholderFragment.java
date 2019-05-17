@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -18,12 +19,20 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.uberpets.Constants;
+import com.uberpets.library.rest.Headers;
+import com.uberpets.mobile.DriverHome;
 import com.uberpets.mobile.R;
+import com.uberpets.mobile.UserHome;
 import com.uberpets.mobile.WelcomeToAppActivity;
 import com.uberpets.model.DataFacebook;
+import com.uberpets.model.LoginDTO;
+import com.uberpets.model.SimpleResponse;
+import com.uberpets.services.App;
+import com.uberpets.util.AccountSession;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,6 +40,7 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 
 /**
  * A placeholder fragment containing a simple view.
@@ -42,11 +52,11 @@ public class PlaceholderFragment extends Fragment {
     private String mIdTab;
     private String idWhoHasLogged = "";
     private LoginButton mLoginButton;
-    private TextView dataDisplayed;
     private CallbackManager mCallbackManager;
     private Constants mConstant = Constants.getInstance();
     private CardView mCardMessage;
     private TextView mTextCard;
+    private LoginResult mLoginResult;
 
     public static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
@@ -59,7 +69,9 @@ public class PlaceholderFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PageViewModel pageViewModel = ViewModelProviders.of(this).get(PageViewModel.class);
+        PageViewModel pageViewModel = ViewModelProviders.of(this)
+                .get(PageViewModel.class);
+
         int index = 1;
         if (getArguments() != null) {
             index = getArguments().getInt(ARG_SECTION_NUMBER);
@@ -77,12 +89,18 @@ public class PlaceholderFragment extends Fragment {
             Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_tab_login, container, false);
 
+        /*
+         * before to init the application valid
+         * if user has init session previously and avoid login again
+         */
+
         root.setBackgroundColor(getResources().getColor(
                 mIdTab.equals( mConstant.getID_USERS() ) ?
                         R.color.loginUser : R.color.loginDriver));
 
+        evaluateSession();
+
         mLoginButton = root.findViewById(R.id.login_button_facebook);
-        dataDisplayed = root.findViewById(R.id.data_displayed_login);
         mCallbackManager = CallbackManager.Factory.create();
 
         mLoginButton.setReadPermissions("email");
@@ -98,6 +116,16 @@ public class PlaceholderFragment extends Fragment {
         return root;
     }
 
+    private void evaluateSession() {
+        if(AccountSession.getLoginStatusValue(getContext()) &&
+        AccountSession.getRolLoggedValue(getContext()).equals(this.mIdTab)) {
+            Intent intent = new Intent(getContext(),
+                    AccountSession.getRolLoggedValue(getContext()).equals(mConstant.getID_USERS())
+                     ?  UserHome.class : DriverHome.class);
+            startActivity(intent);
+            getActivity().finish();
+        }
+    }
 
     public void setListenerButtonLogin() {
         mLoginButton.setOnClickListener( view ->{
@@ -117,54 +145,89 @@ public class PlaceholderFragment extends Fragment {
     public void registerCallback() {
         mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
-            public void onSuccess(LoginResult loginResult) { handleSuccessEvent(loginResult); }
+            public void onSuccess(LoginResult loginResult) {
+                handleSuccessLoginFacebook(loginResult); }
 
             @Override
             public void onCancel() {
-                handleCancelEvent();
+
+                handleCancelLoginFacebook();
             }
 
             @Override
             public void onError(FacebookException error) {
-                handleErrorEvent(error);
+
+                handleErrorLoginFacebook(error);
             }
         });
     }
 
-    private void handleSuccessEvent(@NonNull LoginResult loginResult) {
-        /*dataDisplayed.setText("ID USER: "+
-                loginResult.getAccessToken().getUserId() + "\n" +
-                "TOKEN: "+loginResult.getAccessToken().getToken());*/
 
-        //pegarle al server con el id del usuario para ver si está registrado
-        //si no está registrado registrar
-        //si está registrado go to home
-
-        //App.nodeServer.get()
-        Log.d(this.getClass().getName(),"Success event: "+loginResult.toString());
-        validateAmountFriends(loginResult);
-    }
-
-    private void handleCancelEvent() {
+    private void handleCancelLoginFacebook() {
         showErrorInRegister("El login fue cancelado");
         Log.d(this.getClass().getName(),"Cancel event: ");
-
     }
 
-    private void handleErrorEvent(FacebookException error) {
+    private void handleErrorLoginFacebook(FacebookException error) {
         showErrorInRegister("Hubo un error en el Login, inténtelo ,más tarde");
         Log.e(this.getClass().getName(),error.getMessage());
     }
 
-/*
-    private void handleGoodResponse(SimpleResponse response) {
+    private void handleSuccessLoginFacebook(@NonNull LoginResult loginResult) {
+        mLoginResult = loginResult;
 
+        //TODO: hay que quitar el hardcodeo
+
+        /*Log.i(this.getClass().getName(),loginResult.getAccessToken().getUserId());
+        LoginDTO loginDTO = new LoginDTO(loginResult
+                .getAccessToken().getUserId());*/
+        LoginDTO loginDTO = new LoginDTO("123456789");
+
+        Log.d(this.getClass().getName(),"Success event: "+loginResult.toString());
+
+        App.nodeServer.post("/userCredentials/login",loginDTO,
+                SimpleResponse.class, new Headers())
+                .run(this::handleServerSuccessfulResponse,this::handleServerErrorResponse);
     }
 
-    private void handleErrorResponse(Exception e) {
-
+    private void handleServerErrorResponse(Exception e) {
+        Log.e(this.getClass().getName(),e.toString());
+        showErrorInRegister("Hubo un problema con el login, inténtelo más tarde");
     }
-*/
+
+
+    private void handleServerSuccessfulResponse(SimpleResponse response) {
+
+        Log.d(this.getClass().getName(),"data response login: "+response.getStatus());
+        switch (response.getStatus()){
+            case 200:
+                goToHome();
+                break;
+
+            case 203:
+                initRegister();
+                break;
+        }
+    }
+
+    private void goToHome() {
+        // when user is registered and access successfully
+        //go to home and save session
+        AccountSession.setRolLoggedValue(getContext(),this.mIdTab);
+        AccountSession.setLoginStatusValue(getContext(),true);
+
+        Intent intent = new Intent(getActivity(),
+                mIdTab.equals(mConstant.getID_USERS()) ?
+                        UserHome.class : DriverHome.class);
+        startActivity(intent);
+        getActivity().finish();
+    }
+
+    private void initRegister() {
+        /*show message or progress bar */
+        validateAmountFriends(mLoginResult);
+    }
+
 
     public void validateAmountFriends(@NonNull LoginResult loginResult) {
         int minimumNumberFriends = mConstant.getMINIMUM_FRIENDS_ACCOUNT();
@@ -218,17 +281,19 @@ public class PlaceholderFragment extends Fragment {
                             Log.v(this.getClass().getName(), response.toString());
                             isValid[0] = validateAlbumDate(object);
 
-                            String after = object.getJSONObject("albums")
-                                    .getJSONObject("paging").getJSONObject("cursors")
-                                    .getString("after");
+                            try{
+                                String after = object.getJSONObject("albums")
+                                        .getJSONObject("paging").getJSONObject("cursors")
+                                        .getString("after");
 
-                            String nextPage = object.getJSONObject("albums")
-                                    .getString("next");
+                                object.getJSONObject("albums")
+                                        .getString("next");
 
-                            if (nextPage == null)
-                                hasNextPage[0]=false;
-                            else
                                 afterPage[0]=after;
+
+                            }catch (Exception e){
+                                hasNextPage[0]=false;
+                            }
 
                         }catch(Exception ex){
                             Log.d(this.getClass().getName(),ex.toString());
@@ -239,7 +304,7 @@ public class PlaceholderFragment extends Fragment {
 
             Bundle parameters = new Bundle();
             parameters.putString("fields", "albums");
-            parameters.putString("next", afterPage[0]);
+            parameters.putString("after", afterPage[0]);
             request.setParameters(parameters);
 
             Thread t = new Thread(request::executeAndWait);
@@ -266,6 +331,7 @@ public class PlaceholderFragment extends Fragment {
 
 
     public void showErrorInRegister(String text) {
+        LoginManager.getInstance().logOut();
         if (text.length() > 0){
             mTextCard.setText(text);
         }
@@ -306,7 +372,12 @@ public class PlaceholderFragment extends Fragment {
     }
 
 
-
+    /**
+     * This method obtain picture profile and name of user/driver
+     * if these fields are not obtained the field name is empty
+     * and picture is picture by default
+     * @param loginResult is object that contain token, id of facebook account
+     */
     public void getDataLoginFacebook(@NonNull LoginResult loginResult) {
         GraphRequest request = GraphRequest.newMeRequest(
                 loginResult.getAccessToken(),

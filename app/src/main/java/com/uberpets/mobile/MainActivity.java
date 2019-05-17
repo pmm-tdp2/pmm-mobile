@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     private RequestQueue requestQueue;
 
     private static MainActivity mInstance;
-    private RadioButton radioLocalHost;
     private RadioButton radioCloudServer;
     private RadioButton radioWriteIp;
     private EditText ip_input;
@@ -35,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Button driverButton = findViewById(R.id.driverButton);
-        radioLocalHost = findViewById(R.id.local_host);
         radioCloudServer = findViewById(R.id.cloud_server);
         radioWriteIp = findViewById(R.id.local_ip_configurable);
         ip_input = findViewById(R.id.ip_input);
@@ -45,9 +43,6 @@ public class MainActivity extends AppCompatActivity {
         boolean success = false;
         if (radioCloudServer.isChecked()){
             Constants.getInstance().setIpToConnect("SERVER_CLOUD");
-            success = true;
-        }else if (radioLocalHost.isChecked()){
-            Constants.getInstance().setIpToConnect("LOCALHOST");
             success = true;
         }else if (radioWriteIp.isChecked() && ip_input.getText().length() != 0){
             Constants.getInstance().setIpToConnect(ip_input.getText().toString());
@@ -76,8 +71,10 @@ public class MainActivity extends AppCompatActivity {
     }*/
 
     public void goToTab(View view){
-        Intent intent = new Intent(this, TabLoginActivity.class);
-        startActivity(intent);
+        if (isIpServerSelected()){
+            Intent intent = new Intent(this, TabLoginActivity.class);
+            startActivity(intent);
+        }
     }
 
     public static synchronized MainActivity getInstance() {
@@ -113,13 +110,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void goRegisterDriver(View view){
-        Intent intent = new Intent(this, DriverRegisterActivity.class);
-        startActivity(intent);
+        if(isIpServerSelected()){
+            Intent intent = new Intent(this, DriverRegisterActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void goRegisterUser(View view){
-        Intent intent = new Intent(this, UserRegisterActivity.class);
-        startActivity(intent);
+        if(isIpServerSelected()){
+            Intent intent = new Intent(this, UserRegisterActivity.class);
+            startActivity(intent);
+        }
     }
 
 }

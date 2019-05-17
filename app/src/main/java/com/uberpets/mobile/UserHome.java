@@ -2,6 +2,7 @@ package com.uberpets.mobile;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -30,6 +31,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.facebook.login.LoginManager;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.Socket;
@@ -52,6 +54,7 @@ import com.google.android.gms.tasks.Task;
 import com.uberpets.Constants;
 import com.uberpets.model.Person;
 import com.uberpets.model.TravelAssignedDTO;
+import com.uberpets.util.AccountSession;
 import com.uberpets.util.GMapV2Direction;
 import com.uberpets.util.GMapV2DirectionAsyncTask;
 
@@ -215,6 +218,11 @@ public class UserHome extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
+        }else if (id == R.id.logout_from_home_account_user) {
+            AccountSession.finalizeSession(this);
+            Intent intent = new Intent(this, TabLoginActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
