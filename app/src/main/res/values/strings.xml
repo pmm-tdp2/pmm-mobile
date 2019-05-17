@@ -59,8 +59,6 @@
     <string name="message_welcome_register">Necesitamos que ingreses algunos datos para poder completar el registro</string>
     <string name="are_you_sure">¿Estás seguro?</string>
     <string name="cancel_travel_information">Al cancelar el viaje tendrás una calificación de 0 puntos.</string>
-
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="your_travel_has_been_canceled_title">Su viaje ha sido cancelado</string>
+    <string name="your_travel_has_been_canceled_body">El chofer ha cancelado el viaje. Volvé a pedir uno nuevo!</string>
 </resources>

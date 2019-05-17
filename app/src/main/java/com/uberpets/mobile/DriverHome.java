@@ -401,7 +401,7 @@ public class  DriverHome
                 .setTravelID(1).setDriverId(1).setHasACompanion(true)
                 .setPetLargeAmount(0).setPetSmallAmount(1).setPetMediumAmount(0)
                 .setUserId(-1).build();
-        TravelRequestFragment travelRequestFragment= new TravelRequestFragment();
+        TravelRequestFragment travelRequestFragment = new TravelRequestFragment();
         travelRequestFragment.setTravelDTO(mockTravelDTO);
         replaceFragment(travelRequestFragment,true);
     }
