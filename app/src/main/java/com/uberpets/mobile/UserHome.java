@@ -51,6 +51,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.uberpets.Constants;
+import com.uberpets.mobile.ui.main.CanceledTravelFragment;
 import com.uberpets.model.Person;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.util.AccountSession;
@@ -637,7 +638,6 @@ public class UserHome extends AppCompatActivity
 
     //listen if arrive message that driver arrived to destiny
     public void listenCancelTravel() {
-        UserHome userHome = this;
         mSocket.on(mConstants.getEVENT_CANCEL_TRAVEL(),
                 mListenerDriverCancelTravel = new Emitter.Listener() {
                     @Override
@@ -645,10 +645,9 @@ public class UserHome extends AppCompatActivity
                         runOnUiThread( () -> {
                             Log.d(this.getClass().getName(),"message finalize travel arrived");
                             Log.d(this.getClass().getName(),args[0].toString());
-                            Toast.makeText(userHome,"Su viaje ha sido cancelado",
-                                    Toast.LENGTH_LONG).show();
                             finishPreviousFragments();
                             returnOriginalState();
+                            replaceFragment(new CanceledTravelFragment(),true);
                         });
                     }
                 });
