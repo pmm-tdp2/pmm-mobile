@@ -1,16 +1,14 @@
 package com.uberpets.mobile;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -20,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.android.volley.NetworkResponse;
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
 import com.uberpets.model.DataFacebook;
@@ -36,8 +33,6 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.media.MediaRecorder.VideoSource.CAMERA;
 
 public class DriverRegisterActivity extends AppCompatActivity {
     private DataFacebook mDataFacebook;

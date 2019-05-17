@@ -1,12 +1,10 @@
 package com.uberpets.mobile;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.uberpets.mobile.R;
 
 /**
  * A placeholder fragment containing a simple view.
