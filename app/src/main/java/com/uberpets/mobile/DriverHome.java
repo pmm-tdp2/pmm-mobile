@@ -204,7 +204,7 @@ public class  DriverHome
                 .checkSelfPermission(DriverHome.this,
                         android.Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
+                    ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION},locationRequestCode);
         } else{

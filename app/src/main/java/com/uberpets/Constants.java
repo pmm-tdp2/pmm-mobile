@@ -28,6 +28,8 @@ public class Constants {
     private int RESPONSE_DESTINY_AUTOCOMPLETE_ACTIVITY;
     private int RESPONSE_ROUTE_AUTOCOMPLETE_ACTIVITY;
 
+    public static int MY_PERMISSIONS_REQUEST_CAMERA;
+
     private String ID_ROL;
     private String ID_USERS;
     private String ID_DRIVERS;
