@@ -21,6 +21,7 @@ public class Constants {
     private String EVENT_CONNECTION;
     private String EVENT_DRIVER_ARRIVED_USER;
     private String EVENT_NOTIFICATION_TRAVEL;
+    private String EVENT_CANCEL_TRAVEL;
 
     private int REQUEST_AUTOCOMPLETE_ACTIVITY;
     private int RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY;
@@ -83,6 +84,7 @@ public class Constants {
             EVENT_CONNECTION = prop.getProperty("event.connection");
             EVENT_DRIVER_ARRIVED_USER = prop.getProperty("event.driver_arrived_user");
             EVENT_NOTIFICATION_TRAVEL = prop.getProperty("event.notification_travel");
+            EVENT_CANCEL_TRAVEL = prop.getProperty("event.cancel_travel");
 
             REQUEST_AUTOCOMPLETE_ACTIVITY = Integer.parseInt(prop.getProperty("intent.request_autocomplete_activity"));
             RESPONSE_ORIGIN_AUTOCOMPLETE_ACTIVITY = Integer.parseInt(prop.getProperty("intent.autocomplete_response_origin"));
@@ -147,6 +149,10 @@ public class Constants {
 
     public String getEVENT_DRIVER_ARRIVED_USER() {
         return EVENT_DRIVER_ARRIVED_USER;
+    }
+
+    public String getEVENT_CANCEL_TRAVEL() {
+        return EVENT_CANCEL_TRAVEL;
     }
 
     public int getREQUEST_AUTOCOMPLETE_ACTIVITY() {
