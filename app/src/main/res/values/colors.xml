@@ -2,7 +2,7 @@
 <resources>
     <!-- App Theme Colors -->
     <color name="colorPrimary">#41CAC6</color>
-    <color name="colorPrimaryDark">#2a9592</color>
+    <color name="colorPrimaryDark">#2A9592</color>
     <color name="analogous1">#418ACA</color>
     <color name="analogous2">#41CA82</color>
     <color name="colorAccent">#CA4145</color>

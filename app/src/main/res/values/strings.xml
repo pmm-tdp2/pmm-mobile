@@ -27,8 +27,10 @@
     <string name="send">Enviar</string>
     <string name="pets_are_on_way">Tus mascotas están en camino</string>
     <string name="arrive_in">llegará a destino en</string>
-    <string name="name_and_colon">nombre:</string>
-    <string name="name">nombre</string>
+    <string name="name_and_colon">Nombre:</string>
+    <string name="name">Nombre</string>
+    <string name="email">Email</string>
+    <string name="phone">Teléfono</string>
     <string name="document_number">Dni</string>
     <string name="driver_on_the_way_message">El chofer está en camino</string>
     <string name="hardcode_space"> </string>
@@ -65,5 +67,12 @@
 
     <string name="logout_account">Cerar sesión</string>
     <string name="number_phone">Teléfono celular</string>
+    <string name="user_registry_data_instruction">Necesitamos que verifiques y completes algunos datos.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="user_profile_image_description">Imagen de perfil</string>
+    <string name="registry">Registro</string>
+    <string name="change_profile_picture">Cambiar foto</string>
 
 </resources>
