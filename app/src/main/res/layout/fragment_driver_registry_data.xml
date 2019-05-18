@@ -4,19 +4,6 @@
     android:layout_height="wrap_content"
     tools:context="com.uberpets.mobile.UserRegistryFragmentData">
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
-
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/user_registry_data_instruction" />
-
-    </FrameLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,8 +42,10 @@
                 android:id="@+id/button3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/continue_button" />
+                android:layout_margin="32dp"
+                android:background="@color/analogous1"
+                android:text="@string/continue_button"
+                android:textColor="@color/lightText" />
         </FrameLayout>
 
     </LinearLayout>

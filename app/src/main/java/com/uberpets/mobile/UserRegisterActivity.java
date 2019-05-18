@@ -90,10 +90,10 @@ public class UserRegisterActivity extends AppCompatActivity {
 
     private void showPictureDialog(int code){
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
-        pictureDialog.setTitle("Select Action");
+        pictureDialog.setTitle("Seleccionar Acción");
         String[] pictureDialogItems = {
-                "Select photo from gallery",
-                "Capture photo from camera" };
+                "Elegir una foto de la galeria",
+                "Subir una foto desde la camara" };
         pictureDialog.setItems(pictureDialogItems,
                 (dialog, which) -> {
                     switch (which) {
@@ -167,11 +167,11 @@ public class UserRegisterActivity extends AppCompatActivity {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
                     saveImage(bitmap);
                     this.photoProfileCoded = generatePhotoProfileCoded(bitmap);
-                    Toast.makeText(UserRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UserRegisterActivity.this, "Imagen guardada!", Toast.LENGTH_SHORT).show();
                     imageviewProfile.setImageBitmap(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(UserRegisterActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(UserRegisterActivity.this, "Falló la carga de imagen", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -179,7 +179,7 @@ public class UserRegisterActivity extends AppCompatActivity {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");imageviewProfile.setImageBitmap(thumbnail);
             saveImage(thumbnail);
             this.photoProfileCoded = generatePhotoProfileCoded(thumbnail);
-            Toast.makeText(UserRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(UserRegisterActivity.this, "Imagen guardada!", Toast.LENGTH_SHORT).show();
         }
     }
 

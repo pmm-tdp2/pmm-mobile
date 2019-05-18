@@ -1,7 +1,9 @@
 package com.uberpets.mobile;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -9,6 +11,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -89,10 +94,10 @@ public class DriverRegisterActivity extends AppCompatActivity {
 
     private void showPictureDialog(int code){
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
-        pictureDialog.setTitle("Select Action");
+        pictureDialog.setTitle("Seleccionar una acción");
         String[] pictureDialogItems = {
-                "Select photo from gallery",
-                "Capture photo from camera" };
+                "Elegir foto de la galeria",
+                "Subir una foto desde la camara" };
         pictureDialog.setItems(pictureDialogItems,
                 (dialog, which) -> {
                     switch (which) {
@@ -115,8 +120,43 @@ public class DriverRegisterActivity extends AppCompatActivity {
     }
 
     private void takePhotoFromCamera(int code) {
-        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent, code);
+        //Tengo que pedir permiso
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA);
+
+        requestCameraPermission();
+
+        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(intent, code);
+        }else{
+            Toast.makeText(DriverRegisterActivity.this, "No tenes permisos para realizar esta acción.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void requestCameraPermission(){
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.CAMERA)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        Constants.MY_PERMISSIONS_REQUEST_CAMERA);
+            }
+        }
     }
 
     @Override
@@ -132,7 +172,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
                     saveImage(bitmap);
                     imagesPath.put(requestCode,generatePhotoProfileCoded(bitmap));
-                    Toast.makeText(DriverRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DriverRegisterActivity.this, "Imagen guardada!", Toast.LENGTH_SHORT).show();
 
                     if (requestCode == GALLERY_CAR) imageviewCar.setImageBitmap(bitmap);
                     else if (requestCode == GALLERY_LICENSE) imageviewLicense.setImageBitmap(bitmap);
@@ -140,7 +180,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
                     else if (requestCode == GALLERY_PROFILE) imageviewProfile.setImageBitmap(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(DriverRegisterActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DriverRegisterActivity.this, "Falló la carga de imagen", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -152,7 +192,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
             else if (requestCode == CAMERA_PROFILE) imageviewProfile.setImageBitmap(thumbnail);
             saveImage(thumbnail);
             imagesPath.put(requestCode,generatePhotoProfileCoded(thumbnail));
-            Toast.makeText(DriverRegisterActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DriverRegisterActivity.this, "Imagen guardada!", Toast.LENGTH_SHORT).show();
         }
     }
 
