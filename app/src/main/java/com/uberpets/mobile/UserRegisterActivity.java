@@ -57,8 +57,6 @@ public class UserRegisterActivity extends AppCompatActivity {
 
         getExtrasPreviousActivity();
         addName();
-
-
     }
 
 

@@ -66,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:background="@color/analogous1"
                     android:layoutDirection="inherit"
+                    android:onClick="acceptAction"
                     android:text="@string/accept"
                     android:textColor="@color/lightText" />
 
