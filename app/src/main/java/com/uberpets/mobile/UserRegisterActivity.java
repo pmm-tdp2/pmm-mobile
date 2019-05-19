@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.uberpets.Constants;
@@ -42,6 +43,7 @@ public class UserRegisterActivity extends AppCompatActivity {
     private ImageView imageviewProfile;
     private Button continueButton;
     private EditText editName;
+    private TextView sendingDataText;
     private String photoProfileCoded;
     private boolean isUploadedPhotoProfile;
     private static final String IMAGE_DIRECTORY = "/demonuts";
@@ -54,6 +56,9 @@ public class UserRegisterActivity extends AppCompatActivity {
 
         imageviewProfile = findViewById(R.id.imageview_profile);
         //imageviewProfile.setOnClickListener(view -> uploadImageProfile(view));
+
+        sendingDataText = findViewById(R.id.sending_user_data_text);
+        sendingDataText.setVisibility(View.INVISIBLE);
 
         continueButton = findViewById(R.id.end_register_user_btn);
         continueButton.setOnClickListener(view -> finishRegister(view));
@@ -223,6 +228,8 @@ public class UserRegisterActivity extends AppCompatActivity {
     public void finishRegister(View view){
         if ( editName.length() >0 &&
                 isUploadedPhotoProfile){
+            sendingDataText.setVisibility(View.VISIBLE);
+            continueButton.setVisibility(View.INVISIBLE);
             sendDataToServer();
         }else{
             Toast.makeText(this, "Tu nombre no puede estar incompleto",

@@ -30,20 +30,20 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="64dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/driver_register_header">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1" >
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -257,7 +257,7 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="32dp"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="64dp"
                 android:background="@color/analogous1"
                 android:text="@string/continue_button"
                 android:textColor="@color/lightText"
@@ -271,12 +271,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:visibility="invisible"
-                android:text="@string/sending_data_dots" />
-
+                android:text="@string/sending_data_dots"
+                android:visibility="invisible" />
         </LinearLayout>
     </ScrollView>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
