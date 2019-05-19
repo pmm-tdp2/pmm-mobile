@@ -75,5 +75,6 @@
     <string name="registry">Registro</string>
     <string name="change_profile_picture">Cambiar foto</string>
     <string name="driver_photo_upload_instruction">Necesitamos que subas algunas fotos. Hace click en la imagen para subir o cambiar la foto.</string>
+    <string name="sending_data_dots">Enviando datos...</string>
 
 </resources>

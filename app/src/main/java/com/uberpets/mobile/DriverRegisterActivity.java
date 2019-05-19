@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.uberpets.Constants;
@@ -53,6 +54,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private EditText editNameDriver;
     private EditText editDniDriver;
     private EditText editPhoneDriver;
+    private TextView sendingDataText;
     private static final String IMAGE_DIRECTORY = "/demonuts";
     private int GALLERY_CAR = 1, CAMERA_CAR = 2;
     private int GALLERY_LICENSE = 3, CAMERA_LICENSE = 4;
@@ -68,6 +70,8 @@ public class DriverRegisterActivity extends AppCompatActivity {
         editNameDriver = findViewById(R.id.name_driver_facebook);
         editDniDriver = findViewById(R.id.dni_driver);
         editPhoneDriver = findViewById(R.id.phone_driver);
+        sendingDataText = findViewById(R.id.sending_data_text);
+        sendingDataText.setVisibility(View.INVISIBLE);
         addName();
         imageviewCar = findViewById(R.id.imageview_car);
         imageviewCar.setOnClickListener(view -> uploadImageCar(view));
@@ -187,8 +191,8 @@ public class DriverRegisterActivity extends AppCompatActivity {
         } else if (requestCode % 2 == 0) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             if (requestCode == CAMERA_CAR) imageviewCar.setImageBitmap(thumbnail);
-            else if (requestCode == CAMERA_LICENSE) imageviewCar.setImageBitmap(thumbnail);
-            else if (requestCode == CAMERA_INSURANCE) imageviewCar.setImageBitmap(thumbnail);
+            else if (requestCode == CAMERA_LICENSE) imageviewLicense.setImageBitmap(thumbnail);
+            else if (requestCode == CAMERA_INSURANCE) imageviewCarInusrance.setImageBitmap(thumbnail);
             else if (requestCode == CAMERA_PROFILE) imageviewProfile.setImageBitmap(thumbnail);
             saveImage(thumbnail);
             imagesPath.put(requestCode,generatePhotoProfileCoded(thumbnail));
@@ -294,6 +298,9 @@ public class DriverRegisterActivity extends AppCompatActivity {
     }
 
     public void finishRegister(View view) {
+        sendingDataText.setVisibility(View.VISIBLE);
+        continueButton.setVisibility(View.INVISIBLE);
+
         if (isUploadedCarImage && isUploadedLicenseImage
                 && isUploadedInsuranceImage && isUploadedProfileImage
                 && editNameDriver.getText().length() > 0
@@ -303,6 +310,8 @@ public class DriverRegisterActivity extends AppCompatActivity {
             sendDataToServer();
         }
         else{
+            sendingDataText.setVisibility(View.INVISIBLE);
+            continueButton.setVisibility(View.VISIBLE);
             Toast.makeText(this, "Tenes que completar todos los campos para continuar",
                     Toast.LENGTH_LONG).show();
         }
