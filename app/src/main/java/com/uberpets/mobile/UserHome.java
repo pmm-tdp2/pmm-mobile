@@ -111,6 +111,7 @@ public class UserHome extends AppCompatActivity
     private Emitter.Listener mListenerDriverCancelTravel;
 
     private OptionsTravelFragment mFragmentTest;
+    private CanceledTravelFragment mFragmentCanceledTravel;
     private Constants mConstants = Constants.getInstance();
 
     private static final String[] TRANSPORTS = {
@@ -160,6 +161,10 @@ public class UserHome extends AppCompatActivity
         }
 
         requestPermission();
+
+        //erase
+        //mFragmentCanceledTravel = new CanceledTravelFragment();
+        //replaceFragment(mFragmentCanceledTravel,true);
     }
 
     public int getIdUSer() {
@@ -430,7 +435,7 @@ public class UserHome extends AppCompatActivity
 
     //init fragment options travel
     public void showOptionsToTravel() {
-        mFragmentTest =new OptionsTravelFragment();
+        mFragmentTest = new OptionsTravelFragment();
         mFragmentTest.setSocketIO(mSocket);
         replaceFragment(mFragmentTest , true);
     }
@@ -647,7 +652,8 @@ public class UserHome extends AppCompatActivity
                             Log.d(this.getClass().getName(),args[0].toString());
                             finishPreviousFragments();
                             returnOriginalState();
-                            replaceFragment(new CanceledTravelFragment(),true);
+                            if (mFragmentCanceledTravel == null) mFragmentCanceledTravel = new CanceledTravelFragment();
+                            replaceFragment(mFragmentCanceledTravel,true);
                         });
                     }
                 });
@@ -728,7 +734,11 @@ public class UserHome extends AppCompatActivity
         //por ahora....
         transaction.commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
+    }
 
+    public void acceptAction(View view){
+        getSupportFragmentManager().beginTransaction().
+                remove(mFragmentCanceledTravel).commit();
     }
 
     /*END REPLACE FRAGMENT*/
