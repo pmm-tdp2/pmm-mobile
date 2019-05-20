@@ -335,6 +335,7 @@ public class  DriverHome
         //por ahora....
         transaction.commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
+        Log.d(this.getClass().getName(),"Reemplazando fragment");
     }
 
     private void removeUpperSectionFragment(){
@@ -397,8 +398,8 @@ public class  DriverHome
     public void showNewTravelNotification(android.view.View view) {
         TravelDTO mockTravelDTO = new TravelDTO.TravelDTOBuilder(
                 new LatLng(1.0,1.0), new LatLng(1.5,1.5))
-                .setTravelID(1).setDriverId(1).setHasACompanion(true)
-                .setPetLargeAmount(0).setPetSmallAmount(1).setPetMediumAmount(0)
+                .setTravelID(-1).setDriverId(1).setHasACompanion(true)
+                .setpetAmountLarge(0).setpetAmountSmall(1).setpetAmountMedium(0)
                 .setUserId(-1).build();
         TravelRequestFragment travelRequestFragment= new TravelRequestFragment();
         travelRequestFragment.setTravelDTO(mockTravelDTO);

@@ -15,9 +15,9 @@ public class TravelDTO {
     private final int travelID;
     private final LatLng from;
     private final LatLng to;
-    private final int petSmallAmount;
-    private final int petMediumAmount;
-    private final int petLargeAmount;
+    private final int petAmountSmall;
+    private final int petAmountMedium;
+    private final int petAmountLarge;
     private final boolean hasACompanion;
 
 
@@ -27,9 +27,9 @@ public class TravelDTO {
         private int travelID = 0;
         private int userId = 0;
         private int driverId = 0;
-        private int petSmallAmount = 0;
-        private int petMediumAmount = 0;
-        private int petLargeAmount = 0;
+        private int petAmountSmall = 0;
+        private int petAmountMedium = 0;
+        private int petAmountLarge = 0;
         private boolean hasACompanion = false;
 
         public TravelDTOBuilder(LatLng from, LatLng to) {
@@ -52,18 +52,18 @@ public class TravelDTO {
             return this;
         }
 
-        public TravelDTOBuilder setPetSmallAmount(int petSmallAmount) {
-            this.petSmallAmount = petSmallAmount;
+        public TravelDTOBuilder setpetAmountSmall(int petAmountSmall) {
+            this.petAmountSmall = petAmountSmall;
             return this;
         }
 
-        public TravelDTOBuilder setPetMediumAmount(int petMediumAmount) {
-            this.petMediumAmount = petMediumAmount;
+        public TravelDTOBuilder setpetAmountMedium(int petAmountMedium) {
+            this.petAmountMedium = petAmountMedium;
             return this;
         }
 
-        public TravelDTOBuilder setPetLargeAmount(int petLargeAmount) {
-            this.petLargeAmount = petLargeAmount;
+        public TravelDTOBuilder setpetAmountLarge(int petAmountLarge) {
+            this.petAmountLarge = petAmountLarge;
             return this;
         }
 
@@ -83,9 +83,9 @@ public class TravelDTO {
         this.from = builder.from;
         this.to = builder.to;
         this.hasACompanion = builder.hasACompanion;
-        this.petSmallAmount = builder.petSmallAmount;
-        this.petMediumAmount = builder.petMediumAmount;
-        this.petLargeAmount = builder.petLargeAmount;
+        this.petAmountSmall = builder.petAmountSmall;
+        this.petAmountMedium = builder.petAmountMedium;
+        this.petAmountLarge = builder.petAmountLarge;
         this.travelID = builder.travelID;
         this.userId = builder.userId;
         this.driverId = builder.driverId;
@@ -103,16 +103,16 @@ public class TravelDTO {
         return to;
     }
 
-    public int getPetSmallAmount() {
-        return petSmallAmount;
+    public int getpetAmountSmall() {
+        return petAmountSmall;
     }
 
-    public int getPetMediumAmount() {
-        return petMediumAmount;
+    public int getpetAmountMedium() {
+        return petAmountMedium;
     }
 
-    public int getPetLargeAmount() {
-        return petLargeAmount;
+    public int getpetAmountLarge() {
+        return petAmountLarge;
     }
 
     public boolean isHasACompanion() {
@@ -134,9 +134,9 @@ public class TravelDTO {
          +" travelID: "+travelID
          +" from: "+from
          +" to: "+to
-         +" petSmallAmount: "+petSmallAmount
-         +" petMediumAmount: "+petMediumAmount
-         +" petLargeAmount: "+petLargeAmount
+         +" petAmountSmall: "+petAmountSmall
+         +" petAmountMedium: "+petAmountMedium
+         +" petAmountLarge: "+petAmountLarge
          +" hasACompanion: "+hasACompanion;
 
     }

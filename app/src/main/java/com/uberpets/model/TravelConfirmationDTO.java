@@ -11,11 +11,13 @@ public class TravelConfirmationDTO {
     private int travelID;
     private String rol;
     private int id;
+    private boolean accept;
 
-    public TravelConfirmationDTO(int travelID, String rol, int id) {
+    public TravelConfirmationDTO(int travelID, String rol, int id, boolean accept) {
         this.travelID = travelID;
         this.rol = rol;
         this.id = id;
+        this.accept = accept;
     }
 
     public int getId() {

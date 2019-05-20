@@ -135,9 +135,9 @@ public class OptionsTravelFragment extends Fragment {
                 myActivity.getmOrigin(),myActivity.getmDestiny())
                 .setUserId(myActivity.getIdUSer())
                 .setHasACompanion(optionCompanion.isChecked())
-                .setPetSmallAmount(mAdapter.getAllLittlePets())
-                .setPetMediumAmount(mAdapter.getAllMediumPets())
-                .setPetLargeAmount(mAdapter.getAllBigPets())
+                .setpetAmountSmall(mAdapter.getAllLittlePets())
+                .setpetAmountMedium(mAdapter.getAllMediumPets())
+                .setpetAmountLarge(mAdapter.getAllBigPets())
                 .build();
 
         App.nodeServer.post("/travel/cotization",
@@ -172,7 +172,7 @@ public class OptionsTravelFragment extends Fragment {
         if (readyToGetTravel){
             showSearchingDriver();
             TravelConfirmationDTO travelConfirmationDTO =
-                    new TravelConfirmationDTO(travelID,myActivity.ROL,myActivity.getIdUSer());
+                    new TravelConfirmationDTO(travelID,myActivity.ROL,myActivity.getIdUSer(),true);
             App.nodeServer.post("/travel/confirmation",
                     travelConfirmationDTO, TravelAssignedDTO.class, new Headers())
                     //.onDone((s,ec)->finishFragmentExecuted())

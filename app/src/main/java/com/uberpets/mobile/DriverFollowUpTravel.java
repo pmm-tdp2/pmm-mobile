@@ -176,7 +176,7 @@ public class DriverFollowUpTravel extends Fragment {
         int driverId = this.idDriver;
         int travelId = mTravelAssignedDTO == null ? 9999 : mTravelAssignedDTO.getTravelID();
         TravelConfirmationDTO travelCancelDTO = new TravelConfirmationDTO(
-                travelId, rol, driverId);
+                travelId, rol, driverId,true);
         App.nodeServer.post("/travel/cancel", travelCancelDTO, SimpleResponse.class, new Headers())
                 .run(this::responseCancelTravel, this::errorCancelTravel);
     }
@@ -185,7 +185,7 @@ public class DriverFollowUpTravel extends Fragment {
         if(mTravelAssignedDTO !=  null){
             TravelConfirmationDTO travelConfirmationDTO =
                     new TravelConfirmationDTO(mTravelAssignedDTO.getTravelID()
-                            ,this.ROL,this.idDriver);
+                            ,this.ROL,this.idDriver,true);
             App.nodeServer.post("/travel/finalize",travelConfirmationDTO,
                     SimpleResponse.class, new Headers())
                     .run(this::responseFinalizeTravelFragment,this::errorRejectTravelFragment);
