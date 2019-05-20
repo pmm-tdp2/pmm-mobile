@@ -28,8 +28,8 @@ public class CanceledTravelFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        acceptButton = container.findViewById(R.id.accept_canceled_travel_button);
-        acceptButton.setOnClickListener(view->acceptAction(view));
+        //acceptButton = container.findViewById(R.id.accept_canceled_travel_button);
+        //acceptButton.setOnClickListener(view->acceptAction(view));
         return inflater.inflate(R.layout.fragment_canceled_travel, container, false);
     }
 
