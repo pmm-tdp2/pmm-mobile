@@ -8,19 +8,22 @@ public class DataFacebook implements Serializable {
     private final String name;
     private final int amountFriends;
     private final int timeActive;
+    private final String idFacebook;
 
     public DataFacebook(DataFacebookBuilder builder) {
         this.pictureUrl = builder.pictureUrl;
         this.name = builder.name;
         this.amountFriends = builder.amountFriends;
         this.timeActive = builder.timeActive;
+        this.idFacebook = builder.idFacebook;
     }
 
-    public DataFacebook(String pictureUrl, String name, int amountFriends, int timeActive) {
+    public DataFacebook(String pictureUrl, String name, int amountFriends, int timeActive,String idFacebook) {
         this.pictureUrl = pictureUrl;
         this.name = name;
         this.amountFriends = amountFriends;
         this.timeActive = timeActive;
+        this.idFacebook = idFacebook;
     }
 
     public static class DataFacebookBuilder {
@@ -28,8 +31,10 @@ public class DataFacebook implements Serializable {
         private String name="";
         private int amountFriends=0;
         private int timeActive=0;
+        private final String idFacebook;
 
-        public DataFacebookBuilder() {
+        public DataFacebookBuilder(String idFacebook) {
+            this.idFacebook = idFacebook;
         }
 
         public DataFacebookBuilder setPictureUrl(String pictureUrl) {
@@ -72,5 +77,9 @@ public class DataFacebook implements Serializable {
 
     public int getTimeActive() {
         return timeActive;
+    }
+
+    public String getIdFacebook() {
+        return idFacebook;
     }
 }

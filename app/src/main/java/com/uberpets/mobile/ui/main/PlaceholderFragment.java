@@ -177,10 +177,9 @@ public class PlaceholderFragment extends Fragment {
 
         //TODO: hay que quitar el hardcodeo
 
-        /*Log.i(this.getClass().getName(),loginResult.getAccessToken().getUserId());
+        Log.i(this.getClass().getName(),loginResult.getAccessToken().getUserId());
         LoginDTO loginDTO = new LoginDTO(loginResult
-                .getAccessToken().getUserId());*/
-        LoginDTO loginDTO = new LoginDTO("123456789");
+                .getAccessToken().getUserId());
 
         Log.d(this.getClass().getName(),"Success event: "+loginResult.toString());
 
@@ -386,7 +385,8 @@ public class PlaceholderFragment extends Fragment {
                 public void onCompleted(JSONObject object, GraphResponse response) {
                     Log.v(this.getClass().getName(), response.toString());
                     try {
-                        DataFacebook dataFacebook =  new DataFacebook.DataFacebookBuilder()
+                        DataFacebook dataFacebook =  new DataFacebook
+                                .DataFacebookBuilder(loginResult.getAccessToken().getUserId())
                                 .setName(object.getString("name"))
                                 .setPictureUrl("https://graph.facebook.com/" +
                                         loginResult.getAccessToken().getUserId()

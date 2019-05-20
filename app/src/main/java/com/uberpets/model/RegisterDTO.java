@@ -9,7 +9,7 @@ public class RegisterDTO {
     private final String photoCar;
     private final String photoInsurance;
     private final String photoLicense;
-
+    private final String rol;
 
     public static class RegisterDTOBuilder {
         private final String id;
@@ -20,6 +20,8 @@ public class RegisterDTO {
         private String photoCar;
         private String photoInsurance;
         private String photoLicense;
+        private String rol;
+
 
         public RegisterDTOBuilder(String id, String name, String photoProfile) {
             this.id = id;
@@ -52,6 +54,11 @@ public class RegisterDTO {
             return this;
         }
 
+        public RegisterDTOBuilder setRol(String rol) {
+            this.rol = rol;
+            return this;
+        }
+
         public RegisterDTO build() {
             return new RegisterDTO(this);
         }
@@ -66,6 +73,7 @@ public class RegisterDTO {
         this.photoCar = builder.photoCar;
         this.photoInsurance = builder.photoInsurance;
         this.photoLicense = builder.photoLicense;
+        this.rol = builder.rol;
     }
 
     public String getName() {

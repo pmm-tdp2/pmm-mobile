@@ -245,8 +245,9 @@ public class UserRegisterActivity extends AppCompatActivity {
     }
 
     private RegisterDTO getRegisterDTO(){
-        return new RegisterDTO.RegisterDTOBuilder(String.valueOf(id + 3), editName.getText().toString(),
-                this.photoProfileCoded).build();
+        return new RegisterDTO.RegisterDTOBuilder(mDataFacebook.getIdFacebook(), editName.getText().toString(),
+                this.photoProfileCoded)
+                .setRol("USER").build();
     }
 
     private void handleResponseRegister(SimpleResponse simpleResponse) {
