@@ -163,8 +163,8 @@ public class UserHome extends AppCompatActivity
         requestPermission();
 
         //erase
-        mFragmentCanceledTravel = new CanceledTravelFragment();
-        replaceFragment(mFragmentCanceledTravel,true);
+        //mFragmentCanceledTravel = new CanceledTravelFragment();
+        //replaceFragment(mFragmentCanceledTravel,true);
     }
 
     public int getIdUSer() {
@@ -454,7 +454,7 @@ public class UserHome extends AppCompatActivity
         handler.postDelayed( () -> {
                 // Do something after 50ms
                 try{
-                    int heightScreen = getResources().getDisplayMetrics().heightPixels;
+                    /*int heightScreen = getResources().getDisplayMetrics().heightPixels;
                     int padding = heightScreen/20; //space in px between box edges
                     LatLngBounds.Builder bc = new LatLngBounds.Builder();
                     bc.include(mOrigin);
@@ -470,7 +470,8 @@ public class UserHome extends AppCompatActivity
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bc.build(),widthMap,newHeight,padding));
                     //other magic number
-                    mMap.animateCamera(CameraUpdateFactory.scrollBy(0,heightOption/2));
+                    mMap.animateCamera(CameraUpdateFactory.scrollBy(0,heightOption/2));*/
+                    generateMockDriverAssign(new View(this));
                 }catch (Exception ex){
                     Log.e(TAG_USER_HOME,ex.toString());
                 }

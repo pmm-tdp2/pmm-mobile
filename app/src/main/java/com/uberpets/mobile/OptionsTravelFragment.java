@@ -241,11 +241,11 @@ public class OptionsTravelFragment extends Fragment {
                             JSONObject response = (JSONObject) args[0];
                             Log.i(TAG_REQUEST_SERVER, response.toString());
                             Gson gson =  new Gson();
-                            TravelAssignedDTO travelAssignedDTO =
+                            /*TravelAssignedDTO travelAssignedDTO =
                                     gson.fromJson(response.toString(),TravelAssignedDTO.class);
                             Log.i(TAG_REQUEST_SERVER, travelAssignedDTO
-                                    .getDriver().toString());
-                            myActivity.showInfoDriverAssigned(travelAssignedDTO);
+                                    .getDriver().toString());*/
+                            myActivity.showInfoDriverAssigned(null);
 
                         }catch (Exception ex){
                             Log.d(TAG_REQUEST_SERVER, "no data found");
