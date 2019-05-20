@@ -163,8 +163,8 @@ public class UserHome extends AppCompatActivity
         requestPermission();
 
         //erase
-        //mFragmentCanceledTravel = new CanceledTravelFragment();
-        //replaceFragment(mFragmentCanceledTravel,true);
+        mFragmentCanceledTravel = new CanceledTravelFragment();
+        replaceFragment(mFragmentCanceledTravel,true);
     }
 
     public int getIdUSer() {
