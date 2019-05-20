@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
@@ -51,6 +52,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private boolean isUploadedLicenseImage = false;
     private boolean isUploadedInsuranceImage = false;
     private boolean isUploadedProfileImage = false;
+    private Long id = 0l;
     private EditText editNameDriver;
     private EditText editDniDriver;
     private EditText editPhoneDriver;
@@ -61,6 +63,11 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private int GALLERY_INSURANCE = 5, CAMERA_INSURANCE = 6;
     private int GALLERY_PROFILE = 7, CAMERA_PROFILE = 8;
     private Map<Integer,String> imagesPath;
+
+    @Override
+    public Resources getResources() {
+        return super.getResources();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -230,7 +237,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
     }
 
     private RegisterDTO getRegisterDTO(){
-       return new RegisterDTO.RegisterDTOBuilder(
+       return new RegisterDTO.RegisterDTOBuilder( String.valueOf(this.id + 2),
                 this.editNameDriver.getText().toString(),
                 imagesPath.containsKey(GALLERY_PROFILE) ?
                         imagesPath.get(GALLERY_PROFILE): imagesPath.get(CAMERA_PROFILE))

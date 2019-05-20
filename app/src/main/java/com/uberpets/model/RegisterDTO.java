@@ -1,7 +1,7 @@
 package com.uberpets.model;
 
 public class RegisterDTO {
-
+    private final String id;
     private final String name;
     private final String photoProfile;
     private final String dni;
@@ -12,6 +12,7 @@ public class RegisterDTO {
 
 
     public static class RegisterDTOBuilder {
+        private final String id;
         private final String name;
         private final String photoProfile;
         private String dni;
@@ -20,7 +21,8 @@ public class RegisterDTO {
         private String photoInsurance;
         private String photoLicense;
 
-        public RegisterDTOBuilder(String name, String photoProfile) {
+        public RegisterDTOBuilder(String id, String name, String photoProfile) {
+            this.id = id;
             this.name = name;
             this.photoProfile = photoProfile;
         }
@@ -56,6 +58,7 @@ public class RegisterDTO {
     }
 
     public RegisterDTO(RegisterDTOBuilder builder) {
+        this.id = builder.id;
         this.name = builder.name;
         this.photoProfile = builder.photoProfile;
         this.dni = builder.dni;

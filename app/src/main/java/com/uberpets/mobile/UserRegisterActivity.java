@@ -43,6 +43,7 @@ public class UserRegisterActivity extends AppCompatActivity {
     private ImageView imageviewProfile;
     private Button continueButton;
     private EditText editName;
+    private Long id = 1l;
     private TextView sendingDataText;
     private String photoProfileCoded;
     private boolean isUploadedPhotoProfile;
@@ -244,7 +245,7 @@ public class UserRegisterActivity extends AppCompatActivity {
     }
 
     private RegisterDTO getRegisterDTO(){
-        return new RegisterDTO.RegisterDTOBuilder(editName.getText().toString(),
+        return new RegisterDTO.RegisterDTOBuilder(String.valueOf(id + 3), editName.getText().toString(),
                 this.photoProfileCoded).build();
     }
 
