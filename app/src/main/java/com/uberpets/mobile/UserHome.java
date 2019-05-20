@@ -521,7 +521,8 @@ public class UserHome extends AppCompatActivity
     }
 
     public void returnOriginalState(){
-        mRoute.remove();
+        if(mRoute != null)
+            mRoute.remove();
         LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
         mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Estas Acá"));
         mCardViewSearch.setVisibility(View.VISIBLE);
