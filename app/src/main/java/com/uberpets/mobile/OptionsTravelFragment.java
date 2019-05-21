@@ -24,6 +24,7 @@ import com.github.nkzawa.socketio.client.Socket;
 import com.google.gson.Gson;
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
+import com.uberpets.model.Person;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.TravelConfirmationDTO;
 import com.uberpets.model.TravelPriceDTO;
@@ -44,7 +45,6 @@ public class OptionsTravelFragment extends Fragment {
     private CheckBox optionCompanion;
     private SizePetsAdapter mAdapter;
     private boolean readyToGetTravel =false;
-    private final String TAG_REQUEST_SERVER="REQUEST_SERVER_TRAVEL";
     private UserHome myActivity;
     private FloatingActionButton mButtonFab;
     private Button mButtonGetTravel;
@@ -160,7 +160,7 @@ public class OptionsTravelFragment extends Fragment {
         /*
         Show message of Error
          */
-        Log.e(TAG_REQUEST_SERVER,ex.toString());
+        Log.e(this.getClass().getName(),ex.toString());
         Toast.makeText(getContext()
                 , getString(R.string.error_quotation)
                 , Toast.LENGTH_LONG).show();
@@ -201,11 +201,12 @@ public class OptionsTravelFragment extends Fragment {
 //TODO: cambiar el tipo de respuesta
     public void handleGoodResponse(TravelAssignedDTO travelAssignedDTO) {
         if(travelAssignedDTO != null){
-            /*Log.i(TAG_REQUEST_SERVER, travelAssignedDTO.getDriver().toString());
+            /*Log.i(this.getClass().getName(), travelAssignedDTO.getDriver().toString());
             myActivity.showInfoDriverAssigned();*/
-            listenAssignedDriver();
+            Log.d(this.getClass().getName(), "LA SOLICITUD FUE RECIBIDA");
+            //listenAssignedDriver();
         }else{
-            Log.d(TAG_REQUEST_SERVER, "no hay datos");
+            Log.d(this.getClass().getName(), "NO SE PUDO MANDAR LA SOLICUTD");
             finishFragmentExecuted();
             myActivity.showDriverNotFound();
         }
@@ -214,7 +215,7 @@ public class OptionsTravelFragment extends Fragment {
     public void handleErrorResponse(Exception ex) {
         finishFragmentExecuted();
         if (ex instanceof ServerError) {
-            Log.d(TAG_REQUEST_SERVER, "error to connect server");
+            Log.d(this.getClass().getName(), "error to connect server");
             myActivity.showMessageCard();
         } else
             Toast.makeText(getContext()
@@ -226,39 +227,5 @@ public class OptionsTravelFragment extends Fragment {
     public void setSocketIO(Socket socketIO) {
         this.socketIO = socketIO;
     }
-
-    //listen if a driver is or isn't assigned to travel
-    //requested for user
-    public void listenAssignedDriver() {
-        socketIO.on(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
-            mListenerAssignDriver = new Emitter.Listener() {
-                @Override
-                public void call(final Object... args) {
-                    myActivity.runOnUiThread( () -> {
-                        Log.d(TAG_REQUEST_SERVER,"I was assign a driver");
-                        finishFragmentExecuted();
-                        try{
-                            JSONObject response = (JSONObject) args[0];
-                            Log.i(TAG_REQUEST_SERVER, response.toString());
-                            Gson gson =  new Gson();
-                            /*TravelAssignedDTO travelAssignedDTO =
-                                    gson.fromJson(response.toString(),TravelAssignedDTO.class);
-                            Log.i(TAG_REQUEST_SERVER, travelAssignedDTO
-                                    .getDriver().toString());*/
-                            myActivity.showInfoDriverAssigned(null);
-
-                        }catch (Exception ex){
-                            Log.d(TAG_REQUEST_SERVER, "no data found");
-                            myActivity.showDriverNotFound();
-                        }
-
-                        socketIO.off(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
-                            mListenerAssignDriver);
-                    });
-                }
-        });
-    }
-
-
 
 }

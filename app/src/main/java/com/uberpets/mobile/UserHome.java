@@ -50,6 +50,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
 import com.uberpets.Constants;
 import com.uberpets.mobile.ui.main.CanceledTravelFragment;
 import com.uberpets.model.Person;
@@ -109,6 +110,7 @@ public class UserHome extends AppCompatActivity
     private Emitter.Listener mListenerDriverArrivedToUser;
     private Emitter.Listener mListenerDriverArrivedToDestiny;
     private Emitter.Listener mListenerDriverCancelTravel;
+    private Emitter.Listener mListenerAssignDriver;
 
     private OptionsTravelFragment mFragmentTest;
     private CanceledTravelFragment mFragmentCanceledTravel;
@@ -155,6 +157,7 @@ public class UserHome extends AppCompatActivity
                 listenDriverArrivedUser();
                 listenDriverArrivedDestiny();
                 listenCancelTravel();
+                listenAssignedDriver();
             } catch (URISyntaxException e) {
                 Log.e(TAG_CONNECTION_SERVER,"io socket failure");
             }
@@ -442,11 +445,22 @@ public class UserHome extends AppCompatActivity
 
 
     public void showInfoDriverAssigned(TravelAssignedDTO travelAssignedDTO){
+        Log.d(this.getClass().getName(),"#### showInfoDriverAssigned1");
         finishPreviousFragments();
+        Log.d(this.getClass().getName(),"#### showInfoDriverAssigned2");
+
         InfoDriverAssignFragment info = new InfoDriverAssignFragment();
+        Log.d(this.getClass().getName(),"#### showInfoDriverAssigned3");
+
         info.setTravelAssignedDTO(travelAssignedDTO);
+        Log.d(this.getClass().getName(),"#### showInfoDriverAssigned4");
+
         replaceFragment(info,true);
+        Log.d(this.getClass().getName(),"#### showInfoDriverAssigned5");
+
         showRouteFullInAssignTravel();
+        Log.d(this.getClass().getName(),"#### showInfoDriverAssigned6");
+
     }
 
     public void showRouteFullInAssignTravel(){
@@ -454,7 +468,7 @@ public class UserHome extends AppCompatActivity
         handler.postDelayed( () -> {
                 // Do something after 50ms
                 try{
-                    /*int heightScreen = getResources().getDisplayMetrics().heightPixels;
+                    int heightScreen = getResources().getDisplayMetrics().heightPixels;
                     int padding = heightScreen/20; //space in px between box edges
                     LatLngBounds.Builder bc = new LatLngBounds.Builder();
                     bc.include(mOrigin);
@@ -470,8 +484,7 @@ public class UserHome extends AppCompatActivity
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bc.build(),widthMap,newHeight,padding));
                     //other magic number
-                    mMap.animateCamera(CameraUpdateFactory.scrollBy(0,heightOption/2));*/
-                    generateMockDriverAssign(new View(this));
+                    mMap.animateCamera(CameraUpdateFactory.scrollBy(0,heightOption/2));
                 }catch (Exception ex){
                     Log.e(TAG_USER_HOME,ex.toString());
                 }
@@ -482,16 +495,20 @@ public class UserHome extends AppCompatActivity
 
     public void generateMockDriverAssign(View view){
         try{
+            Log.d(this.getClass().getName(),"========================");
             Fragment mapFragment = (Fragment) getSupportFragmentManager().findFragmentById(R.id.map);
             int width = mapFragment.getView().getMeasuredWidth();
             int height = mapFragment.getView().getMeasuredHeight();
+
             Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
             width = getResources().getDisplayMetrics().widthPixels;
             height = getResources().getDisplayMetrics().heightPixels;
             Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
+
             Person user = new Person(1,"Juan Fernando ","Perez Gonzales");
             Person driver = new Person(1,"Chano Santiago ","Moreno Charpentier");
             TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20 minutos",user,driver);
+
             mCardViewSearch.setVisibility(View.INVISIBLE);
             fastGenerationOriginDestiny(view);
             showInfoDriverAssigned(travelAssignedDTO);
@@ -744,6 +761,48 @@ public class UserHome extends AppCompatActivity
     }
 
     /*END REPLACE FRAGMENT*/
+
+
+    public void listenAssignedDriver() {
+        mSocket.on(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
+                mListenerAssignDriver = new Emitter.Listener() {
+                    @Override
+                    public void call(final Object... args) {
+                        runOnUiThread( () -> {
+                            Log.d(this.getClass().getName(),"I was assign a driver");
+                            //finishFragmentExecuted();
+                            try{
+                                JSONObject response = (JSONObject) args[0];
+                                Log.i(this.getClass().getName(), response.toString());
+                                Gson gson =  new Gson();
+
+                                //TravelAssignedDTO travelAssignedDTO =
+                                //      gson.fromJson(response.toString(),TravelAssignedDTO.class);*/
+
+
+                                Person user = new Person(1,"Juan Fernando ","Perez Gonzales");
+                                Person driver = new Person(1,"Chano Santiago ","Moreno Charpentier");
+                                TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20 minutos",user,driver);
+
+
+
+                                Log.i(this.getClass().getName(), travelAssignedDTO
+                                        .getDriver().toString());
+
+                                showInfoDriverAssigned(travelAssignedDTO);
+
+                            }catch (Exception e){
+                                Log.d(this.getClass().getName(),e.toString());
+                                Log.d(this.getClass().getName(), "no data found");
+                                showDriverNotFound();
+                            }
+
+                            mSocket.off(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
+                                    mListenerAssignDriver);
+                        });
+                    }
+                });
+    }
 
 }
 
