@@ -3,12 +3,12 @@ package com.uberpets.model;
 public class Person {
 
     private int id;
-    private String firstName;
+    private String name;
     private String lastName;
 
-    public Person(int id, String firstName, String lastName) {
+    public Person(int id, String name, String lastName) {
         this.id = id;
-        this.firstName = firstName;
+        this.name = name;
         this.lastName = lastName;
     }
 
@@ -17,7 +17,7 @@ public class Person {
     }
 
     public String getFirstName() {
-        return firstName;
+        return name;
     }
 
     public String getLastName() {

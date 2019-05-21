@@ -49,21 +49,24 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/arrive_in"
+            android:id="@+id/time_arrive"
+            android:layout_marginStart="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" "
             android:textColor="@color/lightText"
             android:textSize="15sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/waiting_time_for_driver"
+            android:layout_marginStart="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/minutes"
             android:textColor="@color/lightText"
             android:textSize="15sp"
             android:textStyle="bold" />
+
+
 
     </LinearLayout>
 

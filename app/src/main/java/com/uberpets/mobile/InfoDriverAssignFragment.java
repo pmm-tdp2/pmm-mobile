@@ -3,6 +3,8 @@ package com.uberpets.mobile;
 
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,8 +36,7 @@ public class InfoDriverAssignFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_info_driver_assing, container, false);
-
-        this.textTime = rootView.findViewById(R.id.waiting_time_for_driver);
+        this.textTime = rootView.findViewById(R.id.time_arrive);
         this.textName = rootView.findViewById(R.id.driver_name);
         this.textLastname =  rootView.findViewById(R.id.driver_last_name);
         updateDisplayedDataDriver();

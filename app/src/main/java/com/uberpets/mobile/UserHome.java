@@ -445,22 +445,11 @@ public class UserHome extends AppCompatActivity
 
 
     public void showInfoDriverAssigned(TravelAssignedDTO travelAssignedDTO){
-        Log.d(this.getClass().getName(),"#### showInfoDriverAssigned1");
         finishPreviousFragments();
-        Log.d(this.getClass().getName(),"#### showInfoDriverAssigned2");
-
         InfoDriverAssignFragment info = new InfoDriverAssignFragment();
-        Log.d(this.getClass().getName(),"#### showInfoDriverAssigned3");
-
         info.setTravelAssignedDTO(travelAssignedDTO);
-        Log.d(this.getClass().getName(),"#### showInfoDriverAssigned4");
-
         replaceFragment(info,true);
-        Log.d(this.getClass().getName(),"#### showInfoDriverAssigned5");
-
         showRouteFullInAssignTravel();
-        Log.d(this.getClass().getName(),"#### showInfoDriverAssigned6");
-
     }
 
     public void showRouteFullInAssignTravel(){
@@ -776,13 +765,13 @@ public class UserHome extends AppCompatActivity
                                 Log.i(this.getClass().getName(), response.toString());
                                 Gson gson =  new Gson();
 
-                                //TravelAssignedDTO travelAssignedDTO =
-                                //      gson.fromJson(response.toString(),TravelAssignedDTO.class);*/
+                                TravelAssignedDTO travelAssignedDTO =
+                                      gson.fromJson(response.toString(),TravelAssignedDTO.class);
 
 
-                                Person user = new Person(1,"Juan Fernando ","Perez Gonzales");
+                                /*Person user = new Person(1,"Juan Fernando ","Perez Gonzales");
                                 Person driver = new Person(1,"Chano Santiago ","Moreno Charpentier");
-                                TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20 minutos",user,driver);
+                                TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20 minutos",user,driver);*/
 
 
 
