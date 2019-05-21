@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +38,6 @@ public class DriverFollowUpTravel extends Fragment {
     private TravelAssignedDTO mTravelAssignedDTO;
     private String ROL;
     private int idDriver;
-    private String TAG_DRIVER_FOLLOW_UP_TRAVEL = "DRIVER_FOLLOW_UP_TRAVEL ";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -196,28 +196,39 @@ public class DriverFollowUpTravel extends Fragment {
     }
 
     public void responseFinalizeTravelFragment(SimpleResponse simpleResponse) {
-        Log.d(TAG_DRIVER_FOLLOW_UP_TRAVEL,simpleResponse.getMessage());
+        Log.d(this.getClass().getName(),simpleResponse.getMessage());
         mListener.finishTravel();
     }
 
     public void errorRejectTravelFragment(Exception e){
         //TODO: mandar un mensaje que no se pudo finalizar el viaje
+        Log.e(this.getClass().getName(),e.toString());
+        Toast toast = Toast.makeText(getActivity(), "no se pudo cancelar intentelo nuevamente",
+                Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 
     public void responseCancelTravel(SimpleResponse response) {
-        Log.d(TAG_DRIVER_FOLLOW_UP_TRAVEL, response.getMessage());
+        Log.d(this.getClass().getName(), response.getMessage());
         if (response.getStatus() == 200){
             //cancelo el viaje
-            Toast.makeText(getActivity(), "Se ha cancelado su viaje",
-                    Toast.LENGTH_LONG).show();
+            Toast toast = Toast.makeText(getActivity(), "Se ha cancelado su viaje",
+                    Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
             mListener.cancelOngoingTravel();
         }else{
             //TODO: ocurrió un error con el servidor y no se pudo cancelar el viaje
+            Toast toast = Toast.makeText(getActivity(), "no se pudo cancelar intentelo nuevamente",
+                    Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
         }
     }
 
     public void errorCancelTravel(Exception e){
-        Log.d(TAG_DRIVER_FOLLOW_UP_TRAVEL, e.getMessage());
+        Log.d(this.getClass().getName(), e.getMessage());
         //TODO: no se ha podido finalizar el viaje
     }
 
