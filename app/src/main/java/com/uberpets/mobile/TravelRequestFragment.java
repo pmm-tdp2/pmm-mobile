@@ -53,7 +53,6 @@ public class TravelRequestFragment extends Fragment {
     // TODO: Rename and change types and number of parameters
     public static TravelRequestFragment newInstance(String ROL, int idDriver, TravelDTO travelDTO) {
         TravelRequestFragment fragment = new TravelRequestFragment();
-        Log.d("TravelRequestFragment","##################1");
         //Bundle args = new Bundle();
         //args.putString(ARG_PARAM1, info);
         //fragment.setArguments(args);
@@ -66,8 +65,6 @@ public class TravelRequestFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("TravelRequestFragment","##################2");
-
         if (getArguments() != null) {
             info = getArguments().getString(ARG_PARAM1);
         }
@@ -84,7 +81,6 @@ public class TravelRequestFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Log.d("TravelRequestFragment","##################3");
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -95,7 +91,6 @@ public class TravelRequestFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        Log.d("TravelRequestFragment","##################4");
         super.onDetach();
         mListener = null;
     }
@@ -129,9 +124,7 @@ public class TravelRequestFragment extends Fragment {
 
         setButtonReject();
         setButtonAccept();
-        Log.d("TravelRequestFragment","##################6");
         updateDataTravel(rootView);
-        Log.d("TravelRequestFragment","##################7");
 
         return rootView;
     }
@@ -150,7 +143,6 @@ public class TravelRequestFragment extends Fragment {
 
     public void updateDataTravel(View rootView) {
         //TODO: show info the travel
-        Log.d("TravelRequestFragment","##################8");
         Log.d(this.getClass().getName(),"TravelDTO: "+mTravelDTO.toString());
         TextView bigPets =rootView.findViewById(R.id.amount_big_pets);
         bigPets.setText(String.valueOf(mTravelDTO.getpetAmountLarge()));
@@ -164,7 +156,6 @@ public class TravelRequestFragment extends Fragment {
         TextView hasCompanion =rootView.findViewById(R.id.has_companion);
         hasCompanion.setText(mTravelDTO.isHasACompanion() ? getString(R.string.yes_string):
                 getString(R.string.no_string));
-        Log.d("TravelRequestFragment","##################9");
     }
 
     public void setButtonReject() {
@@ -198,7 +189,6 @@ public class TravelRequestFragment extends Fragment {
     }
 
     public void acceptTravelFragment(){
-        Log.d("TravelRequestFragment","##################10");
         if(mTravelDTO != null && mTravelDTO.getTravelID() >0){
             Log.d(this.getClass().getName(), "Driver accept travel and send message");
             TravelConfirmationDTO travelConfirmationDTO =
