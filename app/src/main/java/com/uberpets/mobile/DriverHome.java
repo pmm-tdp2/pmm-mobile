@@ -334,7 +334,7 @@ public class  DriverHome
         //transaction.commit();
         //por ahora....
         transaction.commitAllowingStateLoss();
-        getSupportFragmentManager().executePendingTransactions();
+        getSupportFragmentManager().executePendingTransactions(); //error recurrente
         Log.d(this.getClass().getName(),"Reemplazando fragment");
     }
 

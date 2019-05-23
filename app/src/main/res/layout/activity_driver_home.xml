@@ -13,13 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <FrameLayout
-        android:id="@+id/upper_section_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment">
-    </FrameLayout>
-
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
