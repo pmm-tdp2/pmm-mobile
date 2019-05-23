@@ -725,23 +725,24 @@ public class UserHome extends AppCompatActivity
 
 
     public void replaceFragment(Fragment fragment, boolean addToBackStack) {
+        if(!isDestroyed()){
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction();
 
-        FragmentTransaction transaction = getSupportFragmentManager()
-                .beginTransaction();
+            if (addToBackStack) {
+                transaction.addToBackStack(null);
 
-        if (addToBackStack) {
-            transaction.addToBackStack(null);
+            } else {
+                getSupportFragmentManager().popBackStack(null,
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-        } else {
-            getSupportFragmentManager().popBackStack(null,
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
+            }
+            transaction.replace(R.id.options_travel, fragment);
+            //transaction.commit();
+            //por ahora....
+            transaction.commitAllowingStateLoss();
+            getSupportFragmentManager().executePendingTransactions();
         }
-        transaction.replace(R.id.options_travel, fragment);
-        //transaction.commit();
-        //por ahora....
-        transaction.commitAllowingStateLoss();
-        getSupportFragmentManager().executePendingTransactions();
     }
 
     public void acceptAction(View view){

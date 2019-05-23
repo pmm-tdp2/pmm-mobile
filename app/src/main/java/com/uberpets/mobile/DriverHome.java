@@ -78,7 +78,6 @@ public class  DriverHome
     private Fragment notification;
 
     private Socket mSocket;
-    private final String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
     private final String EVENT_CONNECTION = "message";
     private Emitter.Listener mListenerConnection;
     private Emitter.Listener mListenerNotificationTravel;
@@ -120,11 +119,11 @@ public class  DriverHome
                 options.transports = TRANSPORTS;
                 String uuu = Constants.getInstance().getURL_SOCKET();
                 mSocket = IO.socket(Constants.getInstance().getURL_SOCKET(), options);
-                Log.i(TAG_CONNECTION_SERVER,"io socket succes");
+                Log.i(this.getClass().getName(),"io socket succes");
                 connectToServer();
                 listenNotificaciónTravel();
             } catch (URISyntaxException e) {
-                Log.e(TAG_CONNECTION_SERVER,"io socket failure");
+                Log.e(this.getClass().getName(),"io socket failure");
             }
         }
         requestPermission();
@@ -270,7 +269,7 @@ public class  DriverHome
     @Override
     public void onMapReady(GoogleMap googleMap) {
         try {
-            Log.d("INFO", "GOOGLE GOOD LOADED");
+            Log.d(this.getClass().getName(), "GOOGLE GOOD LOADED");
             mMap = googleMap;
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             mockLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -295,17 +294,21 @@ public class  DriverHome
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, ZOOM_VALUE));
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e("ERROR", "GOOGLE MAPS NOT LOADED DRIVER");
+            Log.e(this.getClass().getName(), "GOOGLE MAPS NOT LOADED DRIVER");
         }
     }
 
     public boolean popFragment() {
         boolean isPop = false;
 
-        Fragment currentFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.layout_driver_to_replace);
+        /*Fragment currentFragment = getSupportFragmentManager()
+                .findFragmentById(R.id.layout_driver_to_replace);*/
+
+        Log.i(this.getClass().getName(),"####cantidad: "+getSupportFragmentManager().getBackStackEntryCount());
 
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+
+            Log.i(this.getClass().getName(),"####FRAGMEENT POPBACK");
             isPop = true;
             getSupportFragmentManager().popBackStackImmediate();
         }
@@ -318,24 +321,28 @@ public class  DriverHome
     }
 
     public void replaceFragment(Fragment fragment, boolean addToBackStack) {
+        Log.d(this.getClass().getName(),"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        if(!isDestroyed()){
+            Log.d(this.getClass().getName(),"/////////////////////////////");
+            FragmentTransaction transaction = getSupportFragmentManager()
+                    .beginTransaction();
 
-        FragmentTransaction transaction = getSupportFragmentManager()
-                .beginTransaction();
+            if (addToBackStack) {
+                transaction.addToBackStack(null);
 
-        if (addToBackStack) {
-            transaction.addToBackStack(null);
+            } else {
+                getSupportFragmentManager().popBackStack(null,
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
-        } else {
-            getSupportFragmentManager().popBackStack(null,
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
+            }
+            transaction.replace(R.id.layout_driver_to_replace, fragment);
+            //transaction.commit();
+            //por ahora....
+            transaction.commitAllowingStateLoss();
+            //if(!isFinishing())
+            getSupportFragmentManager().executePendingTransactions(); //error recurrente
+            Log.d(this.getClass().getName(),"Reemplazando fragment");
         }
-        transaction.replace(R.id.layout_driver_to_replace, fragment);
-        //transaction.commit();
-        //por ahora....
-        transaction.commitAllowingStateLoss();
-        getSupportFragmentManager().executePendingTransactions(); //error recurrente
-        Log.d(this.getClass().getName(),"Reemplazando fragment");
     }
 
     private void removeUpperSectionFragment(){
@@ -452,11 +459,11 @@ public class  DriverHome
                     @Override
                     public void run() {
                         JSONObject response = (JSONObject) args[0];
-                        Log.d(TAG_CONNECTION_SERVER, "Established Connection");
+                        Log.d(this.getClass().getName(), "Established Connection");
                         try{
                             idDriver= response.getInt("id");
                         }catch (Exception ex){
-                            Log.e(TAG_CONNECTION_SERVER,"driver has no assigned a id");
+                            Log.e(this.getClass().getName(),"driver has no assigned a id");
                         }
                     }
                 });
@@ -468,7 +475,7 @@ public class  DriverHome
 
     //listen request of travel
     public void listenNotificaciónTravel() {
-        Log.d("NOTIFICATION_TRAVEL",mConstants.getEVENT_NOTIFICATION_TRAVEL());
+        Log.d(this.getClass().getName(),mConstants.getEVENT_NOTIFICATION_TRAVEL());
         mSocket.on(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
                 mListenerNotificationTravel = new Emitter.Listener() {
             @Override
@@ -479,17 +486,19 @@ public class  DriverHome
                         if (!inTravel){
                             JSONObject response = (JSONObject) args[0];
                             Gson gson = new Gson();
-                            Log.d("NOTIFICATION_TRAVEL","-----------------");
-                            Log.d("NOTIFICATION_TRAVEL",response.toString());
+                            Log.d(this.getClass().getName(),"--NOTIFICACIÓN DE VIAJE-");
+                            Log.d(this.getClass().getName(),response.toString());
                             TravelDTO travelDTO = gson.fromJson(response.toString(),TravelDTO.class);
                             //TODO: mostrar la cantidad de mascotas que tendrá el viaje
                             //TODO: dibujar el tramo del viaje
-                            Log.d("NOTIFICATION_TRAVEL",travelDTO.toString());
+                            Log.d(this.getClass().getName(),travelDTO.toString());
 
-                            TravelRequestFragment travelRequest = new TravelRequestFragment();
+                            TravelRequestFragment travelRequest =
+                                    TravelRequestFragment.newInstance(ROL,idDriver,travelDTO);
+                            /*TravelRequestFragment travelRequest = new TravelRequestFragment();
                             travelRequest.setTravelDTO(travelDTO);
                             travelRequest.setROL(ROL);
-                            travelRequest.setIdDriver(idDriver);
+                            travelRequest.setIdDriver(idDriver);*/
                             replaceFragment(travelRequest,true);
                         }
                     }
