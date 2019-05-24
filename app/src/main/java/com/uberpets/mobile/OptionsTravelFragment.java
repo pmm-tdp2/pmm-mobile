@@ -89,9 +89,7 @@ public class OptionsTravelFragment extends Fragment {
     }
 
 
-    public void setmButtonFab(){
-        mButtonFab.setOnClickListener(view->addItem());
-    }
+    public void setmButtonFab(){mButtonFab.setOnClickListener(view->addItem());}
 
     public void setmButtonGetTravel(){
         mButtonGetTravel.setOnClickListener(view->onClickButtonGetTravel());
@@ -116,9 +114,6 @@ public class OptionsTravelFragment extends Fragment {
 
     public void addItem(){
         mAdapter.updateList();
-        if (mAdapter.getItemCount() == 3){
-            mButtonFab.hide();
-        }
     }
 
 

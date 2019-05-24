@@ -86,6 +86,9 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
             this.pets.add(new PetSize());
             notifyItemInserted(getItemCount());
         }
+        if (getItemCount() == maxNumbItems){
+            addPetButton.hide();
+        }
     }
 
     public int getAllLittlePets() {
