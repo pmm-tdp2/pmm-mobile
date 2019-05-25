@@ -178,17 +178,23 @@ public class PlaceholderFragment extends Fragment {
         //TODO: hay que quitar el hardcodeo
 
         Log.i(this.getClass().getName(),loginResult.getAccessToken().getUserId());
-        LoginDTO loginDTO = new LoginDTO(loginResult
-                .getAccessToken().getUserId());
+        LoginDTO loginDTO = new LoginDTO(/*loginResult
+                .getAccessToken().getUserId()*/"31", mIdTab.equals(mConstant.getID_USERS())?
+                mConstant.getID_USERS() : mConstant.getID_DRIVERS());
 
         Log.d(this.getClass().getName(),"Success event: "+loginResult.toString());
+        Log.d(this.getClass().getName(),"PATH: "+Constants.getInstance().getURL() +"/api/login");
+        Log.d(this.getClass().getName(),"DTO: "+loginDTO.toString());
 
-        App.nodeServer.post("/userCredentials/login",loginDTO,
+
+
+        App.nodeServer.post("/api/login",loginDTO,
                 SimpleResponse.class, new Headers())
                 .run(this::handleServerSuccessfulResponse,this::handleServerErrorResponse);
     }
 
     private void handleServerErrorResponse(Exception e) {
+        Log.e(this.getClass().getName(),"Error en el login");
         Log.e(this.getClass().getName(),e.toString());
         showErrorInRegister("Hubo un problema con el login, inténtelo más tarde");
     }

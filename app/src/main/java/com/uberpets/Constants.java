@@ -60,7 +60,7 @@ public class Constants {
             default:
                 URL_SOCKET = "http://"+ip+":8081";
         }
-        URL = URL_SOCKET + URL_BASE_PATH;
+        URL = URL_SOCKET;// + URL_BASE_PATH;
 
         Log.i(TAG_CONSTANT,"url used to connect socket: "+URL_SOCKET);
         Log.i(TAG_CONSTANT,"url used to connect api: "+URL);
