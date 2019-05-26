@@ -239,7 +239,7 @@ public class UserRegisterActivity extends AppCompatActivity {
     }
 
     private void sendDataToServer() {
-        App.nodeServer.post("/userCredentials/register",
+        App.nodeServer.post("/api/register",
                 getRegisterDTO(), SimpleResponse.class, new Headers())
                 .run(this::handleResponseRegister,this::handleErrorRegister);
     }
@@ -247,7 +247,7 @@ public class UserRegisterActivity extends AppCompatActivity {
     private RegisterDTO getRegisterDTO(){
         return new RegisterDTO.RegisterDTOBuilder(mDataFacebook.getIdFacebook(), editName.getText().toString(),
                 this.photoProfileCoded)
-                .setRol("USER").build();
+                .setRole("user").build();
     }
 
     private void handleResponseRegister(SimpleResponse simpleResponse) {

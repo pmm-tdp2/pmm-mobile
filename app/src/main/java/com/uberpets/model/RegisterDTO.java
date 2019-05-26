@@ -1,7 +1,7 @@
 package com.uberpets.model;
 
 public class RegisterDTO {
-    private final String id;
+    private final String facebookId;
     private final String name;
     private final String photoProfile;
     private final String dni;
@@ -9,10 +9,10 @@ public class RegisterDTO {
     private final String photoCar;
     private final String photoInsurance;
     private final String photoLicense;
-    private final String rol;
+    private final String role;
 
     public static class RegisterDTOBuilder {
-        private final String id;
+        private final String facebookId;
         private final String name;
         private final String photoProfile;
         private String dni;
@@ -20,11 +20,11 @@ public class RegisterDTO {
         private String photoCar;
         private String photoInsurance;
         private String photoLicense;
-        private String rol;
+        private String role;
 
 
         public RegisterDTOBuilder(String id, String name, String photoProfile) {
-            this.id = id;
+            this.facebookId = id;
             this.name = name;
             this.photoProfile = photoProfile;
         }
@@ -54,8 +54,8 @@ public class RegisterDTO {
             return this;
         }
 
-        public RegisterDTOBuilder setRol(String rol) {
-            this.rol = rol;
+        public RegisterDTOBuilder setRole(String role) {
+            this.role = role;
             return this;
         }
 
@@ -65,7 +65,7 @@ public class RegisterDTO {
     }
 
     public RegisterDTO(RegisterDTOBuilder builder) {
-        this.id = builder.id;
+        this.facebookId = builder.facebookId;
         this.name = builder.name;
         this.photoProfile = builder.photoProfile;
         this.dni = builder.dni;
@@ -73,7 +73,7 @@ public class RegisterDTO {
         this.photoCar = builder.photoCar;
         this.photoInsurance = builder.photoInsurance;
         this.photoLicense = builder.photoLicense;
-        this.rol = builder.rol;
+        this.role = builder.role;
     }
 
     public String getName() {

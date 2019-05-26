@@ -249,12 +249,12 @@ public class DriverRegisterActivity extends AppCompatActivity {
                         imagesPath.get(GALLERY_INSURANCE): imagesPath.get(CAMERA_INSURANCE))
                 .setPhotoLicense(imagesPath.containsKey(GALLERY_LICENSE)?
                         imagesPath.get(GALLERY_LICENSE): imagesPath.get(CAMERA_LICENSE))
-               .setRol("DRIVER")
+               .setRole("driver")
                 .build();
     }
 
     private void sendDataToServer() {
-        App.nodeServer.post("/userCredentials/register",
+        App.nodeServer.post("/api/register",
                 getRegisterDTO(), SimpleResponse.class, new Headers())
                 .run(this::handleResponseRegister,this::handleErrorRegister);
     }
