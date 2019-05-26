@@ -2,6 +2,8 @@ package com.uberpets.model;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
+
 
 /**
  * This class is used when
@@ -9,9 +11,9 @@ import com.google.android.gms.maps.model.LatLng;
  * - server send notification of travel to driver
  */
 
-public class TravelDTO {
-    private final int userId;
-    private final int driverId;
+public class TravelDTO implements Serializable {
+    private final String userId;
+    private final String driverId;
     private final int travelID;
     private final LatLng from;
     private final LatLng to;
@@ -24,9 +26,9 @@ public class TravelDTO {
     public static class TravelDTOBuilder {
         private final LatLng from;
         private final LatLng to;
-        private int travelID = 0;
-        private int userId = 0;
-        private int driverId = 0;
+        private int travelID;
+        private String userId;
+        private String driverId;
         private int petAmountSmall = 0;
         private int petAmountMedium = 0;
         private int petAmountLarge = 0;
@@ -42,12 +44,12 @@ public class TravelDTO {
             return this;
         }
 
-        public TravelDTOBuilder setUserId(int userId) {
+        public TravelDTOBuilder setUserId(String userId) {
             this.userId = userId;
             return this;
         }
 
-        public TravelDTOBuilder setDriverId(int driverId) {
+        public TravelDTOBuilder setDriverId(String driverId) {
             this.driverId = driverId;
             return this;
         }
@@ -91,7 +93,7 @@ public class TravelDTO {
         this.driverId = builder.driverId;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
@@ -119,7 +121,7 @@ public class TravelDTO {
         return hasACompanion;
     }
 
-    public int getDriverId() {
+    public String getDriverId() {
         return driverId;
     }
 

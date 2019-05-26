@@ -1,29 +1,29 @@
 package com.uberpets.model;
 
 public class TraceDTO {
-    private int userId;
-    private int driverId;
+    private String userId;
+    private String driverId;
     private GeograficCoordenate geograficCoordenate;
 
-    public TraceDTO(int userId, int driverId, GeograficCoordenate geograficCoordenate) {
+    public TraceDTO(String userId, String driverId, GeograficCoordenate geograficCoordenate) {
         this.userId = userId;
         this.driverId = driverId;
         this.geograficCoordenate = geograficCoordenate;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public int getDriverId() {
+    public String getDriverId() {
         return driverId;
     }
 
-    public void setDriverId(int driverId) {
+    public void setDriverId(String driverId) {
         this.driverId = driverId;
     }
 

@@ -128,7 +128,7 @@ public class OptionsTravelFragment extends Fragment {
     public void getTravelQuote() {
         TravelDTO quotation =  new TravelDTO.TravelDTOBuilder(
                 myActivity.getmOrigin(),myActivity.getmDestiny())
-                .setUserId(myActivity.getIdUSer())
+                .setUserId(myActivity.getidUser())
                 .setHasACompanion(optionCompanion.isChecked())
                 .setpetAmountSmall(mAdapter.getAllLittlePets())
                 .setpetAmountMedium(mAdapter.getAllMediumPets())
@@ -167,7 +167,7 @@ public class OptionsTravelFragment extends Fragment {
         if (readyToGetTravel){
             showSearchingDriver();
             TravelConfirmationDTO travelConfirmationDTO =
-                    new TravelConfirmationDTO(travelID,myActivity.ROL,myActivity.getIdUSer(),true);
+                    new TravelConfirmationDTO(travelID,myActivity.ROL,myActivity.getidUser(),true);
             App.nodeServer.post("/travel/confirmation",
                     travelConfirmationDTO, TravelAssignedDTO.class, new Headers())
                     //.onDone((s,ec)->finishFragmentExecuted())

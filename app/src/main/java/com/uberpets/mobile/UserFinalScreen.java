@@ -3,6 +3,7 @@ package com.uberpets.mobile;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.RatingBar;
@@ -11,7 +12,6 @@ public class UserFinalScreen extends AppCompatActivity {
 
     private RatingBar mRatingBar;
     private CheckBox mCheckBox;
-    private String TAG_RATING_USER = "USER_RATING_STARS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,16 +28,17 @@ public class UserFinalScreen extends AppCompatActivity {
     }
 
     public void sendComment(android.view.View view){
-        //int numStars = mRatingBar.getNumStars();
-        //if(numStars != 0) {
-        //    Log.i(TAG_RATING_USER,"user: idUser "+ " has scored with "+numStars );
+        float rating = mRatingBar.getRating();
+        if(rating != 0) {
+            Log.i(this.getClass().getName(),"user: idUser "+ " has scored with "+rating );
+
         //go back to activity that called it
         finish();
-        //}
+        }
     }
 
     public void onRatingBarChange(android.view.View view){
-        int rating = mRatingBar.getNumStars();
+        float rating = mRatingBar.getRating();
         if (rating <= 3) mCheckBox.setVisibility(View.VISIBLE);
         else mCheckBox.setVisibility(View.INVISIBLE);
     }

@@ -266,6 +266,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
             startActivity(intent);
             //saving info session
             AccountSession.setLoginStatusValue(this,true);
+            AccountSession.setLoginId(this,this.mDataFacebook.getIdFacebook());
             AccountSession.setRolLoggedValue(this, Constants.getInstance().getID_DRIVERS());
             finish();
         }

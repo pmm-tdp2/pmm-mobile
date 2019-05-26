@@ -10,17 +10,17 @@ package com.uberpets.model;
 public class TravelConfirmationDTO {
     private int travelID;
     private String rol;
-    private int id;
+    private String id;
     private boolean accept;
 
-    public TravelConfirmationDTO(int travelID, String rol, int id, boolean accept) {
+    public TravelConfirmationDTO(int travelID, String rol, String id, boolean accept) {
         this.travelID = travelID;
         this.rol = rol;
         this.id = id;
         this.accept = accept;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 

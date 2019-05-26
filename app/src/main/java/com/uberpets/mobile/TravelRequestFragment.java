@@ -36,7 +36,7 @@ public class TravelRequestFragment extends Fragment {
     private Button mButtonReject;
     private TravelDTO mTravelDTO;
     private String ROL;
-    private int idDriver;
+    private String idDriver;
 
     private OnFragmentInteractionListener mListener;
 
@@ -51,7 +51,7 @@ public class TravelRequestFragment extends Fragment {
      * @return A new instance of fragment TravelRequestFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TravelRequestFragment newInstance(String ROL, int idDriver, TravelDTO travelDTO) {
+    public static TravelRequestFragment newInstance(String ROL, String idDriver, TravelDTO travelDTO) {
         TravelRequestFragment fragment = new TravelRequestFragment();
         //Bundle args = new Bundle();
         //args.putString(ARG_PARAM1, info);
@@ -137,7 +137,7 @@ public class TravelRequestFragment extends Fragment {
         this.ROL = ROL;
     }
 
-    private void setIdDriver(int idDriver) {
+    private void setIdDriver(String idDriver) {
         this.idDriver = idDriver;
     }
 
@@ -189,7 +189,7 @@ public class TravelRequestFragment extends Fragment {
     }
 
     public void acceptTravelFragment(){
-        if(mTravelDTO != null && mTravelDTO.getTravelID() >0){
+        if(mTravelDTO != null && mTravelDTO.getTravelID() != -1){
             Log.d(this.getClass().getName(), "Driver accept travel and send message");
             TravelConfirmationDTO travelConfirmationDTO =
                     new TravelConfirmationDTO(mTravelDTO.getTravelID(),this.ROL,this.idDriver,true);

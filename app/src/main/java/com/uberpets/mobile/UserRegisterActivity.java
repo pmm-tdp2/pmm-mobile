@@ -257,6 +257,7 @@ public class UserRegisterActivity extends AppCompatActivity {
             AccountSession.setRolLoggedValue(this,
                     Constants.getInstance().getID_USERS());
             AccountSession.setLoginStatusValue(this,true);
+            AccountSession.setLoginId(this,this.mDataFacebook.getIdFacebook());
             Intent intent = new Intent(this, UserHome.class);
             startActivity(intent);
         }

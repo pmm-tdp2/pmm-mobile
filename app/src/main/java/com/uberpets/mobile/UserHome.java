@@ -73,7 +73,7 @@ public class UserHome extends AppCompatActivity
     public final String TAG_ROL = "ROL";
     private GoogleMap mMap;
     private Polyline mRoute;
-    private int idUSer;
+    private String idUser;
     private TextView textPrice;
 
     private Marker mMarker;
@@ -134,6 +134,10 @@ public class UserHome extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        //setting id:
+        this.idUser = AccountSession.getRIdLogin(this);
+        Log.i(this.getClass().getName(),"idFacebook: "+idUser);
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -170,8 +174,8 @@ public class UserHome extends AppCompatActivity
         //replaceFragment(mFragmentCanceledTravel,true);
     }
 
-    public int getIdUSer() {
-        return idUSer;
+    public String getidUser() {
+        return idUser;
     }
 
     @Override
@@ -609,7 +613,7 @@ public class UserHome extends AppCompatActivity
                         JSONObject response = (JSONObject) args[0];
                         Log.d(TAG_CONNECTION_SERVER, "Established Connection");
                         try{
-                            idUSer= response.getInt("id");
+                            idUser= response.getString("id");
                         }catch (Exception ex){
                             Log.e(TAG_CONNECTION_SERVER,"user has no assigned a id");
                         }

@@ -179,13 +179,12 @@ public class PlaceholderFragment extends Fragment {
 
         Log.i(this.getClass().getName(),loginResult.getAccessToken().getUserId());
         LoginDTO loginDTO = new LoginDTO(/*loginResult
-                .getAccessToken().getUserId()*/"31", mIdTab.equals(mConstant.getID_USERS())?
+                .getAccessToken().getUserId()*/"123456780", mIdTab.equals(mConstant.getID_USERS())?
                 mConstant.getID_USERS() : mConstant.getID_DRIVERS());
 
         Log.d(this.getClass().getName(),"Success event: "+loginResult.toString());
         Log.d(this.getClass().getName(),"PATH: "+Constants.getInstance().getURL() +"/api/login");
         Log.d(this.getClass().getName(),"DTO: "+loginDTO.toString());
-
 
 
         App.nodeServer.post("/api/login",loginDTO,
@@ -218,6 +217,8 @@ public class PlaceholderFragment extends Fragment {
         // when user is registered and access successfully
         //go to home and save session
         AccountSession.setRolLoggedValue(getContext(),this.mIdTab);
+        AccountSession.setLoginId(getContext(),this.mLoginResult.getAccessToken().getUserId());
+        AccountSession.setLoginStatusValue(getContext(),true);
         AccountSession.setLoginStatusValue(getContext(),true);
 
         Intent intent = new Intent(getActivity(),

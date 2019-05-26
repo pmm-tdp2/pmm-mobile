@@ -65,7 +65,7 @@ public class  DriverHome
     private GoogleMap mMap;
     private final String ROL = "DRIVER";
     private final String TAG_ROL = "ROL";
-    private int idDriver;
+    private String idDriver;
     private final Constants mConstant = Constants.getInstance();
     private boolean inTravel = false;
     private Location currentLocation;
@@ -83,6 +83,7 @@ public class  DriverHome
     private Emitter.Listener mListenerNotificationTravel;
     private TraceService traceService = new TraceService();
     Constants mConstants = Constants.getInstance();
+    private TravelDTO mTravelDTO;
 
     //private final String URL = "https://young-wave-26125.herokuapp.com/pmm";
     //private final String URL = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
@@ -104,6 +105,10 @@ public class  DriverHome
                 R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        //setting id:
+        this.idDriver = AccountSession.getRIdLogin(this);
+        Log.i(this.getClass().getName(),"idFacebook: "+idDriver);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -127,6 +132,7 @@ public class  DriverHome
             }
         }
         requestPermission();
+
     }
 
     @Override
@@ -380,7 +386,8 @@ public class  DriverHome
         newLocation.setLongitude(mockLocation.longitude);
         newLocation.setLatitude(mockLocation.latitude);
         //TODO:id user esta harcodeado, ver porque se usaría asi
-        TraceDTO traceDTO = new TraceDTO(0, idDriver, new GeograficCoordenate(String.valueOf(newLocation.getLatitude()), String.valueOf(newLocation.getLongitude())));
+        TraceDTO traceDTO = new TraceDTO("", idDriver,
+                new GeograficCoordenate(String.valueOf(newLocation.getLatitude()), String.valueOf(newLocation.getLongitude())));
         traceService.saveTrace(traceDTO, this);
         currentPositionMarker.setPosition(mockLocation);
 
@@ -405,9 +412,9 @@ public class  DriverHome
     public void showNewTravelNotification(android.view.View view) {
         TravelDTO mockTravelDTO = new TravelDTO.TravelDTOBuilder(
                 new LatLng(1.0,1.0), new LatLng(1.5,1.5))
-                .setTravelID(-1).setDriverId(1).setHasACompanion(true)
+                .setTravelID(-1).setDriverId("1").setHasACompanion(true)
                 .setpetAmountLarge(0).setpetAmountSmall(1).setpetAmountMedium(0)
-                .setUserId(-1).build();
+                .setUserId("").build();
         TravelRequestFragment travelRequestFragment= new TravelRequestFragment();
         travelRequestFragment.setTravelDTO(mockTravelDTO);
         replaceFragment(travelRequestFragment,true);
@@ -443,6 +450,7 @@ public class  DriverHome
     public void finishTravel(){
         finishPreviousFragments();
         Intent intent = new Intent(this, DriverFinalScreen.class);
+        intent.putExtra("TRAVEL",mTravelDTO);
         startActivity(intent);
         //TODO: mandar notificación al server de la puntuacion
         inTravel = false;
@@ -461,7 +469,7 @@ public class  DriverHome
                         JSONObject response = (JSONObject) args[0];
                         Log.d(this.getClass().getName(), "Established Connection");
                         try{
-                            idDriver= response.getInt("id");
+                            idDriver= response.getString("id");
                         }catch (Exception ex){
                             Log.e(this.getClass().getName(),"driver has no assigned a id");
                         }
@@ -488,13 +496,13 @@ public class  DriverHome
                             Gson gson = new Gson();
                             Log.d(this.getClass().getName(),"--NOTIFICACIÓN DE VIAJE-");
                             Log.d(this.getClass().getName(),response.toString());
-                            TravelDTO travelDTO = gson.fromJson(response.toString(),TravelDTO.class);
+                            mTravelDTO = gson.fromJson(response.toString(),TravelDTO.class);
                             //TODO: mostrar la cantidad de mascotas que tendrá el viaje
                             //TODO: dibujar el tramo del viaje
-                            Log.d(this.getClass().getName(),travelDTO.toString());
+                            Log.d(this.getClass().getName(),mTravelDTO.toString());
 
                             TravelRequestFragment travelRequest =
-                                    TravelRequestFragment.newInstance(ROL,idDriver,travelDTO);
+                                    TravelRequestFragment.newInstance(ROL,idDriver,mTravelDTO);
                             /*TravelRequestFragment travelRequest = new TravelRequestFragment();
                             travelRequest.setTravelDTO(travelDTO);
                             travelRequest.setROL(ROL);

@@ -9,6 +9,7 @@ import com.facebook.login.LoginManager;
 public class AccountSession {
     private static final String APP_SETTINGS = "APP_SETTINGS";
     private static final String LOGIN_STATUS_VALUE = "Login";
+    private static final String LOGIN_ID_VALUE = "id";
     private static final String ROL_LOGGED_VALUE = "rol";
 
 
@@ -35,6 +36,19 @@ public class AccountSession {
         return rol;
     }
 
+    public static void setLoginId(Context context, String value) {
+        Log.d(AccountSession.class.getName(),"set id login: "+ value);
+        final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
+        editor.putString(LOGIN_ID_VALUE , value);
+        editor.apply();
+    }
+
+    public static String getRIdLogin(Context context) {
+        String id = getSharedPreferences(context).getString(LOGIN_ID_VALUE , "");
+        Log.d(AccountSession.class.getName(),"get id login:" +  id);
+        return id;
+    }
+
     public static void setRolLoggedValue(Context context, String value) {
         Log.d(AccountSession.class.getName(),"set rol login in: "+ value);
         final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
@@ -48,6 +62,7 @@ public class AccountSession {
         LoginManager.getInstance().logOut();
         final SharedPreferences.Editor editor = getSharedPreferences(context).edit();
         editor.putString(ROL_LOGGED_VALUE , "");
+        editor.putString(LOGIN_ID_VALUE , "");
         editor.putBoolean(LOGIN_STATUS_VALUE,false);
         editor.apply();
     }
