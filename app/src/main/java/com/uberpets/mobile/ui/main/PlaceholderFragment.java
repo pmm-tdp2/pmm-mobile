@@ -178,8 +178,8 @@ public class PlaceholderFragment extends Fragment {
         //TODO: hay que quitar el hardcodeo
 
         Log.i(this.getClass().getName(),loginResult.getAccessToken().getUserId());
-        LoginDTO loginDTO = new LoginDTO(/*loginResult
-                .getAccessToken().getUserId()*/"123456780", mIdTab.equals(mConstant.getID_USERS())?
+        LoginDTO loginDTO = new LoginDTO(loginResult
+                .getAccessToken().getUserId(), mIdTab.equals(mConstant.getID_USERS())?
                 mConstant.getID_USERS() : mConstant.getID_DRIVERS());
 
         Log.d(this.getClass().getName(),"Success event: "+loginResult.toString());
