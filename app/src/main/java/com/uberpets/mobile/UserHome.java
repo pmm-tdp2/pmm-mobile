@@ -55,6 +55,7 @@ import com.uberpets.Constants;
 import com.uberpets.mobile.ui.main.CanceledTravelFragment;
 import com.uberpets.model.Person;
 import com.uberpets.model.TravelAssignedDTO;
+import com.uberpets.model.TravelDTO;
 import com.uberpets.util.AccountSession;
 import com.uberpets.util.GMapV2Direction;
 import com.uberpets.util.GMapV2DirectionAsyncTask;
@@ -115,6 +116,7 @@ public class UserHome extends AppCompatActivity
     private OptionsTravelFragment mFragmentTest;
     private CanceledTravelFragment mFragmentCanceledTravel;
     private Constants mConstants = Constants.getInstance();
+    private TravelDTO mTravelDTO;
 
     private static final String[] TRANSPORTS = {
             "websocket"
@@ -498,8 +500,8 @@ public class UserHome extends AppCompatActivity
             height = getResources().getDisplayMetrics().heightPixels;
             Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
 
-            Person user = new Person(1,"Juan Fernando ","Perez Gonzales");
-            Person driver = new Person(1,"Chano Santiago ","Moreno Charpentier");
+            Person user = new Person("1","Juan Fernando ","Perez Gonzales");
+            Person driver = new Person("1","Chano Santiago ","Moreno Charpentier");
             TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20 minutos",user,driver);
 
             mCardViewSearch.setVisibility(View.INVISIBLE);
@@ -574,6 +576,7 @@ public class UserHome extends AppCompatActivity
         finishPreviousFragments();
         returnOriginalState();
         Intent intent = new Intent(this, UserFinalScreen.class);
+        intent.putExtra("TRAVEL",mTravelDTO);
         startActivity(intent);
     }
 
@@ -772,13 +775,10 @@ public class UserHome extends AppCompatActivity
 
                                 TravelAssignedDTO travelAssignedDTO =
                                       gson.fromJson(response.toString(),TravelAssignedDTO.class);
-
-
+                                mTravelDTO = new TravelDTO((new TravelDTO.TravelDTOBuilder(originMarker.getPosition(), destinyMarker.getPosition())).setTravelID(travelAssignedDTO.getTravelID()).setDriverId(travelAssignedDTO.getDriver().getId()).setUserId(travelAssignedDTO.getUser().getId()));
                                 /*Person user = new Person(1,"Juan Fernando ","Perez Gonzales");
                                 Person driver = new Person(1,"Chano Santiago ","Moreno Charpentier");
                                 TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20 minutos",user,driver);*/
-
-
 
                                 Log.i(this.getClass().getName(), travelAssignedDTO
                                         .getDriver().toString());

@@ -43,7 +43,7 @@ public class DriverFinalScreen extends AppCompatActivity {
                     .setToId(mTravelDto.getUserId())
                     .setTravelId(mTravelDto.getTravelID())
                     .build();
-            App.nodeServer.post("/api/driverScores",ratingDto,
+            App.nodeServer.post("/api/userScores",ratingDto,
                     SimpleResponse.class,new Headers())
                     .run(this::handleResponseRating,this::handleErrorRating);
         }

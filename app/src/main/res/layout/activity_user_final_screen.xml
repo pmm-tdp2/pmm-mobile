@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.uberpets.mobile.DriverFinalScreen">
+    tools:context="com.uberpets.mobile.UserFinalScreen">
 
     <TextView
         android:id="@+id/textView6"
@@ -79,6 +79,7 @@
         tools:layout_editor_absoluteX="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/user_text_comment"
             android:layout_width="match_parent"
             android:layout_height="157dp"
             android:hint="@string/user_comment_hint" />

@@ -2,17 +2,17 @@ package com.uberpets.model;
 
 public class Person {
 
-    private int id;
+    private String id;
     private String name;
     private String lastName;
 
-    public Person(int id, String name, String lastName) {
+    public Person(String id, String name, String lastName) {
         this.id = id;
         this.name = name;
         this.lastName = lastName;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
