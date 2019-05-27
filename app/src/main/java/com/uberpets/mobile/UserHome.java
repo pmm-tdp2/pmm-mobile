@@ -53,6 +53,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.uberpets.Constants;
 import com.uberpets.mobile.ui.main.CanceledTravelFragment;
+import com.uberpets.model.CopyTravelDTO;
 import com.uberpets.model.Person;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.TravelDTO;
@@ -576,7 +577,16 @@ public class UserHome extends AppCompatActivity
         finishPreviousFragments();
         returnOriginalState();
         Intent intent = new Intent(this, UserFinalScreen.class);
-        intent.putExtra("TRAVEL",mTravelDTO);
+        CopyTravelDTO copyTravelDTO = new CopyTravelDTO.CopyTravelDTOBuilder()
+                .setBigPetQuantity(mTravelDTO.getBigPetQuantity())
+                .setMediumPetQuantity(mTravelDTO.getMediumPetQuantity())
+                .setSmallPetQuantity(mTravelDTO.getSmallPetQuantity())
+                .setTravelId(mTravelDTO.getTravelId())
+                .setUserId(mTravelDTO.getUserId())
+                .setDriverId(mTravelDTO.getDriverId())
+                .setHasCompanion(mTravelDTO.isHasCompanion())
+                .build();
+        intent.putExtra("TRAVEL",copyTravelDTO);
         startActivity(intent);
     }
 

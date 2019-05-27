@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.uberpets.library.rest.Headers;
+import com.uberpets.model.CopyTravelDTO;
 import com.uberpets.model.RatingDTO;
 import com.uberpets.model.SimpleResponse;
 import com.uberpets.model.TravelDTO;
@@ -22,7 +23,7 @@ public class UserFinalScreen extends AppCompatActivity {
     private RatingBar mRatingBar;
     private CheckBox mCheckBox;
     TextInputEditText mTextInput;
-    private TravelDTO mTravelDto;
+    private CopyTravelDTO mTravelDto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,7 @@ public class UserFinalScreen extends AppCompatActivity {
         mCheckBox = findViewById(R.id.betterServiceCheckbox);
         mCheckBox.setVisibility(View.INVISIBLE);
         mTextInput =  findViewById(R.id.user_text_comment);
-        mTravelDto = (TravelDTO) getIntent().getSerializableExtra("TRAVEL");
+        mTravelDto = (CopyTravelDTO) getIntent().getSerializableExtra("TRAVEL");
     }
 
     @Override

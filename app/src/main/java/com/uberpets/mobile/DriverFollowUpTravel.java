@@ -182,9 +182,11 @@ public class DriverFollowUpTravel extends Fragment {
 
     public void finalizeTravelFragment() {
         if(mTravelAssignedDTO !=  null){
+            Log.i(this.getClass().getName(),"ANTES DE CREAR DTO");
             TravelConfirmationDTO travelConfirmationDTO =
                     new TravelConfirmationDTO(mTravelAssignedDTO.getTravelId()
                             ,this.ROL,this.idDriver,true);
+            Log.i(this.getClass().getName(),"LUEGO DE CREAR DTO");
             App.nodeServer.post("/api/travels/finalize",travelConfirmationDTO,
                     SimpleResponse.class, new Headers())
                     .run(this::responseFinalizeTravelFragment,this::errorRejectTravelFragment);

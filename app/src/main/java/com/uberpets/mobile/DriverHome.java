@@ -41,6 +41,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.uberpets.Constants;
+import com.uberpets.model.CopyTravelDTO;
 import com.uberpets.model.GeograficCoordenate;
 import com.uberpets.model.TraceDTO;
 import com.uberpets.model.TravelAssignedDTO;
@@ -450,7 +451,16 @@ public class  DriverHome
     public void finishTravel(){
         finishPreviousFragments();
         Intent intent = new Intent(this, DriverFinalScreen.class);
-        intent.putExtra("TRAVEL",mTravelDTO);
+        CopyTravelDTO copyTravelDTO = new CopyTravelDTO.CopyTravelDTOBuilder()
+                .setBigPetQuantity(mTravelDTO.getBigPetQuantity())
+                .setMediumPetQuantity(mTravelDTO.getMediumPetQuantity())
+                .setSmallPetQuantity(mTravelDTO.getSmallPetQuantity())
+                .setTravelId(mTravelDTO.getTravelId())
+                .setUserId(mTravelDTO.getUserId())
+                .setDriverId(mTravelDTO.getDriverId())
+                .setHasCompanion(mTravelDTO.isHasCompanion())
+                .build();
+        intent.putExtra("TRAVEL",copyTravelDTO);
         startActivity(intent);
         //TODO: mandar notificación al server de la puntuacion
         inTravel = false;

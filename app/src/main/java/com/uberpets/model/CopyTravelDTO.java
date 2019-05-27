@@ -11,10 +11,8 @@ import java.io.Serializable;
  * - server send notification of travel to driver
  */
 
-public class TravelDTO {
+public class CopyTravelDTO implements Serializable {
     private final String userId;
-    private final LatLng from;
-    private final LatLng to;
     private final int smallPetQuantity;
     private final int mediumPetQuantity;
     private final int bigPetQuantity;
@@ -23,9 +21,7 @@ public class TravelDTO {
     private final int travelId;
 
 
-    public static class TravelDTOBuilder {
-        private final LatLng from;
-        private final LatLng to;
+    public static class CopyTravelDTOBuilder {
         private int travelId;
         private String userId;
         private String driverId;
@@ -34,56 +30,52 @@ public class TravelDTO {
         private int bigPetQuantity = 0;
         private boolean hasCompanion = false;
 
-        public TravelDTOBuilder(LatLng from, LatLng to) {
-            this.from = from;
-            this.to = to;
+        public CopyTravelDTOBuilder() {
         }
 
-        public TravelDTOBuilder setTravelId(int travelId) {
+        public CopyTravelDTOBuilder setTravelId(int travelId) {
             this.travelId = travelId;
             return this;
         }
 
-        public TravelDTOBuilder setUserId(String userId) {
+        public CopyTravelDTOBuilder setUserId(String userId) {
             this.userId = userId;
             return this;
         }
 
-        public TravelDTOBuilder setDriverId(String driverId) {
+        public CopyTravelDTOBuilder setDriverId(String driverId) {
             this.driverId = driverId;
             return this;
         }
 
-        public TravelDTOBuilder setSmallPetQuantity(int smallPetQuantity) {
+        public CopyTravelDTOBuilder setSmallPetQuantity(int smallPetQuantity) {
             this.smallPetQuantity = smallPetQuantity;
             return this;
         }
 
-        public TravelDTOBuilder setMediumPetQuantity(int mediumPetQuantity) {
+        public CopyTravelDTOBuilder setMediumPetQuantity(int mediumPetQuantity) {
             this.mediumPetQuantity = mediumPetQuantity;
             return this;
         }
 
-        public TravelDTOBuilder setBigPetQuantity(int bigPetQuantity) {
+        public CopyTravelDTOBuilder setBigPetQuantity(int bigPetQuantity) {
             this.bigPetQuantity = bigPetQuantity;
             return this;
         }
 
-        public TravelDTOBuilder setHasCompanion(boolean hasCompanion) {
+        public CopyTravelDTOBuilder setHasCompanion(boolean hasCompanion) {
             this.hasCompanion = hasCompanion;
             return this;
         }
 
-        public TravelDTO build() {
-            return new TravelDTO(this);
+        public CopyTravelDTO build() {
+            return new CopyTravelDTO(this);
         }
 
     }
 
 
-    public TravelDTO(TravelDTOBuilder builder) {
-        this.from = builder.from;
-        this.to = builder.to;
+    public CopyTravelDTO(CopyTravelDTOBuilder builder) {
         this.hasCompanion = builder.hasCompanion;
         this.smallPetQuantity = builder.smallPetQuantity;
         this.mediumPetQuantity = builder.mediumPetQuantity;
@@ -95,14 +87,6 @@ public class TravelDTO {
 
     public String getUserId() {
         return userId;
-    }
-
-    public LatLng getFrom() {
-        return from;
-    }
-
-    public LatLng getTo() {
-        return to;
     }
 
     public int getSmallPetQuantity() {
@@ -134,8 +118,6 @@ public class TravelDTO {
         return "userId: "+userId
          +" driverId: "+driverId
          +" travelId: "+travelId
-         +" from: "+from
-         +" to: "+to
          +" smallPetQuantity: "+smallPetQuantity
          +" mediumPetQuantity: "+mediumPetQuantity
          +" bigPetQuantity: "+bigPetQuantity

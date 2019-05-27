@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.uberpets.library.rest.Headers;
+import com.uberpets.model.CopyTravelDTO;
 import com.uberpets.model.RatingDTO;
 import com.uberpets.model.SimpleResponse;
 import com.uberpets.model.TravelDTO;
@@ -18,7 +19,7 @@ public class DriverFinalScreen extends AppCompatActivity {
 
     RatingBar mRatingBar;
     TextInputEditText mTextInput;
-    TravelDTO mTravelDto;
+    CopyTravelDTO mTravelDto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,7 @@ public class DriverFinalScreen extends AppCompatActivity {
         setContentView(R.layout.activity_driver_final_screen);
         mRatingBar = findViewById(R.id.ratingBar_user);
         mTextInput =  findViewById(R.id.driver_text_comment);
-        mTravelDto = (TravelDTO) getIntent().getSerializableExtra("TRAVEL");
+        mTravelDto = (CopyTravelDTO) getIntent().getSerializableExtra("TRAVEL");
     }
 
     public void sendComment(android.view.View view){
