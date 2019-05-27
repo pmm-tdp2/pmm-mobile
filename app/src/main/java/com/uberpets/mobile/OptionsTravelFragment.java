@@ -129,13 +129,13 @@ public class OptionsTravelFragment extends Fragment {
         TravelDTO quotation =  new TravelDTO.TravelDTOBuilder(
                 myActivity.getmOrigin(),myActivity.getmDestiny())
                 .setUserId(myActivity.getidUser())
-                .setHasACompanion(optionCompanion.isChecked())
-                .setpetAmountSmall(mAdapter.getAllLittlePets())
-                .setpetAmountMedium(mAdapter.getAllMediumPets())
-                .setpetAmountLarge(mAdapter.getAllBigPets())
+                .setHasCompanion(optionCompanion.isChecked())
+                .setSmallPetQuantity(mAdapter.getAllLittlePets())
+                .setMediumPetQuantity(mAdapter.getAllMediumPets())
+                .setBigPetQuantity(mAdapter.getAllBigPets())
                 .build();
 
-        App.nodeServer.post("/travel/cotization",
+        App.nodeServer.post("/api/travels/simulateQuote",
                 quotation, TravelPriceDTO.class, new Headers())
                 .run(this::responseQuotation, this::errorQuotation);
     }
@@ -147,7 +147,7 @@ public class OptionsTravelFragment extends Fragment {
             String price = "$"+ priceTravel.getPrice();
             mPriceText.setText(price);
             readyToGetTravel=true;
-            travelID = priceTravel.getTravelID();
+            travelID = priceTravel.getTravelId();
         }
     }
 
@@ -168,7 +168,7 @@ public class OptionsTravelFragment extends Fragment {
             showSearchingDriver();
             TravelConfirmationDTO travelConfirmationDTO =
                     new TravelConfirmationDTO(travelID,myActivity.ROL,myActivity.getidUser(),true);
-            App.nodeServer.post("/travel/confirmation",
+            App.nodeServer.post("/api/travels/confirmation",
                     travelConfirmationDTO, TravelAssignedDTO.class, new Headers())
                     //.onDone((s,ec)->finishFragmentExecuted())
                     .run(this::handleGoodResponse, this::handleErrorResponse);

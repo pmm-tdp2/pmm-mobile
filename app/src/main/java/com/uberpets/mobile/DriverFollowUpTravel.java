@@ -173,19 +173,19 @@ public class DriverFollowUpTravel extends Fragment {
 
     public void cancelTravelRequest(){
         String rol = this.ROL == null ? "driver" : this.ROL;
-        int travelId = mTravelAssignedDTO == null ? 9999 : mTravelAssignedDTO.getTravelID();
+        int travelId = mTravelAssignedDTO == null ? 9999 : mTravelAssignedDTO.getTravelId();
         TravelConfirmationDTO travelCancelDTO = new TravelConfirmationDTO(
                 travelId, rol, this.idDriver,true);
-        App.nodeServer.post("/travel/cancel", travelCancelDTO, SimpleResponse.class, new Headers())
+        App.nodeServer.post("/api/travels/cancel", travelCancelDTO, SimpleResponse.class, new Headers())
                 .run(this::responseCancelTravel, this::errorCancelTravel);
     }
 
     public void finalizeTravelFragment() {
         if(mTravelAssignedDTO !=  null){
             TravelConfirmationDTO travelConfirmationDTO =
-                    new TravelConfirmationDTO(mTravelAssignedDTO.getTravelID()
+                    new TravelConfirmationDTO(mTravelAssignedDTO.getTravelId()
                             ,this.ROL,this.idDriver,true);
-            App.nodeServer.post("/travel/finalize",travelConfirmationDTO,
+            App.nodeServer.post("/api/travels/finalize",travelConfirmationDTO,
                     SimpleResponse.class, new Headers())
                     .run(this::responseFinalizeTravelFragment,this::errorRejectTravelFragment);
         }else{

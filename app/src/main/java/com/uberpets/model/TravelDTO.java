@@ -13,34 +13,34 @@ import java.io.Serializable;
 
 public class TravelDTO implements Serializable {
     private final String userId;
-    private final String driverId;
-    private final int travelID;
     private final LatLng from;
     private final LatLng to;
-    private final int petAmountSmall;
-    private final int petAmountMedium;
-    private final int petAmountLarge;
-    private final boolean hasACompanion;
+    private final int smallPetQuantity;
+    private final int mediumPetQuantity;
+    private final int bigPetQuantity;
+    private final boolean hasCompanion;
+    private final String driverId;
+    private final int travelId;
 
 
     public static class TravelDTOBuilder {
         private final LatLng from;
         private final LatLng to;
-        private int travelID;
+        private int travelId;
         private String userId;
         private String driverId;
-        private int petAmountSmall = 0;
-        private int petAmountMedium = 0;
-        private int petAmountLarge = 0;
-        private boolean hasACompanion = false;
+        private int smallPetQuantity = 0;
+        private int mediumPetQuantity = 0;
+        private int bigPetQuantity = 0;
+        private boolean hasCompanion = false;
 
         public TravelDTOBuilder(LatLng from, LatLng to) {
             this.from = from;
             this.to = to;
         }
 
-        public TravelDTOBuilder setTravelID(int travelID) {
-            this.travelID = travelID;
+        public TravelDTOBuilder setTravelId(int travelId) {
+            this.travelId = travelId;
             return this;
         }
 
@@ -54,23 +54,23 @@ public class TravelDTO implements Serializable {
             return this;
         }
 
-        public TravelDTOBuilder setpetAmountSmall(int petAmountSmall) {
-            this.petAmountSmall = petAmountSmall;
+        public TravelDTOBuilder setSmallPetQuantity(int smallPetQuantity) {
+            this.smallPetQuantity = smallPetQuantity;
             return this;
         }
 
-        public TravelDTOBuilder setpetAmountMedium(int petAmountMedium) {
-            this.petAmountMedium = petAmountMedium;
+        public TravelDTOBuilder setMediumPetQuantity(int mediumPetQuantity) {
+            this.mediumPetQuantity = mediumPetQuantity;
             return this;
         }
 
-        public TravelDTOBuilder setpetAmountLarge(int petAmountLarge) {
-            this.petAmountLarge = petAmountLarge;
+        public TravelDTOBuilder setBigPetQuantity(int bigPetQuantity) {
+            this.bigPetQuantity = bigPetQuantity;
             return this;
         }
 
-        public TravelDTOBuilder setHasACompanion(boolean hasACompanion) {
-            this.hasACompanion = hasACompanion;
+        public TravelDTOBuilder setHasCompanion(boolean hasCompanion) {
+            this.hasCompanion = hasCompanion;
             return this;
         }
 
@@ -84,11 +84,11 @@ public class TravelDTO implements Serializable {
     public TravelDTO(TravelDTOBuilder builder) {
         this.from = builder.from;
         this.to = builder.to;
-        this.hasACompanion = builder.hasACompanion;
-        this.petAmountSmall = builder.petAmountSmall;
-        this.petAmountMedium = builder.petAmountMedium;
-        this.petAmountLarge = builder.petAmountLarge;
-        this.travelID = builder.travelID;
+        this.hasCompanion = builder.hasCompanion;
+        this.smallPetQuantity = builder.smallPetQuantity;
+        this.mediumPetQuantity = builder.mediumPetQuantity;
+        this.bigPetQuantity = builder.bigPetQuantity;
+        this.travelId = builder.travelId;
         this.userId = builder.userId;
         this.driverId = builder.driverId;
     }
@@ -105,41 +105,41 @@ public class TravelDTO implements Serializable {
         return to;
     }
 
-    public int getpetAmountSmall() {
-        return petAmountSmall;
+    public int getSmallPetQuantity() {
+        return smallPetQuantity;
     }
 
-    public int getpetAmountMedium() {
-        return petAmountMedium;
+    public int getMediumPetQuantity() {
+        return mediumPetQuantity;
     }
 
-    public int getpetAmountLarge() {
-        return petAmountLarge;
+    public int getBigPetQuantity() {
+        return bigPetQuantity;
     }
 
-    public boolean isHasACompanion() {
-        return hasACompanion;
+    public boolean isHasCompanion() {
+        return hasCompanion;
     }
 
     public String getDriverId() {
         return driverId;
     }
 
-    public int getTravelID() {
-        return travelID;
+    public int getTravelId() {
+        return travelId;
     }
 
     @Override
     public String toString(){
         return "userId: "+userId
          +" driverId: "+driverId
-         +" travelID: "+travelID
+         +" travelId: "+travelId
          +" from: "+from
          +" to: "+to
-         +" petAmountSmall: "+petAmountSmall
-         +" petAmountMedium: "+petAmountMedium
-         +" petAmountLarge: "+petAmountLarge
-         +" hasACompanion: "+hasACompanion;
+         +" smallPetQuantity: "+smallPetQuantity
+         +" mediumPetQuantity: "+mediumPetQuantity
+         +" bigPetQuantity: "+bigPetQuantity
+         +" hasCompanion: "+hasCompanion;
 
     }
 }

@@ -2,18 +2,18 @@ package com.uberpets.model;
 
 public class TravelPriceDTO {
     private String price;
-    private int travelID;
+    private int travelId;
 
-    public TravelPriceDTO(String price, int travelID) {
+    public TravelPriceDTO(String price, int travelId) {
         this.price = price;
-        this.travelID = travelID;
+        this.travelId = travelId;
     }
 
     public String getPrice() {
         return price;
     }
 
-    public int getTravelID() {
-        return travelID;
+    public int getTravelId() {
+        return travelId;
     }
 }

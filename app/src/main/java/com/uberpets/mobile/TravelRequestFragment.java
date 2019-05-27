@@ -145,16 +145,16 @@ public class TravelRequestFragment extends Fragment {
         //TODO: show info the travel
         Log.d(this.getClass().getName(),"TravelDTO: "+mTravelDTO.toString());
         TextView bigPets =rootView.findViewById(R.id.amount_big_pets);
-        bigPets.setText(String.valueOf(mTravelDTO.getpetAmountLarge()));
+        bigPets.setText(String.valueOf(mTravelDTO.getBigPetQuantity()));
 
         TextView mediumPets =rootView.findViewById(R.id.amount_medium_pets);
-        mediumPets.setText(String.valueOf(mTravelDTO.getpetAmountMedium()));
+        mediumPets.setText(String.valueOf(mTravelDTO.getMediumPetQuantity()));
 
         TextView littlePets =rootView.findViewById(R.id.amount_little_pets);
-        littlePets.setText(String.valueOf(mTravelDTO.getpetAmountSmall()));
+        littlePets.setText(String.valueOf(mTravelDTO.getSmallPetQuantity()));
 
         TextView hasCompanion =rootView.findViewById(R.id.has_companion);
-        hasCompanion.setText(mTravelDTO.isHasACompanion() ? getString(R.string.yes_string):
+        hasCompanion.setText(mTravelDTO.isHasCompanion() ? getString(R.string.yes_string):
                 getString(R.string.no_string));
     }
 
@@ -168,8 +168,8 @@ public class TravelRequestFragment extends Fragment {
 
     public void rejectTravelFragment() {
         TravelConfirmationDTO travelConfirmationDTO =
-                new TravelConfirmationDTO(mTravelDTO.getTravelID(),this.ROL,this.idDriver,false);
-        App.nodeServer.post("/travel/confirmation",travelConfirmationDTO,
+                new TravelConfirmationDTO(mTravelDTO.getTravelId(),this.ROL,this.idDriver,false);
+        App.nodeServer.post("/api/travels/confirmation",travelConfirmationDTO,
                 Object.class, new Headers())
                 .run(this::responseRejectTravelFragment,this::errorRejectTravelFragment);
         //mListener.rejectTravel();
@@ -189,11 +189,11 @@ public class TravelRequestFragment extends Fragment {
     }
 
     public void acceptTravelFragment(){
-        if(mTravelDTO != null && mTravelDTO.getTravelID() != -1){
+        if(mTravelDTO != null && mTravelDTO.getTravelId() != -1){
             Log.d(this.getClass().getName(), "Driver accept travel and send message");
             TravelConfirmationDTO travelConfirmationDTO =
-                    new TravelConfirmationDTO(mTravelDTO.getTravelID(),this.ROL,this.idDriver,true);
-            App.nodeServer.post("/travel/confirmation",travelConfirmationDTO,
+                    new TravelConfirmationDTO(mTravelDTO.getTravelId(),this.ROL,this.idDriver,true);
+            App.nodeServer.post("/api/travels/confirmation",travelConfirmationDTO,
                     TravelAssignedDTO.class, new Headers())
                     .run(this::responseAcceptTravelFragment,this::errorAcceptTravelFragment);
         }else{

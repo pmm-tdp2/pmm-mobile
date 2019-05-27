@@ -8,13 +8,13 @@ package com.uberpets.model;
  */
 
 public class TravelConfirmationDTO {
-    private int travelID;
+    private int travelId;
     private String rol;
     private String id;
     private boolean accept;
 
-    public TravelConfirmationDTO(int travelID, String rol, String id, boolean accept) {
-        this.travelID = travelID;
+    public TravelConfirmationDTO(int travelId, String rol, String id, boolean accept) {
+        this.travelId = travelId;
         this.rol = rol;
         this.id = id;
         this.accept = accept;
@@ -24,8 +24,8 @@ public class TravelConfirmationDTO {
         return id;
     }
 
-    public int getTravelID() {
-        return travelID;
+    public int getTravelId() {
+        return travelId;
     }
 
     public String getRol() {

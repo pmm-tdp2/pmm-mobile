@@ -775,7 +775,12 @@ public class UserHome extends AppCompatActivity
 
                                 TravelAssignedDTO travelAssignedDTO =
                                       gson.fromJson(response.toString(),TravelAssignedDTO.class);
-                                mTravelDTO = new TravelDTO((new TravelDTO.TravelDTOBuilder(originMarker.getPosition(), destinyMarker.getPosition())).setTravelID(travelAssignedDTO.getTravelID()).setDriverId(travelAssignedDTO.getDriver().getId()).setUserId(travelAssignedDTO.getUser().getId()));
+                                mTravelDTO = new TravelDTO((new TravelDTO.TravelDTOBuilder(
+                                        originMarker.getPosition(),
+                                        destinyMarker.getPosition()))
+                                        .setTravelId(travelAssignedDTO.getTravelId())
+                                        .setDriverId(travelAssignedDTO.getDriver().getId())
+                                        .setUserId(travelAssignedDTO.getUser().getId()));
                                 /*Person user = new Person(1,"Juan Fernando ","Perez Gonzales");
                                 Person driver = new Person(1,"Chano Santiago ","Moreno Charpentier");
                                 TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20 minutos",user,driver);*/
