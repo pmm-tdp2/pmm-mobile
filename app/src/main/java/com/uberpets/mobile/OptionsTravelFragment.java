@@ -143,6 +143,7 @@ public class OptionsTravelFragment extends Fragment {
 
     public void responseQuotation(TravelPriceDTO priceTravel) {
         if (priceTravel != null) {
+            Log.i(this.getClass().getName(),"COTIZATION: "+priceTravel.toString());
             mButtonGetTravel.setText("Pedir Viaje");
             String price = "$"+ priceTravel.getPrice();
             mPriceText.setText(price);

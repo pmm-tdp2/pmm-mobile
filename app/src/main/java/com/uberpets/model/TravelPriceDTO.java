@@ -2,11 +2,11 @@ package com.uberpets.model;
 
 public class TravelPriceDTO {
     private String price;
-    private int travelId;
+    private int id;
 
-    public TravelPriceDTO(String price, int travelId) {
+    public TravelPriceDTO(String price, int id) {
         this.price = price;
-        this.travelId = travelId;
+        this.id = id;
     }
 
     public String getPrice() {
@@ -14,6 +14,10 @@ public class TravelPriceDTO {
     }
 
     public int getTravelId() {
-        return travelId;
+        return id;
+    }
+
+    public String toString() {
+        return "price: "+price+", travelId: "+id;
     }
 }
