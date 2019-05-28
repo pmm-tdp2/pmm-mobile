@@ -29,7 +29,6 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -138,7 +137,7 @@ public class UserHome extends AppCompatActivity
         toggle.syncState();
 
         //setting id:
-        this.idUser = AccountSession.getRIdLogin(this);
+        this.idUser = AccountSession.getIdLogin(this) == "" ? "123456782" : AccountSession.getIdLogin(this);
         Log.i(this.getClass().getName(),"idFacebook: "+idUser);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -626,6 +625,11 @@ public class UserHome extends AppCompatActivity
             public void call(final Object... args) {
                 runOnUiThread(new Runnable() {
                     @Override
+                    public int hashCode() {
+                        return super.hashCode();
+                    }
+
+                    @Override
                     public void run() {
                         JSONObject response = (JSONObject) args[0];
                         Log.d(TAG_CONNECTION_SERVER, "Established Connection");
@@ -638,7 +642,7 @@ public class UserHome extends AppCompatActivity
                 });
             }
         });
-        mSocket.emit(TAG_ROL,ROL);
+        mSocket.emit(TAG_ROL, ROL, idUser);
     }
 
 

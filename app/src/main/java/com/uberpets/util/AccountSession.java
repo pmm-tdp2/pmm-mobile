@@ -43,7 +43,7 @@ public class AccountSession {
         editor.apply();
     }
 
-    public static String getRIdLogin(Context context) {
+    public static String getIdLogin(Context context) {
         String id = getSharedPreferences(context).getString(LOGIN_ID_VALUE , "");
         Log.d(AccountSession.class.getName(),"get id login:" +  id);
         return id;

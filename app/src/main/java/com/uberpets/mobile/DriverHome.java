@@ -108,7 +108,7 @@ public class  DriverHome
         toggle.syncState();
 
         //setting id:
-        this.idDriver = AccountSession.getRIdLogin(this);
+        this.idDriver = AccountSession.getIdLogin(this) == "" ? "987654322" : AccountSession.getIdLogin(this);
         Log.i(this.getClass().getName(),"idFacebook: "+idDriver);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -487,7 +487,7 @@ public class  DriverHome
                 });
             }
         });
-        mSocket.emit(TAG_ROL,ROL);
+        mSocket.emit(TAG_ROL, ROL, idDriver);
     }
 
 

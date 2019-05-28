@@ -49,6 +49,11 @@ public class DriverFollowUpTravel extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
