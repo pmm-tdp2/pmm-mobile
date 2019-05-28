@@ -33,7 +33,7 @@ public class DriverFinalScreen extends AppCompatActivity {
     public void sendComment(android.view.View view){
         float rating = mRatingBar.getRating();
         if(rating != 0 && mTravelDto != null) {
-            Log.i(this.getClass().getName(),"driver: idDriver "+ " has scored with "+rating );
+            Log.i(this.getClass().getName(),"driver: idDriver "+ " has scored with " + rating );
             Log.i(this.getClass().getName(),"comentario: "+mTextInput.getText().toString());
             //go back to activity that called it
             RatingDTO ratingDto = new RatingDTO.RatingDTOBuilder()

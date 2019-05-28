@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.common.api.Status;
@@ -88,9 +89,11 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
         // Initialize the AutocompleteSupportFragment
         mAutocompleteSupportFragmentOrigin = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment_origin);
+        if (mAutocompleteSupportFragmentOrigin != null) mAutocompleteSupportFragmentOrigin.a.setTextSize(12.0f);
 
         mAutocompleteSupportFragmentDestiny = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment_destiny);
+        if (mAutocompleteSupportFragmentDestiny  != null) mAutocompleteSupportFragmentDestiny.a.setTextSize(12.0f);
 
 
         mAutocompleteSupportFragmentOrigin.setHint("Origen");

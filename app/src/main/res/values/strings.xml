@@ -78,5 +78,6 @@
     <string name="sending_data_dots">Enviando datos...</string>
     <string name="user_scoring_description"><![CDATA[¿Cómo te ha ido con <nombre>?]]></string>
     <string name="minutes">minutos</string>
+    <string name="where_you_want_to_go">¿A dónde querés ir?</string>
 
 </resources>
