@@ -23,5 +23,13 @@ public class Person {
     public String getLastName() {
         return lastName;
     }
+
+    public String toString() {
+        return "{" +
+                "id: "+id +","
+                + "name: "+name +","
+                + "lastName: "+lastName
+                + "}";
+    }
 }
 

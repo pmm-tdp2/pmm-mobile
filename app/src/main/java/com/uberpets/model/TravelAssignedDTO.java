@@ -7,8 +7,8 @@ package com.uberpets.model;
 public class TravelAssignedDTO {
     private int travelId;
     private String time;
-    private Person user;
-    private Person driver;
+    private Person user = null;
+    private Person driver = null;
 
     public TravelAssignedDTO(int travelId, String time, Person user, Person driver) {
         this.travelId = travelId;
@@ -31,5 +31,27 @@ public class TravelAssignedDTO {
 
     public Person getDriver() {
         return driver;
+    }
+
+    public String toString() {
+        String stringUser;
+        String stringDriver;
+        if(this.user == null)
+            stringUser="null";
+        else
+            stringUser = this.user.toString();
+
+        if(this.driver == null)
+            stringDriver="null";
+        else
+            stringDriver = this.driver.toString();
+
+
+        return "{" +
+                "travelId: "+travelId +","
+                + "time: "+time +","
+                + "user: "+ stringUser
+                + "driver: "+ stringDriver
+                +"}";
     }
 }

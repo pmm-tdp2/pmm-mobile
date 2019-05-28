@@ -478,11 +478,11 @@ public class  DriverHome
                     public void run() {
                         JSONObject response = (JSONObject) args[0];
                         Log.d(this.getClass().getName(), "Established Connection");
-                        try{
+                        /*try{
                             idDriver= response.getString("id");
                         }catch (Exception ex){
                             Log.e(this.getClass().getName(),"driver has no assigned a id");
-                        }
+                        }*/
                     }
                 });
             }
@@ -506,13 +506,15 @@ public class  DriverHome
                             Gson gson = new Gson();
                             Log.d(this.getClass().getName(),"--NOTIFICACIÓN DE VIAJE-");
                             Log.d(this.getClass().getName(),response.toString());
+                            Log.d(this.getClass().getName(),"------------------------");
                             mTravelDTO = gson.fromJson(response.toString(),TravelDTO.class);
+
                             //TODO: mostrar la cantidad de mascotas que tendrá el viaje
                             //TODO: dibujar el tramo del viaje
                             Log.d(this.getClass().getName(),mTravelDTO.toString());
 
                             TravelRequestFragment travelRequest =
-                                    TravelRequestFragment.newInstance(ROL,idDriver,mTravelDTO);
+                                    TravelRequestFragment.newInstance(idDriver,mTravelDTO);
                             /*TravelRequestFragment travelRequest = new TravelRequestFragment();
                             travelRequest.setTravelDTO(travelDTO);
                             travelRequest.setROL(ROL);

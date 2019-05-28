@@ -234,7 +234,8 @@ public class DriverFollowUpTravel extends Fragment {
     }
 
     public void errorCancelTravel(Exception e){
-        Log.d(this.getClass().getName(), e.getMessage());
+        Log.e(this.getClass().getName(),"Error in cancel");
+        Log.d(this.getClass().getName(), e.toString());
         //TODO: no se ha podido finalizar el viaje
     }
 

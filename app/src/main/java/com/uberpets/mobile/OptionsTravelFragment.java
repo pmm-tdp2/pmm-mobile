@@ -1,5 +1,6 @@
 package com.uberpets.mobile;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -168,7 +169,8 @@ public class OptionsTravelFragment extends Fragment {
         if (readyToGetTravel){
             showSearchingDriver();
             TravelConfirmationDTO travelConfirmationDTO =
-                    new TravelConfirmationDTO(travelID,myActivity.ROL,myActivity.getidUser(),true);
+                    new TravelConfirmationDTO(travelID,mConstants.getID_USERS()
+                            ,myActivity.getidUser(),true);
             App.nodeServer.post("/api/travels/confirmation",
                     travelConfirmationDTO, TravelAssignedDTO.class, new Headers())
                     //.onDone((s,ec)->finishFragmentExecuted())
@@ -200,6 +202,7 @@ public class OptionsTravelFragment extends Fragment {
             /*Log.i(this.getClass().getName(), travelAssignedDTO.getDriver().toString());
             myActivity.showInfoDriverAssigned();*/
             Log.d(this.getClass().getName(), "LA SOLICITUD FUE RECIBIDA");
+            Log.d(this.getClass().getName(),travelAssignedDTO.toString());
             //listenAssignedDriver();
         }else{
             Log.d(this.getClass().getName(), "NO SE PUDO MANDAR LA SOLICUTD");
@@ -209,14 +212,17 @@ public class OptionsTravelFragment extends Fragment {
     }
 
     public void handleErrorResponse(Exception ex) {
-        finishFragmentExecuted();
-        if (ex instanceof ServerError) {
-            Log.d(this.getClass().getName(), "error to connect server");
-            myActivity.showMessageCard();
-        } else
-            Toast.makeText(getContext()
-                    , getString(R.string.error_quotation)
-                    , Toast.LENGTH_LONG).show();
+        Activity activity = getActivity();
+        if(activity != null && isAdded()){
+            finishFragmentExecuted();
+            if (ex instanceof ServerError) {
+                Log.d(this.getClass().getName(), "error to connect server");
+                myActivity.showMessageCard();
+            } else
+                Toast.makeText(activity
+                        , getString(R.string.error_quotation)
+                        , Toast.LENGTH_LONG).show();
+        }
     }
 
 

@@ -633,11 +633,11 @@ public class UserHome extends AppCompatActivity
                     public void run() {
                         JSONObject response = (JSONObject) args[0];
                         Log.d(TAG_CONNECTION_SERVER, "Established Connection");
-                        try{
+                        /*try{
                             idUser= response.getString("id");
                         }catch (Exception ex){
                             Log.e(TAG_CONNECTION_SERVER,"user has no assigned a id");
-                        }
+                        }*/
                     }
                 });
             }
