@@ -577,15 +577,19 @@ public class UserHome extends AppCompatActivity
         finishPreviousFragments();
         returnOriginalState();
         Intent intent = new Intent(this, UserFinalScreen.class);
-        CopyTravelDTO copyTravelDTO = new CopyTravelDTO.CopyTravelDTOBuilder()
-                .setBigPetQuantity(mTravelDTO.getBigPetQuantity())
-                .setMediumPetQuantity(mTravelDTO.getMediumPetQuantity())
-                .setSmallPetQuantity(mTravelDTO.getSmallPetQuantity())
-                .setTravelId(mTravelDTO.getTravelId())
-                .setUserId(mTravelDTO.getUserId())
-                .setDriverId(mTravelDTO.getDriverId())
-                .setHasCompanion(mTravelDTO.isHasCompanion())
-                .build();
+        CopyTravelDTO copyTravelDTO = null;
+
+        if (copyTravelDTO != null) {
+            copyTravelDTO = new CopyTravelDTO.CopyTravelDTOBuilder()
+                    .setBigPetQuantity(mTravelDTO.getBigPetQuantity())
+                    .setMediumPetQuantity(mTravelDTO.getMediumPetQuantity())
+                    .setSmallPetQuantity(mTravelDTO.getSmallPetQuantity())
+                    .setTravelId(mTravelDTO.getTravelId())
+                    .setUserId(mTravelDTO.getUserId())
+                    .setDriverId(mTravelDTO.getDriverId())
+                    .setHasCompanion(mTravelDTO.isHasCompanion())
+                    .build();
+        }
         intent.putExtra("TRAVEL",copyTravelDTO);
         startActivity(intent);
     }
