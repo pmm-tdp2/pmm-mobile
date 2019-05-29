@@ -463,6 +463,9 @@ public class  DriverHome
                 .setHasCompanion(mTravelDTO.isHasCompanion())
                 .build();
         intent.putExtra("TRAVEL",copyTravelDTO);
+        Log.i(this.getClass().getName(),"---------go to rating driver--------------");
+        Log.i(this.getClass().getName(),copyTravelDTO.toString());
+        Log.i(this.getClass().getName(),"-----------------------------------");
         startActivity(intent);
         //TODO: mandar notificación al server de la puntuacion
         inTravel = false;
