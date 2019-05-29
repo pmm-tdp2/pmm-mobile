@@ -82,7 +82,7 @@ public class VolleyJsonRequest<T> implements Async<T> {
 
         request.setRetryPolicy(new DefaultRetryPolicy(
                 60*1000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+               0,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(request);
     }
