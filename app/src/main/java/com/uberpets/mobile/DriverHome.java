@@ -532,11 +532,11 @@ public class  DriverHome
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
+        mSocket.emit("FIN ROL","DRIVER", this.idDriver);
         mSocket.disconnect();
         mSocket.off("FINISH", mListenerConnection);
         mSocket.off("FINISH", mListenerNotificationTravel);
+        super.onDestroy();
     }
 
 }

@@ -719,13 +719,13 @@ public class UserHome extends AppCompatActivity
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
+        mSocket.emit("FIN ROL","USER", this.idUser);
         mSocket.disconnect();
         mSocket.off("FINISH", mListenerConnection);
         mSocket.off("FINISH", mListenerPositionDriver);
         mSocket.off("FINISH", mListenerDriverArrivedToUser);
         mSocket.off("FINISH", mListenerDriverArrivedToDestiny);
+        super.onDestroy();
     }
 
     /*BEGIN REPLACE FRAGMENT*/
