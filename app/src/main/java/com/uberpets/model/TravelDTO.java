@@ -134,8 +134,8 @@ public class TravelDTO {
         return "userId: "+userId
          +" driverId: "+driverId
          +" travelId: "+travelId
-         +" from: "+from
-         +" to: "+to
+         +" from: "+from.toString()
+         +" to: "+to.toString()
          +" smallPetQuantity: "+smallPetQuantity
          +" mediumPetQuantity: "+mediumPetQuantity
          +" bigPetQuantity: "+bigPetQuantity

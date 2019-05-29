@@ -578,17 +578,16 @@ public class UserHome extends AppCompatActivity
         Intent intent = new Intent(this, UserFinalScreen.class);
         CopyTravelDTO copyTravelDTO = null;
 
-        if (copyTravelDTO != null) {
-            copyTravelDTO = new CopyTravelDTO.CopyTravelDTOBuilder()
-                    .setBigPetQuantity(mTravelDTO.getBigPetQuantity())
-                    .setMediumPetQuantity(mTravelDTO.getMediumPetQuantity())
-                    .setSmallPetQuantity(mTravelDTO.getSmallPetQuantity())
-                    .setTravelId(mTravelDTO.getTravelId())
-                    .setUserId(mTravelDTO.getUserId())
-                    .setDriverId(mTravelDTO.getDriverId())
-                    .setHasCompanion(mTravelDTO.isHasCompanion())
-                    .build();
-        }
+        copyTravelDTO = new CopyTravelDTO.CopyTravelDTOBuilder()
+                .setBigPetQuantity(mTravelDTO.getBigPetQuantity())
+                .setMediumPetQuantity(mTravelDTO.getMediumPetQuantity())
+                .setSmallPetQuantity(mTravelDTO.getSmallPetQuantity())
+                .setTravelId(mTravelDTO.getTravelId())
+                .setUserId(mTravelDTO.getUserId())
+                .setDriverId(mTravelDTO.getDriverId())
+                .setHasCompanion(mTravelDTO.isHasCompanion())
+                .build();
+
         intent.putExtra("TRAVEL",copyTravelDTO);
         startActivity(intent);
     }
@@ -823,7 +822,18 @@ public class UserHome extends AppCompatActivity
         if(travelAssignedDTO != null) {
             Log.d(this.getClass().getName(),"I was assign a driver");
             //finishFragmentExecuted();
+            mTravelDTO = new TravelDTO((new TravelDTO.TravelDTOBuilder(
+                    originMarker.getPosition(),
+                    destinyMarker.getPosition()))
+                    .setTravelId(travelAssignedDTO.getTravelId())
+                    .setDriverId(travelAssignedDTO.getDriver().getId())
+                    .setUserId(travelAssignedDTO.getUser().getId()));
             showInfoDriverAssigned(travelAssignedDTO);
+
+            Log.d(this.getClass().getName(),travelAssignedDTO.toString());
+            Log.d(this.getClass().getName(),"--------------------");
+            Log.d(this.getClass().getName(),mTravelDTO.toString());
+
         }else {
             Log.d(this.getClass().getName(), "No se pudo econtrar un chofer");
             showDriverNotFound();
