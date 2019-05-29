@@ -170,6 +170,7 @@ public class OptionsTravelFragment extends Fragment {
 
     //user send request to confirm travel
     public void confirmTravel() {
+        Log.i(this.getClass().getName(),"he pedido un viaje");
         if (readyToGetTravel){
             showSearchingDriver();
             TravelConfirmationDTO travelConfirmationDTO =
@@ -202,9 +203,9 @@ public class OptionsTravelFragment extends Fragment {
 
 //TODO: cambiar el tipo de respuesta
     public void handleGoodResponse(TravelAssignedDTO travelAssignedDTO) {
-        if(travelAssignedDTO != null){
-            /*Log.i(this.getClass().getName(), travelAssignedDTO.getDriver().toString());
-            myActivity.showInfoDriverAssigned();*/
+        finishFragmentExecuted();
+        myActivity.driverAssignedToTravel(travelAssignedDTO);
+        /*if(travelAssignedDTO != null){
             Log.d(this.getClass().getName(), "LA SOLICITUD FUE RECIBIDA");
             Log.d(this.getClass().getName(),travelAssignedDTO.toString());
             //listenAssignedDriver();
@@ -212,7 +213,7 @@ public class OptionsTravelFragment extends Fragment {
             Log.d(this.getClass().getName(), "NO SE PUDO MANDAR LA SOLICUTD");
             finishFragmentExecuted();
             myActivity.showDriverNotFound();
-        }
+        }*/
     }
 
     public void handleErrorResponse(Exception ex) {

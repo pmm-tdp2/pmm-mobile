@@ -163,7 +163,7 @@ public class UserHome extends AppCompatActivity
                 listenDriverArrivedUser();
                 listenDriverArrivedDestiny();
                 listenCancelTravel();
-                listenAssignedDriver();
+                //listenAssignedDriver();
             } catch (URISyntaxException e) {
                 Log.e(TAG_CONNECTION_SERVER,"io socket failure");
             }
@@ -778,7 +778,7 @@ public class UserHome extends AppCompatActivity
     /*END REPLACE FRAGMENT*/
 
 
-    public void listenAssignedDriver() {
+    /*public void listenAssignedDriver() {
         mSocket.on(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
                 mListenerAssignDriver = new Emitter.Listener() {
                     @Override
@@ -799,9 +799,6 @@ public class UserHome extends AppCompatActivity
                                         .setTravelId(travelAssignedDTO.getTravelId())
                                         .setDriverId(travelAssignedDTO.getDriver().getId())
                                         .setUserId(travelAssignedDTO.getUser().getId()));
-                                /*Person user = new Person(1,"Juan Fernando ","Perez Gonzales");
-                                Person driver = new Person(1,"Chano Santiago ","Moreno Charpentier");
-                                TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20 minutos",user,driver);*/
 
                                 Log.i(this.getClass().getName(), travelAssignedDTO
                                         .getDriver().toString());
@@ -819,6 +816,18 @@ public class UserHome extends AppCompatActivity
                         });
                     }
                 });
+    }*/
+
+    public void driverAssignedToTravel(TravelAssignedDTO travelAssignedDTO) {
+
+        if(travelAssignedDTO != null) {
+            Log.d(this.getClass().getName(),"I was assign a driver");
+            //finishFragmentExecuted();
+            showInfoDriverAssigned(travelAssignedDTO);
+        }else {
+            Log.d(this.getClass().getName(), "No se pudo econtrar un chofer");
+            showDriverNotFound();
+        }
     }
 
 }
