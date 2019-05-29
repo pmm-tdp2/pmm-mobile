@@ -127,6 +127,7 @@ public class OptionsTravelFragment extends Fragment {
 
     //user send request to get quotation of travel
     public void getTravelQuote() {
+
         TravelDTO quotation =  new TravelDTO.TravelDTOBuilder(
                 myActivity.getmOrigin(),myActivity.getmDestiny())
                 .setUserId(myActivity.getidUser())
@@ -136,13 +137,16 @@ public class OptionsTravelFragment extends Fragment {
                 .setBigPetQuantity(mAdapter.getAllBigPets())
                 .build();
 
+        Log.i(this.getClass().getName(),"COTIZATION: " + quotation);
         App.nodeServer.post("/api/travels/simulateQuote",
                 quotation, TravelPriceDTO.class, new Headers())
                 .run(this::responseQuotation, this::errorQuotation);
+        Log.i(this.getClass().getName(),"DONE REQUEST: ");
     }
 
 
     public void responseQuotation(TravelPriceDTO priceTravel) {
+        Log.i(this.getClass().getName(),"COTIZATION 1: "+priceTravel.toString());
         if (priceTravel != null) {
             Log.i(this.getClass().getName(),"COTIZATION: "+priceTravel.toString());
             mButtonGetTravel.setText("Pedir Viaje");
