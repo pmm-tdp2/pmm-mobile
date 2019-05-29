@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
+import com.uberpets.model.SimpleResponse;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.TravelConfirmationDTO;
 import com.uberpets.model.TravelDTO;
@@ -216,5 +217,60 @@ public class TravelRequestFragment extends Fragment {
         //Log.d(this.getClass().getName(),travelAssignedDTO.toString());
         mListener.acceptTravel(travelAssignedDTO);
     }
+
+    /*public void rejectTravelFragment() {
+        TravelConfirmationDTO travelConfirmationDTO =
+                new TravelConfirmationDTO(mTravelDTO.getTravelId()
+                        ,Constants.getInstance().getID_DRIVERS(),this.idDriver,false);
+        App.nodeServer.post("/api/travels/confirmation",travelConfirmationDTO,
+                SimpleResponse.class, new Headers())
+                .run(this::responseRejectTravelFragment,this::errorRejectTravelFragment);
+        mListener.rejectTravel();
+    }
+
+    public void errorRejectTravelFragment(Exception ex){
+        //TODO: muestra que hubo un error y que vuelva a intentarlo
+        Log.e(this.getClass().getName(),"No se pudo rechazar el viaje....");
+        Log.e(this.getClass().getName(),ex.toString());
+        Toast.makeText(getActivity(),"no se pudo realizar la acción, intente nuevamente",
+                Toast.LENGTH_LONG).show();
+    }
+
+    public void responseRejectTravelFragment(SimpleResponse simpleResponse) {
+        Log.d(this.getClass().getName(),"reject travel message has arrived to server successfully");
+        mListener.rejectTravel();
+    }
+
+    public void acceptTravelFragment() {
+        if(mTravelDTO != null && mTravelDTO.getTravelId() != -1){
+            Log.d(this.getClass().getName(), "Driver accept travel and send message");
+            TravelConfirmationDTO travelConfirmationDTO =
+                    new TravelConfirmationDTO(mTravelDTO.getTravelId(),
+                            Constants.getInstance().getID_DRIVERS(),
+                            this.idDriver,true);
+            App.nodeServer.post("/api/travels/confirmation",travelConfirmationDTO,
+                    TravelAssignedDTO.class, new Headers())
+                    .run(this::responseAcceptTravelFragment,this::errorAcceptTravelFragment);
+        }else{
+            //in mock userId is -1
+            Log.d(this.getClass().getName(), "mock accept");
+            mListener.acceptTravel(null);
+        }
+
+    }
+
+    public void errorAcceptTravelFragment(Exception ex) {
+        //TODO: muestra que hubo un error y que vuelva a intentarlo
+        Log.e(this.getClass().getName(),"No se pudo aceptar el viaje....");
+        Log.e(this.getClass().getName(),ex.toString());
+        Toast.makeText(getActivity(),"no se pudo realizar la acción, intente nuevamente",
+                Toast.LENGTH_LONG).show();
+    }
+
+    public void responseAcceptTravelFragment(TravelAssignedDTO travelAssignedDTO) {
+        Log.d(this.getClass().getName(),"accept travel message has arrived to server successfully");
+        Log.d(this.getClass().getName(),travelAssignedDTO.toString());
+        mListener.acceptTravel(travelAssignedDTO);
+    }*/
 
 }

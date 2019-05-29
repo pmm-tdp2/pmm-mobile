@@ -433,12 +433,14 @@ public class  DriverHome
     public void acceptTravel(TravelAssignedDTO travelAssignedDTO){
         //TODO: mostrar información o mandarla a otro fragment del viaje asignado
         inTravel = true;
+        Log.i(this.getClass().getName(),"init FollowUpTravel");
         finishPreviousFragments();
         DriverFollowUpTravel driverFollowUpTravel = DriverFollowUpTravel.newInstance("","");
         driverFollowUpTravel.setROL(ROL);
         driverFollowUpTravel.setIdDriver(idDriver);
         driverFollowUpTravel.setmTravelAssignedDTO(travelAssignedDTO);
         replaceFragment(driverFollowUpTravel, true);
+        Log.i(this.getClass().getName(),"last line  FollowUpTravel");
     }
 
     /*
@@ -519,7 +521,9 @@ public class  DriverHome
                             travelRequest.setTravelDTO(travelDTO);
                             travelRequest.setROL(ROL);
                             travelRequest.setIdDriver(idDriver);*/
+                            Log.d(this.getClass().getName(),"----antes de replace notification---------");
                             replaceFragment(travelRequest,true);
+                            Log.d(this.getClass().getName(),"----luego de replace notification---------");
                         }
                     }
                 });
@@ -533,9 +537,9 @@ public class  DriverHome
     @Override
     public void onDestroy() {
         mSocket.emit("FIN ROL","DRIVER", this.idDriver);
-        mSocket.disconnect();
         mSocket.off("FINISH", mListenerConnection);
         mSocket.off("FINISH", mListenerNotificationTravel);
+        mSocket.disconnect();
         super.onDestroy();
     }
 
