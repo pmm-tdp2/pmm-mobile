@@ -51,6 +51,7 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
     private LatLng currentPlace;
     private static float ZOOM_VALUE = 14.0f;
     private LinearLayout mMenu;
+    private CardView mCardLayout;
     private Button mButton;
 
     @Override
@@ -67,6 +68,7 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
 
         mMenu = findViewById(R.id.menu_autocomplete);
         mButton = findViewById(R.id.button_show_route);
+        mCardLayout = findViewById(R.id.card_autocomplete);
         fetchLastLocation();
 
         Toolbar toolbar = findViewById(R.id.toolbar_place_autocomplete);
@@ -208,6 +210,7 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
 
 
     public void showMenu(){
+        mCardLayout.setVisibility(View.VISIBLE);
         mMenu.setVisibility(View.VISIBLE);
         mCardPick.setVisibility(View.INVISIBLE);
         mButton.setVisibility(View.VISIBLE);
@@ -216,6 +219,7 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
 
 
     public void showMap(){
+        mCardLayout.setVisibility(View.INVISIBLE);
         mMenu.setVisibility(View.INVISIBLE);
         mCardPick.setVisibility(View.VISIBLE);
         mButton.setVisibility(View.INVISIBLE);

@@ -43,17 +43,22 @@ public class UserFinalScreen extends AppCompatActivity {
 
     public void sendComment(android.view.View view){
         float rating = mRatingBar.getRating();
+        Log.d(this.getClass().getName(), "Sending rating: " + rating);
+        Log.d(this.getClass().getName(), "Travel DTO: " + mTravelDto);
         if(rating != 0 && mTravelDto != null) {
-            Log.i(this.getClass().getName(),"driver: idDriver "+ " has scored with "+rating );
-            Log.i(this.getClass().getName(),"comentario: "+mTextInput.getText().toString());
-            //go back to activity that called it
+            Log.i(this.getClass().getName(),"user: " + mTravelDto.getUserId() + " has scored with " + rating );
+            Log.i(this.getClass().getName(),"comentario: " + mTextInput.getText().toString());
+
             RatingDTO ratingDto = new RatingDTO.RatingDTOBuilder()
                     .setComments(mTextInput.getText().toString())
                     .setValue(mRatingBar.getRating())
-                    .setFromId(mTravelDto.getUserId())
-                    .setToId(mTravelDto.getDriverId())
+                    //.setFromId(mTravelDto.getUserId())
+                    //.setToId(mTravelDto.getDriverId())
+                    .setFromId("123456782")
+                    .setToId("987654321")
                     .setTravelId(mTravelDto.getTravelId())
                     .build();
+
             App.nodeServer.post("/api/driverScores",ratingDto,
                     SimpleResponse.class,new Headers())
                     .run(this::handleResponseRating,this::handleErrorRating);
