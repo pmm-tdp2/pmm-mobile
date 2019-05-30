@@ -216,11 +216,13 @@ public class OptionsTravelFragment extends Fragment {
         }*/
     }
 
-    public void handleErrorResponse(Exception ex) {
+    public void handleErrorResponse(Exception e) {
+        Log.e(this.getClass().getName(),"Error no driver found");
+        Log.e(this.getClass().getName(),e.toString());
         Activity activity = getActivity();
-        if(activity != null && isAdded()){
+        if(activity != null ){
             finishFragmentExecuted();
-            if (ex instanceof ServerError) {
+            if (e instanceof ServerError) {
                 Log.d(this.getClass().getName(), "error to connect server");
                 myActivity.showMessageCard();
             } else
