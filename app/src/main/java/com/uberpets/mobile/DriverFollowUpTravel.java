@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
 import com.uberpets.model.SimpleResponse;
 import com.uberpets.model.TravelAssignedDTO;
@@ -36,7 +37,6 @@ public class DriverFollowUpTravel extends Fragment {
     private Button mButtonFinalize;
     private Button mButtonCancel;
     private TravelAssignedDTO mTravelAssignedDTO;
-    private String ROL;
     private String idDriver;
 
     // TODO: Rename and change types of parameters
@@ -141,10 +141,6 @@ public class DriverFollowUpTravel extends Fragment {
         this.mTravelAssignedDTO = mTravelAssignedDTO;
     }
 
-    public void setROL(String ROL) {
-        this.ROL = ROL;
-    }
-
     public void setIdDriver(String idDriver) {
         this.idDriver = idDriver;
     }
@@ -177,7 +173,7 @@ public class DriverFollowUpTravel extends Fragment {
     }
 
     public void cancelTravelRequest(){
-        String rol = this.ROL == null ? "driver" : this.ROL;
+        String rol = Constants.getInstance().getID_DRIVERS();
         int travelId = mTravelAssignedDTO == null ? 9999 : mTravelAssignedDTO.getTravelId();
         TravelConfirmationDTO travelCancelDTO = new TravelConfirmationDTO(
                 travelId, rol, this.idDriver,true);
@@ -187,12 +183,13 @@ public class DriverFollowUpTravel extends Fragment {
 
     public void finalizeTravelFragment() {
         if(mTravelAssignedDTO !=  null){
+            String rol = Constants.getInstance().getID_DRIVERS();
             Log.i(this.getClass().getName(),"ANTES DE CREAR DTO");
             TravelConfirmationDTO travelConfirmationDTO =
                     new TravelConfirmationDTO(mTravelAssignedDTO.getTravelId()
-                            ,this.ROL,this.idDriver,true);
+                            , rol, this.idDriver,true);
             Log.i(this.getClass().getName(),"LUEGO DE CREAR DTO");
-            App.nodeServer.post("/api/travels/finalize",travelConfirmationDTO,
+            App.nodeServer.post("/api/travels/finalize", travelConfirmationDTO,
                     SimpleResponse.class, new Headers())
                     .run(this::responseFinalizeTravelFragment,this::errorRejectTravelFragment);
         }else{

@@ -108,7 +108,7 @@ public class  DriverHome
         toggle.syncState();
 
         //setting id:
-        this.idDriver = AccountSession.getIdLogin(this) == "" ? "987654322" : AccountSession.getIdLogin(this);
+        this.idDriver = AccountSession.getIdLogin(this) == "" ? "987654399" : AccountSession.getIdLogin(this);
         Log.i(this.getClass().getName(),"idFacebook: "+idDriver);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -436,7 +436,6 @@ public class  DriverHome
         Log.i(this.getClass().getName(),"init FollowUpTravel");
         finishPreviousFragments();
         DriverFollowUpTravel driverFollowUpTravel = DriverFollowUpTravel.newInstance("","");
-        driverFollowUpTravel.setROL(ROL);
         driverFollowUpTravel.setIdDriver(idDriver);
         driverFollowUpTravel.setmTravelAssignedDTO(travelAssignedDTO);
         replaceFragment(driverFollowUpTravel, true);

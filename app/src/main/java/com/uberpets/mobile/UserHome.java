@@ -573,6 +573,7 @@ public class UserHome extends AppCompatActivity
 
 
     public void showRatingBar(){
+        Log.d(this.getClass().getName(),"Init showRatingBard");
         finishPreviousFragments();
         returnOriginalState();
         Intent intent = new Intent(this, UserFinalScreen.class);
@@ -833,6 +834,7 @@ public class UserHome extends AppCompatActivity
             Log.d(this.getClass().getName(),travelAssignedDTO.toString());
             Log.d(this.getClass().getName(),"--------------------");
             Log.d(this.getClass().getName(),mTravelDTO.toString());
+            Log.d(this.getClass().getName(),"big:: "+mTravelDTO.getBigPetQuantity());
 
         }else {
             Log.d(this.getClass().getName(), "No se pudo econtrar un chofer");
