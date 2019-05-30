@@ -68,7 +68,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:text="@string/conection_problems_message"
+                android:text="Se encontraron problemas en la conexión. inténtelo más tarde"
                 android:textColor="@color/lightText"
                 android:textSize="18sp" />
 
