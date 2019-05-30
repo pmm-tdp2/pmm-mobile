@@ -66,7 +66,7 @@ public class UserFinalScreen extends AppCompatActivity {
     }
 
     public void handleResponseRating(SimpleResponse simpleResponse){
-        Log.i(this.getClass().getName(),simpleResponse.getMessage());
+        //Log.i(this.getClass().getName(),simpleResponse.getMessage());
         Toast toast = Toast.makeText(this,
                 "LA puntuación se realizó con éxito",Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER,0,0);
