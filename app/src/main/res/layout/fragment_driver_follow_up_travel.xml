@@ -21,12 +21,12 @@
                 android:layout_marginBottom="@dimen/nav_header_vertical_spacing"
                 android:layout_weight="@android:integer/config_longAnimTime"
                 android:background="@color/colorPrimaryDark"
-                android:fontFamily="sans-serif-black"
+                android:fontFamily="sans-serif-smallcaps"
                 android:text="@string/driver_follow_up_message"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-                android:textColor="@color/common_google_signin_btn_text_dark"
-                android:typeface="serif" />
+                android:textColor="@color/lightText"
+                android:typeface="normal" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -83,7 +83,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/cancel" />
+                    android:background="@color/colorAccent"
+                    android:text="@string/cancel"
+                    android:textColor="@color/lightText" />
 
                 <Space
                     android:layout_width="wrap_content"
@@ -95,7 +97,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/end_travel" />
+                    android:background="@color/analogous1"
+                    android:text="@string/end_travel"
+                    android:textColor="@color/lightText" />
             </LinearLayout>
 
         </LinearLayout>
