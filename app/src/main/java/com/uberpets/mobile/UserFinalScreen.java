@@ -46,16 +46,17 @@ public class UserFinalScreen extends AppCompatActivity {
         Log.d(this.getClass().getName(), "Sending rating: " + rating);
         Log.d(this.getClass().getName(), "Travel DTO: " + mTravelDto);
         if(rating != 0 && mTravelDto != null) {
-            Log.i(this.getClass().getName(),"user: " + mTravelDto.getUserId() + " has scored with " + rating );
+            Log.i(this.getClass().getName(), "user: " + mTravelDto.getUserId() + " has scored with " + rating);
+            Log.i(this.getClass().getName(), "to driver: " + mTravelDto.getDriverId());
             Log.i(this.getClass().getName(),"comentario: " + mTextInput.getText().toString());
 
             RatingDTO ratingDto = new RatingDTO.RatingDTOBuilder()
                     .setComments(mTextInput.getText().toString())
                     .setValue(mRatingBar.getRating())
-                    //.setFromId(mTravelDto.getUserId())
-                    //.setToId(mTravelDto.getDriverId())
-                    .setFromId("123456782")
-                    .setToId("987654321")
+                    .setFromId(mTravelDto.getUserId())
+                    .setToId(mTravelDto.getDriverId())
+                    //.setFromId("123456782")
+                    //.setToId("987654321")
                     .setTravelId(mTravelDto.getTravelId())
                     .build();
 

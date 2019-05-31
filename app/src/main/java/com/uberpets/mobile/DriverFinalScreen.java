@@ -43,10 +43,10 @@ public class DriverFinalScreen extends AppCompatActivity {
             RatingDTO ratingDto = new RatingDTO.RatingDTOBuilder()
                     .setComments(mTextInput.getText().toString())
                     .setValue(mRatingBar.getRating())
-                    //.setFromId(mTravelDto.getDriverId())
-                    //.setToId(mTravelDto.getUserId())
-                    .setFromId("987654321")
-                    .setToId("123456782")
+                    .setFromId(mTravelDto.getDriverId())
+                    .setToId(mTravelDto.getUserId())
+                    //.setFromId("987654321")
+                    //.setToId("123456782")
                     .setTravelId(mTravelDto.getTravelId())
                     .build();
             Log.d(this.getClass().getName(), "RatingDTO: " + ratingDto);

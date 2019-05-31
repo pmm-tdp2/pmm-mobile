@@ -55,7 +55,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="64dp"
         android:layout_marginBottom="64dp"
-        app:cardBackgroundColor="@color/quantum_googred"
+        app:cardBackgroundColor="@color/colorAccent"
         app:cardCornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -66,11 +66,11 @@
             android:id="@+id/text_message_register"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textColor="@color/quantum_white_100"
-            android:gravity="center"
             android:layout_margin="20dp"
-            android:text="@string/message_register_invalid"/>
+            android:gravity="center"
+            android:text="@string/message_register_invalid"
+            android:textColor="@color/lightText"
+            android:textSize="20sp" />
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
