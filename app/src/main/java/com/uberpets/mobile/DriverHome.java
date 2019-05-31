@@ -433,6 +433,7 @@ public class  DriverHome
     public void acceptTravel(TravelAssignedDTO travelAssignedDTO){
         //TODO: mostrar información o mandarla a otro fragment del viaje asignado
         inTravel = true;
+        this.mTravelDTO.setUserId(travelAssignedDTO.getUser().getId());
         Log.i(this.getClass().getName(),"init FollowUpTravel");
         finishPreviousFragments();
         DriverFollowUpTravel driverFollowUpTravel = DriverFollowUpTravel.newInstance("","");
@@ -512,6 +513,7 @@ public class  DriverHome
                             Log.d(this.getClass().getName(),response.toString());
                             Log.d(this.getClass().getName(),"------------------------");
                             mTravelDTO = gson.fromJson(response.toString(),TravelDTO.class);
+                            mTravelDTO.setDriverId(idDriver);
 
                             //TODO: mostrar la cantidad de mascotas que tendrá el viaje
                             //TODO: dibujar el tramo del viaje

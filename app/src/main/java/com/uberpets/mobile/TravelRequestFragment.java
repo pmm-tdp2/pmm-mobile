@@ -214,7 +214,7 @@ public class TravelRequestFragment extends Fragment {
 
     public void responseAcceptTravelFragment(TravelAssignedDTO travelAssignedDTO){
         Log.d(this.getClass().getName(),"accept travel message has arrived to server successfully");
-        //Log.d(this.getClass().getName(),travelAssignedDTO.toString());
+        Log.d(this.getClass().getName(),travelAssignedDTO.toString());
         mListener.acceptTravel(travelAssignedDTO);
     }
 

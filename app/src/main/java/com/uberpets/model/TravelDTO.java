@@ -12,14 +12,14 @@ import java.io.Serializable;
  */
 
 public class TravelDTO {
-    private final String userId;
+    private String userId;
+    private String driverId;
     private final LatLng from;
     private final LatLng to;
     private final int smallPetQuantity;
     private final int mediumPetQuantity;
     private final int bigPetQuantity;
     private final boolean hasCompanion;
-    private final String driverId;
     private final int travelId;
 
 
@@ -127,6 +127,14 @@ public class TravelDTO {
 
     public int getTravelId() {
         return travelId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setDriverId(String driverId) {
+        this.driverId = driverId;
     }
 
     @Override
