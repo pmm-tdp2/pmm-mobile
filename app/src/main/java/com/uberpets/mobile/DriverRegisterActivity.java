@@ -237,7 +237,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
     }
 
     private RegisterDTO getRegisterDTO(){
-       return new RegisterDTO.RegisterDTOBuilder( mDataFacebook.getIdFacebook(),
+       return new RegisterDTO.RegisterDTOBuilder(mDataFacebook.getIdFacebook(),
                 this.editNameDriver.getText().toString(),
                 imagesPath.containsKey(GALLERY_PROFILE) ?
                         imagesPath.get(GALLERY_PROFILE): imagesPath.get(CAMERA_PROFILE))

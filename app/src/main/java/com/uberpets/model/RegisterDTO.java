@@ -1,32 +1,29 @@
 package com.uberpets.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RegisterDTO {
     private final String facebookId;
     private final String name;
-    private final String photoProfile;
     private final String dni;
     private final String phone;
-    private final String photoCar;
-    private final String photoInsurance;
-    private final String photoLicense;
+    private List<FileDocumentDTO> files;
     private final String role;
 
     public static class RegisterDTOBuilder {
         private final String facebookId;
         private final String name;
-        private final String photoProfile;
         private String dni;
         private String phone;
-        private String photoCar;
-        private String photoInsurance;
-        private String photoLicense;
+        private List<FileDocumentDTO> files = new ArrayList<>();
         private String role;
-
-
         public RegisterDTOBuilder(String id, String name, String photoProfile) {
             this.facebookId = id;
             this.name = name;
-            this.photoProfile = photoProfile;
+            FileDocumentDTO file = new FileDocumentDTO();
+            file.setData(photoProfile);
+            files.add(file);
         }
 
         public RegisterDTOBuilder setDni(String dni) {
@@ -40,17 +37,23 @@ public class RegisterDTO {
         }
 
         public RegisterDTOBuilder setPhotoCar(String photoCar) {
-            this.photoCar = photoCar;
+            FileDocumentDTO file = new FileDocumentDTO();
+            file.setData(photoCar);
+            files.add(file);
             return this;
         }
 
         public RegisterDTOBuilder setPhotoInsurance(String photoInsurance) {
-            this.photoInsurance = photoInsurance;
+            FileDocumentDTO file = new FileDocumentDTO();
+            file.setData(photoInsurance);
+            files.add(file);
             return this;
         }
 
         public RegisterDTOBuilder setPhotoLicense(String photoLicense) {
-            this.photoLicense = photoLicense;
+            FileDocumentDTO file = new FileDocumentDTO();
+            file.setData(photoLicense);
+            files.add(file);
             return this;
         }
 
@@ -67,21 +70,14 @@ public class RegisterDTO {
     public RegisterDTO(RegisterDTOBuilder builder) {
         this.facebookId = builder.facebookId;
         this.name = builder.name;
-        this.photoProfile = builder.photoProfile;
         this.dni = builder.dni;
         this.phone = builder.phone;
-        this.photoCar = builder.photoCar;
-        this.photoInsurance = builder.photoInsurance;
-        this.photoLicense = builder.photoLicense;
+        this.files = builder.files;
         this.role = builder.role;
     }
 
     public String getName() {
         return name;
-    }
-
-    public String getPhotoProfile() {
-        return photoProfile;
     }
 
     public String getDni() {
@@ -92,15 +88,7 @@ public class RegisterDTO {
         return phone;
     }
 
-    public String getPhotoCar() {
-        return photoCar;
-    }
-
-    public String getPhotoInsurance() {
-        return photoInsurance;
-    }
-
-    public String getPhotoLicense() {
-        return photoLicense;
+    public List<FileDocumentDTO> getFiles() {
+        return files;
     }
 }
