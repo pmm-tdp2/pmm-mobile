@@ -23,6 +23,7 @@ public class RegisterDTO {
             this.name = name;
             FileDocumentDTO file = new FileDocumentDTO();
             file.setData(photoProfile);
+            file.setName("profile");
             files.add(file);
         }
 
@@ -39,6 +40,7 @@ public class RegisterDTO {
         public RegisterDTOBuilder setPhotoCar(String photoCar) {
             FileDocumentDTO file = new FileDocumentDTO();
             file.setData(photoCar);
+            file.setName("car");
             files.add(file);
             return this;
         }
@@ -46,6 +48,7 @@ public class RegisterDTO {
         public RegisterDTOBuilder setPhotoInsurance(String photoInsurance) {
             FileDocumentDTO file = new FileDocumentDTO();
             file.setData(photoInsurance);
+            file.setName("insurance");
             files.add(file);
             return this;
         }
@@ -53,6 +56,7 @@ public class RegisterDTO {
         public RegisterDTOBuilder setPhotoLicense(String photoLicense) {
             FileDocumentDTO file = new FileDocumentDTO();
             file.setData(photoLicense);
+            file.setName("license");
             files.add(file);
             return this;
         }
