@@ -4,17 +4,13 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import com.google.android.material.navigation.NavigationView;
 import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -49,9 +45,10 @@ import com.google.gson.Gson;
 import com.uberpets.Constants;
 import com.uberpets.model.CopyTravelDTO;
 import com.uberpets.model.GeograficCoordenate;
+import com.uberpets.model.Person;
 import com.uberpets.model.TraceDTO;
 import com.uberpets.model.TravelAssignedDTO;
-import com.uberpets.model.TravelDTO;
+import com.uberpets.model.Travel;
 import com.uberpets.services.TraceService;
 import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
@@ -91,7 +88,7 @@ public class  DriverHome
     private Emitter.Listener mListenerNotificationTravel;
     private TraceService traceService = new TraceService();
     Constants mConstants = Constants.getInstance();
-    private TravelDTO mTravelDTO;
+    private Travel mTravel;
 
     //private final String URL = "https://young-wave-26125.herokuapp.com/pmm";
     //private final String URL = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
@@ -440,13 +437,13 @@ public class  DriverHome
     }
 
     public void showNewTravelNotification(android.view.View view) {
-        TravelDTO mockTravelDTO = new TravelDTO.TravelDTOBuilder(
+        Travel mockTravel = new Travel.TravelBuilder(
                 new LatLng(1.0,1.0), new LatLng(1.5,1.5))
-                .setTravelId(-1).setDriverId("1").setHasCompanion(true)
+                .setTravelId(-1).setDriver(new Person("1","chofer","mock")).setHasCompanion(true)
                 .setBigPetQuantity(0).setSmallPetQuantity(1).setMediumPetQuantity(0)
-                .setUserId("").build();
+                .setUser(new Person("1","user","mock")).build();
         TravelRequestFragment travelRequestFragment= new TravelRequestFragment();
-        travelRequestFragment.setTravelDTO(mockTravelDTO);
+        travelRequestFragment.setTravelDTO(mockTravel);
         replaceFragment(travelRequestFragment,true);
     }
 
@@ -462,7 +459,7 @@ public class  DriverHome
     public void acceptTravel(TravelAssignedDTO travelAssignedDTO){
         //TODO: mostrar información o mandarla a otro fragment del viaje asignado
         inTravel = true;
-        this.mTravelDTO.setUserId(travelAssignedDTO.getUser().getId());
+        this.mTravel.setUser(travelAssignedDTO.getUser());
         Log.i(this.getClass().getName(),"init FollowUpTravel");
         finishPreviousFragments();
         DriverFollowUpTravel driverFollowUpTravel = DriverFollowUpTravel.newInstance("","");
@@ -483,13 +480,13 @@ public class  DriverHome
         finishPreviousFragments();
         Intent intent = new Intent(this, DriverFinalScreen.class);
         CopyTravelDTO copyTravelDTO = new CopyTravelDTO.CopyTravelDTOBuilder()
-                .setBigPetQuantity(mTravelDTO.getBigPetQuantity())
-                .setMediumPetQuantity(mTravelDTO.getMediumPetQuantity())
-                .setSmallPetQuantity(mTravelDTO.getSmallPetQuantity())
-                .setTravelId(mTravelDTO.getTravelId())
-                .setUserId(mTravelDTO.getUserId())
-                .setDriverId(mTravelDTO.getDriverId())
-                .setHasCompanion(mTravelDTO.isHasCompanion())
+                .setBigPetQuantity(mTravel.getBigPetQuantity())
+                .setMediumPetQuantity(mTravel.getMediumPetQuantity())
+                .setSmallPetQuantity(mTravel.getSmallPetQuantity())
+                .setTravelId(mTravel.getTravelId())
+                .setUser(mTravel.getUser())
+                .setDriver(mTravel.getDriver())
+                .setHasCompanion(mTravel.isHasCompanion())
                 .build();
         intent.putExtra("TRAVEL",copyTravelDTO);
         Log.i(this.getClass().getName(),"---------go to rating driver--------------");
@@ -541,15 +538,17 @@ public class  DriverHome
                             Log.d(this.getClass().getName(),"--NOTIFICACIÓN DE VIAJE-");
                             Log.d(this.getClass().getName(),response.toString());
                             Log.d(this.getClass().getName(),"------------------------");
-                            mTravelDTO = gson.fromJson(response.toString(),TravelDTO.class);
-                            mTravelDTO.setDriverId(idDriver);
+                            mTravel = gson.fromJson(response.toString(), Travel.class);
+
+                            //TODO: reemplaar por el verdadero nombre
+                            mTravel.setDriver(new Person(idDriver,"NADIE","NADIE"));
 
                             //TODO: mostrar la cantidad de mascotas que tendrá el viaje
                             //TODO: dibujar el tramo del viaje
-                            Log.d(this.getClass().getName(),mTravelDTO.toString());
+                            Log.d(this.getClass().getName(), mTravel.toString());
 
                             TravelRequestFragment travelRequest =
-                                    TravelRequestFragment.newInstance(idDriver,mTravelDTO);
+                                    TravelRequestFragment.newInstance(idDriver, mTravel);
                             /*TravelRequestFragment travelRequest = new TravelRequestFragment();
                             travelRequest.setTravelDTO(travelDTO);
                             travelRequest.setROL(ROL);

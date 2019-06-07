@@ -22,17 +22,14 @@ import android.widget.Toast;
 import com.android.volley.ServerError;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Socket;
-import com.google.gson.Gson;
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
-import com.uberpets.model.Person;
+import com.uberpets.model.Travel;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.TravelConfirmationDTO;
-import com.uberpets.model.TravelPriceDTO;
 import com.uberpets.model.TravelDTO;
+import com.uberpets.model.TravelPriceDTO;
 import com.uberpets.services.App;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 

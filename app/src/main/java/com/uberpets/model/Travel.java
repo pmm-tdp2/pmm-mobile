@@ -5,13 +5,13 @@ import com.google.android.gms.maps.model.LatLng;
 
 /**
  * This class is used when
- * - userId send quotation to server of travel
- * - server send notification of travel to driverId
+ * - user send quotation to server of travel
+ * - server send notification of travel to driver
  */
 
-public class TravelDTO {
-    private String userId;
-    private String driverId;
+public class Travel {
+    private Person user;
+    private Person driver;
     private final LatLng from;
     private final LatLng to;
     private final int smallPetQuantity;
@@ -21,65 +21,65 @@ public class TravelDTO {
     private final int travelId;
 
 
-    public static class TravelDTOBuilder {
+    public static class TravelBuilder {
         private final LatLng from;
         private final LatLng to;
         private int travelId;
-        private String userId;
-        private String driverId;
+        private Person user;
+        private Person driver;
         private int smallPetQuantity = 0;
         private int mediumPetQuantity = 0;
         private int bigPetQuantity = 0;
         private boolean hasCompanion = false;
 
-        public TravelDTOBuilder(LatLng from, LatLng to) {
+        public TravelBuilder(LatLng from, LatLng to) {
             this.from = from;
             this.to = to;
         }
 
-        public TravelDTOBuilder setTravelId(int travelId) {
+        public TravelBuilder setTravelId(int travelId) {
             this.travelId = travelId;
             return this;
         }
 
-        public TravelDTOBuilder setUserId(String userId) {
-            this.userId = userId;
+        public TravelBuilder setUser(Person user) {
+            this.user = user;
             return this;
         }
 
-        public TravelDTOBuilder setDriverId(String driverId) {
-            this.driverId = driverId;
+        public TravelBuilder setDriver(Person driver) {
+            this.driver = driver;
             return this;
         }
 
-        public TravelDTOBuilder setSmallPetQuantity(int smallPetQuantity) {
+        public TravelBuilder setSmallPetQuantity(int smallPetQuantity) {
             this.smallPetQuantity = smallPetQuantity;
             return this;
         }
 
-        public TravelDTOBuilder setMediumPetQuantity(int mediumPetQuantity) {
+        public TravelBuilder setMediumPetQuantity(int mediumPetQuantity) {
             this.mediumPetQuantity = mediumPetQuantity;
             return this;
         }
 
-        public TravelDTOBuilder setBigPetQuantity(int bigPetQuantity) {
+        public TravelBuilder setBigPetQuantity(int bigPetQuantity) {
             this.bigPetQuantity = bigPetQuantity;
             return this;
         }
 
-        public TravelDTOBuilder setHasCompanion(boolean hasCompanion) {
+        public TravelBuilder setHasCompanion(boolean hasCompanion) {
             this.hasCompanion = hasCompanion;
             return this;
         }
 
-        public TravelDTO build() {
-            return new TravelDTO(this);
+        public Travel build() {
+            return new Travel(this);
         }
 
     }
 
 
-    public TravelDTO(TravelDTOBuilder builder) {
+    public Travel(TravelBuilder builder) {
         this.from = builder.from;
         this.to = builder.to;
         this.hasCompanion = builder.hasCompanion;
@@ -87,8 +87,8 @@ public class TravelDTO {
         this.mediumPetQuantity = builder.mediumPetQuantity;
         this.bigPetQuantity = builder.bigPetQuantity;
         this.travelId = builder.travelId;
-        this.userId = builder.userId;
-        this.driverId = builder.driverId;
+        this.user = builder.user;
+        this.driver = builder.driver;
     }
 
     public LatLng getFrom() {
@@ -119,26 +119,26 @@ public class TravelDTO {
         return travelId;
     }
 
-    public String getUserId() {
-        return userId;
+    public Person getUser() {
+        return user;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUser(Person user) {
+        this.user = user;
     }
 
-    public String getDriverId() {
-        return driverId;
+    public Person getDriver() {
+        return driver;
     }
 
-    public void setDriverId(String driverId) {
-        this.driverId = driverId;
+    public void setDriver(Person driver) {
+        this.driver = driver;
     }
 
     @Override
     public String toString(){
-        return "userId: "+userId
-         +" driverId: "+driverId
+        return "user: "+user.toString()
+         +" driver: "+driver.toString()
          +" travelId: "+travelId
          +" from: "+from.toString()
          +" to: "+to.toString()

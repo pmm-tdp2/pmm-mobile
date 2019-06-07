@@ -12,19 +12,19 @@ import java.io.Serializable;
  */
 
 public class CopyTravelDTO implements Serializable {
-    private final String userId;
     private final int smallPetQuantity;
     private final int mediumPetQuantity;
     private final int bigPetQuantity;
     private final boolean hasCompanion;
-    private final String driverId;
+    private final Person driver;
+    private final Person user;
     private final int travelId;
 
 
     public static class CopyTravelDTOBuilder {
         private int travelId;
-        private String userId;
-        private String driverId;
+        private Person user;
+        private Person driver;
         private int smallPetQuantity = 0;
         private int mediumPetQuantity = 0;
         private int bigPetQuantity = 0;
@@ -38,13 +38,13 @@ public class CopyTravelDTO implements Serializable {
             return this;
         }
 
-        public CopyTravelDTOBuilder setUserId(String userId) {
-            this.userId = userId;
+        public CopyTravelDTOBuilder setUser(Person user) {
+            this.user = user;
             return this;
         }
 
-        public CopyTravelDTOBuilder setDriverId(String driverId) {
-            this.driverId = driverId;
+        public CopyTravelDTOBuilder setDriver(Person driver) {
+            this.driver = driver;
             return this;
         }
 
@@ -81,12 +81,8 @@ public class CopyTravelDTO implements Serializable {
         this.mediumPetQuantity = builder.mediumPetQuantity;
         this.bigPetQuantity = builder.bigPetQuantity;
         this.travelId = builder.travelId;
-        this.userId = builder.userId;
-        this.driverId = builder.driverId;
-    }
-
-    public String getUserId() {
-        return userId;
+        this.user = builder.user;
+        this.driver = builder.driver;
     }
 
     public int getSmallPetQuantity() {
@@ -105,18 +101,22 @@ public class CopyTravelDTO implements Serializable {
         return hasCompanion;
     }
 
-    public String getDriverId() {
-        return driverId;
-    }
-
     public int getTravelId() {
         return travelId;
     }
 
+    public Person getDriver() {
+        return driver;
+    }
+
+    public Person getUser() {
+        return user;
+    }
+
     @Override
     public String toString(){
-        return "userId: "+userId
-         +" driverId: "+driverId
+        return "user: "+user.toString()
+         +" driver: "+driver.toString()
          +" travelId: "+travelId
          +" smallPetQuantity: "+smallPetQuantity
          +" mediumPetQuantity: "+mediumPetQuantity
