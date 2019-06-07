@@ -1,9 +1,11 @@
 package com.uberpets.mobile.ui.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.cardview.widget.CardView;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
 import com.uberpets.mobile.DriverHome;
@@ -43,6 +46,13 @@ import com.uberpets.util.ConvertImages;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,7 +66,6 @@ import java.util.List;
 public class PlaceholderFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
-
     private String mIdTab;
     private String idWhoHasLogged = "";
     private LoginButton mLoginButton;
@@ -127,12 +136,7 @@ public class PlaceholderFragment extends Fragment {
     private void evaluateSession() {
         if(AccountSession.getLoginStatusValue(getContext()) &&
         AccountSession.getRolLoggedValue(getContext()).equals(this.mIdTab)) {
-            goLogin(null);
-            /*Intent intent = new Intent(getContext(),
-                    AccountSession.getRolLoggedValue(getContext()).equals(mConstant.getID_USERS())
-                     ?  UserHome.class : DriverHome.class);
-            startActivity(intent);
-            getActivity().finish();*/
+            goLoginServer();
         }
     }
 
@@ -183,34 +187,33 @@ public class PlaceholderFragment extends Fragment {
     }
 
     private void handleSuccessLoginFacebook(@NonNull LoginResult loginResult) {
+        AccountSession.setLoginId(getActivity(),loginResult.getAccessToken().getUserId());
+        AccountSession.setRolLoggedValue(getActivity(),this.mIdTab);
+        AccountSession.setLoginStatusValue(getActivity(),true);
         mLoginResult = loginResult;
-        goLogin(loginResult);
+        goLoginServer();
     }
 
 
-    private void goLogin(LoginResult loginResult) {
+    private void goLoginServer() {
         String id =  AccountSession.getIdLogin(getActivity());
-        if(loginResult != null){
-            id = loginResult.getAccessToken().getUserId();
-        }
         Log.i(this.getClass().getName(),id);
         LoginDTO loginDTO = new LoginDTO(id, mIdTab.equals(mConstant.getID_USERS())?
                 mConstant.getID_USERS() : mConstant.getID_DRIVERS());
 
         App.nodeServer.post("/api/login",loginDTO,
                 SimpleResponse.class, new Headers())
-                .run(this::handleServerSuccessfulResponse,this::handleServerErrorResponse);
+                .run(this::handleSuccessfulServerLoginResponse,this::handleErrorLoginServerResponse);
     }
 
-    private void handleServerErrorResponse(Exception e) {
+    private void handleErrorLoginServerResponse(Exception e) {
         Log.e(this.getClass().getName(),"Error en el login");
         Log.e(this.getClass().getName(),e.toString());
         showErrorInRegister("Hubo un problema con el login, inténtelo más tarde");
     }
 
 
-    private void handleServerSuccessfulResponse(SimpleResponse response) {
-
+    private void handleSuccessfulServerLoginResponse(SimpleResponse response) {
         Log.d(this.getClass().getName(),"data response login: "+response.getStatus());
         switch (response.getStatus()){
             case 200:
@@ -225,40 +228,30 @@ public class PlaceholderFragment extends Fragment {
 
 
     private void loadImages() {
-        String path = "/api/fileDocuments/?userId="+
+        String rolId = mIdTab.equals(mConstant.getID_USERS())? "userId" : "driverId";
+        String path = "/api/fileDocuments/?"+rolId+"="+
                 AccountSession.getIdLogin(getActivity())+"&name=profile";
-        App.nodeServer.get(path, ArrayList.class,new Headers())
+        App.nodeServer.get(path, FileDocumentDTO[].class,new Headers())
                 .run(this::handleSuccessLoadImages,this::handleErrorLoadImages);
     }
 
     private void handleErrorLoadImages(Exception e) {
         Log.e(this.getClass().getName(),"Error to load images from server");
-        Log.e(this.getClass().getName(),e.getMessage());
+        Log.e(this.getClass().getName(),e.toString());
         Toast toast = Toast.makeText(getActivity(),"Error para obtener las imagenes"
                 ,Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER,0,0);
     }
 
-    private void handleSuccessLoadImages(ArrayList<Object> files) {
-        Log.i(this.getClass().getName(),files.toString());
-        String stringObject = files.get(0).toString();
-        //FileDocumentDTO fileDocumentDTO = (FileDocumentDTO) files.get(0);
-        /*Gson gson = new Gson();
-        FileDocumentDTO fileDocumentDTO = gson.fromJson(stringObject,FileDocumentDTO.class);*/
-        //Log.i(this.getClass().getName(),fileDocumentDTO.toString());
-        /*AccountImages.getInstance().setPhotoProfile(
-                ConvertImages.getBitmapImage(files.get(0).getData()));
-        goToHome();*/
+    private void handleSuccessLoadImages(FileDocumentDTO[] files) {
+        Log.i(this.getClass().getName(),"File obtained successfully");
+        AccountImages.getInstance().setPhotoProfile(
+                ConvertImages.getBitmapImage(files[0].getData()));
+        goToHome();
     }
 
     private void goToHome() {
         // when user is registered and access successfully
-        //go to home and save session
-        AccountSession.setRolLoggedValue(getContext(),this.mIdTab);
-        AccountSession.setLoginId(getContext(),this.mLoginResult.getAccessToken().getUserId());
-        AccountSession.setLoginStatusValue(getContext(),true);
-        AccountSession.setLoginStatusValue(getContext(),true);
-
         Intent intent = new Intent(getActivity(),
                 mIdTab.equals(mConstant.getID_USERS()) ?
                         UserHome.class : DriverHome.class);
@@ -267,7 +260,7 @@ public class PlaceholderFragment extends Fragment {
     }
 
     private void initRegister() {
-        /*show message or progress bar */
+        //TODO show message or progress bar
         validateAmountFriends(mLoginResult);
     }
 

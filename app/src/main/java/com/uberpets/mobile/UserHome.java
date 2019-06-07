@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.os.Message;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -145,13 +147,18 @@ public class UserHome extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view_user);
         navigationView.setNavigationItemSelectedListener(this);
-
         View hView =  navigationView.getHeaderView(0);
         ImageView imageView = hView.findViewById(R.id.image_profile_user_navigation);
         Bitmap bitmapProfile = AccountImages.getInstance().getPhotoProfile();
-        if( bitmapProfile != null){
-            imageView.setImageBitmap(bitmapProfile);
-        }
+        imageView.setImageBitmap(bitmapProfile);
+        /*if( bitmapProfile != null){
+            //creamos el drawable redondeado
+            RoundedBitmapDrawable roundedDrawable =
+                    RoundedBitmapDrawableFactory.create(getResources(), bitmapProfile);
+            //asignamos el CornerRadius
+            roundedDrawable.setCornerRadius(100);
+            imageView.setImageDrawable(roundedDrawable);
+        }*/
 
         //is used to obtain user's location, with this our app no needs to manually manage connections
         //to Google Play Services through GoogleApiClient

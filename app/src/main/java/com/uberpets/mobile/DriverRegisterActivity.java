@@ -266,6 +266,10 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private void handleResponseRegister(SimpleResponse simpleResponse) {
         if(simpleResponse.getStatus() == 200) {
 
+            AccountImages.getInstance().setPhotoProfile(ConvertImages
+                    .getBitmapImage(imagesPath.containsKey(GALLERY_PROFILE) ?
+                            imagesPath.get(GALLERY_PROFILE): imagesPath.get(CAMERA_PROFILE)));
+
            /*AccountImages.getInstance().setPhotoProfile(ConvertImages
                     .getBitmapImage(this.mRegisterDTO.getFiles().get(0).getData()));
 

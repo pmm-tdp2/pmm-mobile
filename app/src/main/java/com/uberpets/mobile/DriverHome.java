@@ -4,13 +4,17 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import com.google.android.material.navigation.NavigationView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -23,6 +27,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.github.nkzawa.emitter.Emitter;
@@ -115,6 +120,26 @@ public class  DriverHome
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_driver);
         navigationView.setNavigationItemSelectedListener(this);
+        View hView =  navigationView.getHeaderView(0);
+        ImageView imageView = hView.findViewById(R.id.image_profile_driver_navigation);
+        Bitmap bitmapProfile = AccountImages.getInstance().getPhotoProfile();
+        imageView.setImageBitmap(bitmapProfile);
+
+        /*if( bitmapProfile != null){
+            int lowerValue = bitmapProfile.getHeight() < bitmapProfile.getWidth()?
+                    bitmapProfile.getHeight() :  bitmapProfile.getWidth();
+
+            Bitmap bitmapResized = (Bitmap.createScaledBitmap(bitmapProfile, lowerValue, lowerValue, false));
+
+            //creamos el drawable redondeado
+            RoundedBitmapDrawable roundedDrawable =
+                    RoundedBitmapDrawableFactory.create(getResources(), bitmapResized);
+            //asignamos el CornerRadius
+            roundedDrawable.setCornerRadius(bitmapResized.getHeight());
+            imageView.setImageDrawable(roundedDrawable);
+        }*/
+
+
 
         //is used to obtain user's location, with this our app no needs
         // to manually manage connections
