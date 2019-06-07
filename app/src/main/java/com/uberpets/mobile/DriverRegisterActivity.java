@@ -240,7 +240,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
     }
 
     private RegisterDTO getRegisterDTO(){
-       return new RegisterDTO.RegisterDTOBuilder( mDataFacebook.getIdFacebook(),
+       return new RegisterDTO.RegisterDTOBuilder(mDataFacebook.getIdFacebook(),
                 this.editNameDriver.getText().toString(),
                 imagesPath.containsKey(GALLERY_PROFILE) ?
                         imagesPath.get(GALLERY_PROFILE): imagesPath.get(CAMERA_PROFILE))
@@ -266,8 +266,8 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private void handleResponseRegister(SimpleResponse simpleResponse) {
         if(simpleResponse.getStatus() == 200) {
 
-            AccountImages.getInstance().setPhotoProfile(ConvertImages
-                    .getBitmapImage(this.mRegisterDTO.getPhotoProfile()));
+           /*AccountImages.getInstance().setPhotoProfile(ConvertImages
+                    .getBitmapImage(this.mRegisterDTO.getFiles().get(0).getData()));
 
             AccountImages.getInstance().setPhotoCar(ConvertImages
                     .getBitmapImage(this.mRegisterDTO.getPhotoCar()));
@@ -276,7 +276,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
                     .getBitmapImage(this.mRegisterDTO.getPhotoLicense()));
 
             AccountImages.getInstance().setPhotoInsurance(ConvertImages
-                    .getBitmapImage(this.mRegisterDTO.getPhotoInsurance()));
+                    .getBitmapImage(this.mRegisterDTO.getPhotoInsurance()));*/
 
             //TODO: mostrar mensaje de que el registro fue exitoso y luego de un delay redirigir
             Intent intent = new Intent(this,DriverHome.class);
