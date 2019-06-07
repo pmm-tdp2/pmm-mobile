@@ -27,8 +27,10 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -56,6 +58,7 @@ import com.uberpets.model.CopyTravelDTO;
 import com.uberpets.model.Person;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.TravelDTO;
+import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
 import com.uberpets.util.GMapV2Direction;
 import com.uberpets.util.GMapV2DirectionAsyncTask;
@@ -140,8 +143,15 @@ public class UserHome extends AppCompatActivity
         this.idUser = AccountSession.getIdLogin(this) == "" ? "123456782" : AccountSession.getIdLogin(this);
         Log.i(this.getClass().getName(),"idFacebook: "+idUser);
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view_user);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View hView =  navigationView.getHeaderView(0);
+        ImageView imageView = hView.findViewById(R.id.image_profile_user_navigation);
+        Bitmap bitmapProfile = AccountImages.getInstance().getPhotoProfile();
+        if( bitmapProfile != null){
+            imageView.setImageBitmap(bitmapProfile);
+        }
 
         //is used to obtain user's location, with this our app no needs to manually manage connections
         //to Google Play Services through GoogleApiClient
@@ -150,7 +160,6 @@ public class UserHome extends AppCompatActivity
 
         mMessageCard = findViewById(R.id.card_view_message);
         mMessageCard.setVisibility(CardView.INVISIBLE);
-
 
         {
             try {
@@ -170,10 +179,6 @@ public class UserHome extends AppCompatActivity
         }
 
         requestPermission();
-
-        //erase
-        //mFragmentCanceledTravel = new CanceledTravelFragment();
-        //replaceFragment(mFragmentCanceledTravel,true);
     }
 
     public String getidUser() {

@@ -30,7 +30,9 @@ import com.uberpets.model.DataFacebook;
 import com.uberpets.model.RegisterDTO;
 import com.uberpets.model.SimpleResponse;
 import com.uberpets.services.App;
+import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
+import com.uberpets.util.ConvertImages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -252,6 +254,10 @@ public class UserRegisterActivity extends AppCompatActivity {
 
     private void handleResponseRegister(SimpleResponse simpleResponse) {
         if(simpleResponse.getStatus() == 200) {
+
+            AccountImages.getInstance().setPhotoProfile(ConvertImages
+                    .getBitmapImage(this.photoProfileCoded));
+
             //TODO: mostrar mensaje de que el registro fue exitoso y luego de un delay redirigir
             //save session of user
             AccountSession.setRolLoggedValue(this,

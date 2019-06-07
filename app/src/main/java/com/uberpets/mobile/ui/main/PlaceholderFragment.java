@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import androidx.cardview.widget.CardView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -28,6 +31,7 @@ import com.uberpets.mobile.R;
 import com.uberpets.mobile.UserHome;
 import com.uberpets.mobile.WelcomeToAppActivity;
 import com.uberpets.model.DataFacebook;
+import com.uberpets.model.FileDocumentDTO;
 import com.uberpets.model.LoginDTO;
 import com.uberpets.model.SimpleResponse;
 import com.uberpets.services.App;
@@ -211,6 +215,26 @@ public class PlaceholderFragment extends Fragment {
                 initRegister();
                 break;
         }
+    }
+
+
+    private void loadImages() {
+        String path = "/api/fileDocuments/?userId="+
+                mLoginResult.getAccessToken().getUserId()+"&name=profile";
+        App.nodeServer.get(path, FileDocumentDTO.class,new Headers())
+                .run(this::handleSuccessLoadImages,this::handleErrorLoadImages);
+    }
+
+    private void handleErrorLoadImages(Exception e) {
+        Log.e(this.getClass().getName(),"Error to load images from server");
+        Log.e(this.getClass().getName(),e.getMessage());
+        Toast toast = Toast.makeText(getActivity(),"Error para obtener las imagenes"
+                ,Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER,0,0);
+    }
+
+    private void handleSuccessLoadImages(FileDocumentDTO fileDocumentDTO) {
+
     }
 
     private void goToHome() {
