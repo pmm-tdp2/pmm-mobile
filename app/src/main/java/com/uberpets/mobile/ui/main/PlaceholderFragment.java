@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import androidx.cardview.widget.CardView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
@@ -21,6 +24,7 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.gson.Gson;
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
 import com.uberpets.mobile.DriverHome;
@@ -28,17 +32,22 @@ import com.uberpets.mobile.R;
 import com.uberpets.mobile.UserHome;
 import com.uberpets.mobile.WelcomeToAppActivity;
 import com.uberpets.model.DataFacebook;
+import com.uberpets.model.FileDocumentDTO;
 import com.uberpets.model.LoginDTO;
 import com.uberpets.model.SimpleResponse;
 import com.uberpets.services.App;
+import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
+import com.uberpets.util.ConvertImages;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -118,11 +127,12 @@ public class PlaceholderFragment extends Fragment {
     private void evaluateSession() {
         if(AccountSession.getLoginStatusValue(getContext()) &&
         AccountSession.getRolLoggedValue(getContext()).equals(this.mIdTab)) {
-            Intent intent = new Intent(getContext(),
+            goLogin(null);
+            /*Intent intent = new Intent(getContext(),
                     AccountSession.getRolLoggedValue(getContext()).equals(mConstant.getID_USERS())
                      ?  UserHome.class : DriverHome.class);
             startActivity(intent);
-            getActivity().finish();
+            getActivity().finish();*/
         }
     }
 
@@ -174,18 +184,18 @@ public class PlaceholderFragment extends Fragment {
 
     private void handleSuccessLoginFacebook(@NonNull LoginResult loginResult) {
         mLoginResult = loginResult;
+        goLogin(loginResult);
+    }
 
-        //TODO: hay que quitar el hardcodeo
 
-        Log.i(this.getClass().getName(),loginResult.getAccessToken().getUserId());
-        LoginDTO loginDTO = new LoginDTO(loginResult
-                .getAccessToken().getUserId(), mIdTab.equals(mConstant.getID_USERS())?
+    private void goLogin(LoginResult loginResult) {
+        String id =  AccountSession.getIdLogin(getActivity());
+        if(loginResult != null){
+            id = loginResult.getAccessToken().getUserId();
+        }
+        Log.i(this.getClass().getName(),id);
+        LoginDTO loginDTO = new LoginDTO(id, mIdTab.equals(mConstant.getID_USERS())?
                 mConstant.getID_USERS() : mConstant.getID_DRIVERS());
-
-        Log.d(this.getClass().getName(),"Success event: "+loginResult.toString());
-        Log.d(this.getClass().getName(),"PATH: "+Constants.getInstance().getURL() +"/api/login");
-        Log.d(this.getClass().getName(),"DTO: "+loginDTO.toString());
-
 
         App.nodeServer.post("/api/login",loginDTO,
                 SimpleResponse.class, new Headers())
@@ -204,13 +214,41 @@ public class PlaceholderFragment extends Fragment {
         Log.d(this.getClass().getName(),"data response login: "+response.getStatus());
         switch (response.getStatus()){
             case 200:
-                goToHome();
+                loadImages();
                 break;
 
             case 203:
                 initRegister();
                 break;
         }
+    }
+
+
+    private void loadImages() {
+        String path = "/api/fileDocuments/?userId="+
+                AccountSession.getIdLogin(getActivity())+"&name=profile";
+        App.nodeServer.get(path, ArrayList.class,new Headers())
+                .run(this::handleSuccessLoadImages,this::handleErrorLoadImages);
+    }
+
+    private void handleErrorLoadImages(Exception e) {
+        Log.e(this.getClass().getName(),"Error to load images from server");
+        Log.e(this.getClass().getName(),e.getMessage());
+        Toast toast = Toast.makeText(getActivity(),"Error para obtener las imagenes"
+                ,Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER,0,0);
+    }
+
+    private void handleSuccessLoadImages(ArrayList<Object> files) {
+        Log.i(this.getClass().getName(),files.toString());
+        String stringObject = files.get(0).toString();
+        //FileDocumentDTO fileDocumentDTO = (FileDocumentDTO) files.get(0);
+        /*Gson gson = new Gson();
+        FileDocumentDTO fileDocumentDTO = gson.fromJson(stringObject,FileDocumentDTO.class);*/
+        //Log.i(this.getClass().getName(),fileDocumentDTO.toString());
+        /*AccountImages.getInstance().setPhotoProfile(
+                ConvertImages.getBitmapImage(files.get(0).getData()));
+        goToHome();*/
     }
 
     private void goToHome() {

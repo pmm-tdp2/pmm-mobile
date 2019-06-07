@@ -80,43 +80,10 @@
         android:ems="10"
         android:hint="Ingresa la Ip con la 3ra opcion"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/button_redirect_login_driver"
+        app:layout_constraintBottom_toTopOf="@+id/button_tab_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup2" />
-
-
-    <Button
-        android:id="@+id/button_redirect_login_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/quantum_teal300"
-        android:onClick="goRegisterUser"
-        android:text="Reg User"
-        app:layout_constraintBottom_toTopOf="@+id/button_tab_login"
-        app:layout_constraintEnd_toStartOf="@+id/button_redirect_login_driver"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ip_input" />
-
-    <Button
-        android:id="@+id/button_redirect_login_driver"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/quantum_teal300"
-        android:onClick="goRegisterDriver"
-        android:text="Reg Driver"
-        app:layout_constraintBottom_toTopOf="@+id/button_tab_login"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/button_redirect_login_user"
-        app:layout_constraintTop_toBottomOf="@+id/ip_input" />
 
 
     <Button
@@ -133,7 +100,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_redirect_login_driver"/>
+        app:layout_constraintTop_toBottomOf="@+id/ip_input"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

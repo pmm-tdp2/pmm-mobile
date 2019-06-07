@@ -1,7 +1,9 @@
 package com.uberpets.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.facebook.login.LoginManager;
@@ -55,7 +57,6 @@ public class AccountSession {
         editor.putString(ROL_LOGGED_VALUE , value);
         editor.apply();
     }
-
 
     public static void finalizeSession(Context context) {
         Log.d(AccountSession.class.getName(),"finalize session");

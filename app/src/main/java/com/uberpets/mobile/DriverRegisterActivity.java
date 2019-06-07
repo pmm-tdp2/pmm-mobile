@@ -31,7 +31,9 @@ import com.uberpets.model.DataFacebook;
 import com.uberpets.model.RegisterDTO;
 import com.uberpets.model.SimpleResponse;
 import com.uberpets.services.App;
+import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
+import com.uberpets.util.ConvertImages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -63,6 +65,7 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private int GALLERY_INSURANCE = 5, CAMERA_INSURANCE = 6;
     private int GALLERY_PROFILE = 7, CAMERA_PROFILE = 8;
     private Map<Integer,String> imagesPath;
+    private RegisterDTO mRegisterDTO;
 
     @Override
     public Resources getResources() {
@@ -254,13 +257,27 @@ public class DriverRegisterActivity extends AppCompatActivity {
     }
 
     private void sendDataToServer() {
+        mRegisterDTO = getRegisterDTO();
         App.nodeServer.post("/api/register",
-                getRegisterDTO(), SimpleResponse.class, new Headers())
+                mRegisterDTO, SimpleResponse.class, new Headers())
                 .run(this::handleResponseRegister,this::handleErrorRegister);
     }
 
     private void handleResponseRegister(SimpleResponse simpleResponse) {
         if(simpleResponse.getStatus() == 200) {
+
+           /*AccountImages.getInstance().setPhotoProfile(ConvertImages
+                    .getBitmapImage(this.mRegisterDTO.getFiles().get(0).getData()));
+
+            AccountImages.getInstance().setPhotoCar(ConvertImages
+                    .getBitmapImage(this.mRegisterDTO.getPhotoCar()));
+
+            AccountImages.getInstance().setPhotoLicence(ConvertImages
+                    .getBitmapImage(this.mRegisterDTO.getPhotoLicense()));
+
+            AccountImages.getInstance().setPhotoInsurance(ConvertImages
+                    .getBitmapImage(this.mRegisterDTO.getPhotoInsurance()));*/
+
             //TODO: mostrar mensaje de que el registro fue exitoso y luego de un delay redirigir
             Intent intent = new Intent(this,DriverHome.class);
             startActivity(intent);

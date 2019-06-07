@@ -23,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -47,6 +48,7 @@ import com.uberpets.model.TraceDTO;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.TravelDTO;
 import com.uberpets.services.TraceService;
+import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
 
 
@@ -111,7 +113,7 @@ public class  DriverHome
         this.idDriver = AccountSession.getIdLogin(this) == "" ? "987654399" : AccountSession.getIdLogin(this);
         Log.i(this.getClass().getName(),"idFacebook: "+idDriver);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_driver);
         navigationView.setNavigationItemSelectedListener(this);
 
         //is used to obtain user's location, with this our app no needs
@@ -119,6 +121,8 @@ public class  DriverHome
         //to Google Play Services through GoogleApiClient
         mFusedLocationProviderClient = LocationServices
                 .getFusedLocationProviderClient(this);
+
+
         {
             try {
                 final IO.Options options = new IO.Options();
