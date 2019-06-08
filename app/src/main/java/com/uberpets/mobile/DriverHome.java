@@ -439,9 +439,9 @@ public class  DriverHome
     public void showNewTravelNotification(android.view.View view) {
         Travel mockTravel = new Travel.TravelBuilder(
                 new LatLng(1.0,1.0), new LatLng(1.5,1.5))
-                .setTravelId(-1).setDriver(new Person("1","chofer","mock")).setHasCompanion(true)
+                .setTravelId(-1).setDriver(new Person("1","chofer mock")).setHasCompanion(true)
                 .setBigPetQuantity(0).setSmallPetQuantity(1).setMediumPetQuantity(0)
-                .setUser(new Person("1","user","mock")).build();
+                .setUser(new Person("1","user mock")).build();
         TravelRequestFragment travelRequestFragment= new TravelRequestFragment();
         travelRequestFragment.setTravelDTO(mockTravel);
         replaceFragment(travelRequestFragment,true);
@@ -541,7 +541,7 @@ public class  DriverHome
                             mTravel = gson.fromJson(response.toString(), Travel.class);
 
                             //TODO: reemplaar por el verdadero nombre
-                            mTravel.setDriver(new Person(idDriver,"NADIE","NADIE"));
+                            mTravel.setDriver(new Person(idDriver,"NADIE"));
 
                             //TODO: mostrar la cantidad de mascotas que tendrá el viaje
                             //TODO: dibujar el tramo del viaje

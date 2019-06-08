@@ -46,7 +46,6 @@ public class InfoDriverAssignFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_info_driver_assing, container, false);
         this.textTime = rootView.findViewById(R.id.time_arrive);
         this.textName = rootView.findViewById(R.id.driver_name);
-        this.textLastName =  rootView.findViewById(R.id.driver_last_name);
         this.driverImage = rootView.findViewById(R.id.image_driver);
         updateDisplayedDataDriver();
 
@@ -55,8 +54,7 @@ public class InfoDriverAssignFragment extends Fragment {
 
     public void updateDisplayedDataDriver() {
         this.textTime.setText(this.mTravelAssignedDTO.getTime());
-        this.textName.setText(this.mTravelAssignedDTO.getDriver().getFirstName());
-        this.textLastName.setText(this.mTravelAssignedDTO.getDriver().getLastName());
+        this.textName.setText(this.mTravelAssignedDTO.getDriver().getName());
         loadImageUser();
     }
 
