@@ -78,7 +78,6 @@ public class Travel {
 
     }
 
-
     public Travel(TravelBuilder builder) {
         this.from = builder.from;
         this.to = builder.to;

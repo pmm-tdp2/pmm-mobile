@@ -35,6 +35,14 @@ public class InfoDriverAssignFragment extends Fragment {
         this.mTravelAssignedDTO = mTravelAssignedDTO;
     }
 
+    public void setTimeToArrive(Integer time){
+        this.textTime.setText(time.toString());
+    }
+
+    public void setDriversDistance(Integer distance){
+
+    }
+
     public InfoDriverAssignFragment() {
         // Required empty public constructor
     }

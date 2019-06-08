@@ -51,11 +51,14 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.uberpets.Constants;
+import com.uberpets.library.rest.Headers;
 import com.uberpets.mobile.ui.main.CanceledTravelFragment;
 import com.uberpets.model.CopyTravelDTO;
+import com.uberpets.model.FileDocumentDTO;
 import com.uberpets.model.Person;
 import com.uberpets.model.Travel;
 import com.uberpets.model.TravelAssignedDTO;
+import com.uberpets.services.App;
 import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
 import com.uberpets.util.GMapV2Direction;
@@ -117,10 +120,12 @@ public class UserHome extends AppCompatActivity
     private Emitter.Listener mListenerDriverCancelTravel;
     private Emitter.Listener mListenerAssignDriver;
 
+    private InfoDriverAssignFragment mFragmentTravelData;
     private OptionsTravelFragment mFragmentTest;
     private CanceledTravelFragment mFragmentCanceledTravel;
     private Constants mConstants = Constants.getInstance();
     private Travel mTravel;
+    private Integer i;
 
     private static final String[] TRANSPORTS = {
             "websocket"
@@ -129,19 +134,43 @@ public class UserHome extends AppCompatActivity
     private Handler handler = new Handler();
 
     private Runnable getTravelInfo = new Runnable() {
+
+        private void handleErrorGetTravel(Exception e) {
+            Log.d("GET TRAVEL", e.getMessage());
+        };
+
+        private void handleSuccessGetTravel(Travel travel) {
+            Log.d("GET TRAVEL", travel.toString());
+            mFragmentTravelData.setTimeToArrive(travel.getTravelId());
+        };
+
         @Override
         public void run() {
             if (onCourseTravel){
+                //Get Travel Info
+                String path = "/api/travels/" + mTravel.getTravelId();
+                App.nodeServer.get(path, Travel.class, new Headers())
+                        .run(this::handleSuccessGetTravel, this::handleErrorGetTravel);
+
+                mFragmentTravelData.setTimeToArrive(i);
+                i++;
                 Log.d("Handlers", "Called on main thread");
             }
             handler.postDelayed(this, 2000);
         }
     };
 
+
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         onCourseTravel = false;
+        i = 0;
 
         handler.post(getTravelInfo);
 
@@ -478,9 +507,10 @@ public class UserHome extends AppCompatActivity
 
     public void showInfoDriverAssigned(TravelAssignedDTO travelAssignedDTO){
         finishPreviousFragments();
-        InfoDriverAssignFragment info = new InfoDriverAssignFragment();
-        info.setTravelAssignedDTO(travelAssignedDTO);
-        replaceFragment(info,true);
+        InfoDriverAssignFragment infoTravelFragment= new InfoDriverAssignFragment();
+        mFragmentTravelData = infoTravelFragment;
+        infoTravelFragment.setTravelAssignedDTO(travelAssignedDTO);
+        replaceFragment(infoTravelFragment,true);
         showRouteFullInAssignTravel();
     }
 
