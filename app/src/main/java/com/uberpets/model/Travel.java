@@ -137,11 +137,17 @@ public class Travel {
 
     @Override
     public String toString(){
-        return "user: "+user.toString()
-         +" driver: "+driver.toString()
+
+        String userString = user==null? "null" : user.toString();
+        String driverString = driver==null? "null" : driver.toString();
+        String fromString = from==null? "null" : from.toString();
+        String toString = to==null? "null" : to.toString();
+
+        return "user: "+userString
+         +" driver: "+driverString
          +" travelId: "+travelId
-         +" from: "+from.toString()
-         +" to: "+to.toString()
+         +" from: "+fromString
+         +" to: "+toString
          +" smallPetQuantity: "+smallPetQuantity
          +" mediumPetQuantity: "+mediumPetQuantity
          +" bigPetQuantity: "+bigPetQuantity
