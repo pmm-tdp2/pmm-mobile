@@ -72,6 +72,8 @@ import org.w3c.dom.Document;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import static org.apache.http.conn.params.ConnManagerParams.setTimeout;
+
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
@@ -81,6 +83,7 @@ public class UserHome extends AppCompatActivity
     private Polyline mRoute;
     private String idUser;
     private TextView textPrice;
+    private boolean onCourseTravel;
 
     private Marker mMarker;
     private Marker originMarker;
@@ -127,9 +130,26 @@ public class UserHome extends AppCompatActivity
             "websocket"
     };
 
+    private Handler handler = new Handler();
+
+    private Runnable runnableCode = new Runnable() {
+        @Override
+        public void run() {
+            // Do something here on the main thread
+            Log.d("Handlers", "Called on main thread");
+            Log.d("Handlers", String.valueOf(onCourseTravel));
+            // Repeat this the same runnable code block again another 2 seconds
+            // 'this' is referencing the Runnable object
+            handler.postDelayed(this, 2000);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        onCourseTravel = false;
+
+        handler.post(runnableCode);
 
         setContentView(R.layout.activity_user_home);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -679,6 +699,7 @@ public class UserHome extends AppCompatActivity
             public void call(final Object... args) {
                 runOnUiThread( () -> {
                     Log.d(TAG_USER_HOME,"message finalize travel arrived");
+                    onCourseTravel = false;
                     JSONObject data = (JSONObject) args[0];
                     showRatingBar();
                 });
@@ -697,6 +718,7 @@ public class UserHome extends AppCompatActivity
                             Log.d(this.getClass().getName(),args[0].toString());
                             finishPreviousFragments();
                             returnOriginalState();
+                            onCourseTravel = false;
                             if (mFragmentCanceledTravel == null) mFragmentCanceledTravel = new CanceledTravelFragment();
                             replaceFragment(mFragmentCanceledTravel,true);
                         });
@@ -847,6 +869,7 @@ public class UserHome extends AppCompatActivity
             Log.d(this.getClass().getName(),"--------------------");
             Log.d(this.getClass().getName(),mTravelDTO.toString());
             Log.d(this.getClass().getName(),"big:: "+mTravelDTO.getBigPetQuantity());
+            onCourseTravel = true;
 
         }else {
             Log.d(this.getClass().getName(), "No se pudo econtrar un chofer");
