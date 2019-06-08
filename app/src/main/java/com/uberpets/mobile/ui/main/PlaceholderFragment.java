@@ -187,16 +187,20 @@ public class PlaceholderFragment extends Fragment {
     }
 
     private void handleSuccessLoginFacebook(@NonNull LoginResult loginResult) {
-        AccountSession.setLoginId(getActivity(),loginResult.getAccessToken().getUserId());
-        AccountSession.setRolLoggedValue(getActivity(),this.mIdTab);
-        AccountSession.setLoginStatusValue(getActivity(),true);
         mLoginResult = loginResult;
         goLoginServer();
     }
 
 
     private void goLoginServer() {
-        String id =  AccountSession.getIdLogin(getActivity());
+
+        String id;
+        if(mLoginResult == null) {
+            id =  AccountSession.getIdLogin(getActivity());
+        }else {
+            id =  mLoginResult.getAccessToken().getUserId();
+        }
+
         Log.i(this.getClass().getName(),id);
         LoginDTO loginDTO = new LoginDTO(id, mIdTab.equals(mConstant.getID_USERS())?
                 mConstant.getID_USERS() : mConstant.getID_DRIVERS());
@@ -228,6 +232,13 @@ public class PlaceholderFragment extends Fragment {
 
 
     private void loadImages() {
+        String id;
+        if(mLoginResult == null) {
+            AccountSession.setLoginId(getActivity(),mLoginResult.getAccessToken().getUserId());
+            AccountSession.setRolLoggedValue(getActivity(),this.mIdTab);
+            AccountSession.setLoginStatusValue(getActivity(),true);
+        }
+
         String rolId = mIdTab.equals(mConstant.getID_USERS())? "userId" : "driverId";
         String path = "/api/fileDocuments/?"+rolId+"="+
                 AccountSession.getIdLogin(getActivity())+"&name=profile";
