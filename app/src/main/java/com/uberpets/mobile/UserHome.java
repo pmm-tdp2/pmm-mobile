@@ -12,8 +12,6 @@ import android.os.Handler;
 import android.os.Message;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -32,7 +30,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -53,13 +50,12 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.gson.Gson;
 import com.uberpets.Constants;
 import com.uberpets.mobile.ui.main.CanceledTravelFragment;
 import com.uberpets.model.CopyTravelDTO;
 import com.uberpets.model.Person;
+import com.uberpets.model.Travel;
 import com.uberpets.model.TravelAssignedDTO;
-import com.uberpets.model.TravelDTO;
 import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
 import com.uberpets.util.GMapV2Direction;
@@ -124,7 +120,7 @@ public class UserHome extends AppCompatActivity
     private OptionsTravelFragment mFragmentTest;
     private CanceledTravelFragment mFragmentCanceledTravel;
     private Constants mConstants = Constants.getInstance();
-    private TravelDTO mTravelDTO;
+    private Travel mTravel;
 
     private static final String[] TRANSPORTS = {
             "websocket"
@@ -612,13 +608,13 @@ public class UserHome extends AppCompatActivity
         CopyTravelDTO copyTravelDTO = null;
 
         copyTravelDTO = new CopyTravelDTO.CopyTravelDTOBuilder()
-                .setBigPetQuantity(mTravelDTO.getBigPetQuantity())
-                .setMediumPetQuantity(mTravelDTO.getMediumPetQuantity())
-                .setSmallPetQuantity(mTravelDTO.getSmallPetQuantity())
-                .setTravelId(mTravelDTO.getTravelId())
-                .setUserId(mTravelDTO.getUserId())
-                .setDriverId(mTravelDTO.getDriverId())
-                .setHasCompanion(mTravelDTO.isHasCompanion())
+                .setBigPetQuantity(mTravel.getBigPetQuantity())
+                .setMediumPetQuantity(mTravel.getMediumPetQuantity())
+                .setSmallPetQuantity(mTravel.getSmallPetQuantity())
+                .setTravelId(mTravel.getTravelId())
+                .setUser(mTravel.getUser())
+                .setDriver(mTravel.getDriver())
+                .setHasCompanion(mTravel.isHasCompanion())
                 .build();
 
         intent.putExtra("TRAVEL",copyTravelDTO);
@@ -827,7 +823,7 @@ public class UserHome extends AppCompatActivity
 
                                 TravelAssignedDTO travelAssignedDTO =
                                       gson.fromJson(response.toString(),TravelAssignedDTO.class);
-                                mTravelDTO = new TravelDTO((new TravelDTO.TravelDTOBuilder(
+                                mTravel = new Travel((new Travel.TravelBuilder(
                                         originMarker.getPosition(),
                                         destinyMarker.getPosition()))
                                         .setTravelId(travelAssignedDTO.getTravelId())
@@ -857,18 +853,19 @@ public class UserHome extends AppCompatActivity
         if(travelAssignedDTO != null) {
             Log.d(this.getClass().getName(),"I was assign a driver");
             //finishFragmentExecuted();
-            mTravelDTO = new TravelDTO((new TravelDTO.TravelDTOBuilder(
+            mTravel = new Travel((new Travel.TravelBuilder(
                     originMarker.getPosition(),
                     destinyMarker.getPosition()))
                     .setTravelId(travelAssignedDTO.getTravelId())
-                    .setDriverId(travelAssignedDTO.getDriver().getId())
-                    .setUserId(travelAssignedDTO.getUser().getId()));
+                    .setDriver(travelAssignedDTO.getDriver())
+                    .setUser(travelAssignedDTO.getUser()));
             showInfoDriverAssigned(travelAssignedDTO);
 
             Log.d(this.getClass().getName(),travelAssignedDTO.toString());
             Log.d(this.getClass().getName(),"--------------------");
-            Log.d(this.getClass().getName(),mTravelDTO.toString());
-            Log.d(this.getClass().getName(),"big:: "+mTravelDTO.getBigPetQuantity());
+
+            Log.d(this.getClass().getName(),mTravel.toString());
+            Log.d(this.getClass().getName(),"big:: "+mTravel.getBigPetQuantity());
             onCourseTravel = true;
 
         }else {

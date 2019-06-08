@@ -14,10 +14,9 @@ import android.widget.Toast;
 
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
-import com.uberpets.model.SimpleResponse;
+import com.uberpets.model.Travel;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.TravelConfirmationDTO;
-import com.uberpets.model.TravelDTO;
 import com.uberpets.services.App;
 
 
@@ -36,7 +35,7 @@ public class TravelRequestFragment extends Fragment {
     private String info;
     private Button mButtonAccept;
     private Button mButtonReject;
-    private TravelDTO mTravelDTO;
+    private Travel mTravel;
     //private String ROL;
     private String idDriver;
 
@@ -53,13 +52,13 @@ public class TravelRequestFragment extends Fragment {
      * @return A new instance of fragment TravelRequestFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TravelRequestFragment newInstance(String idDriver, TravelDTO travelDTO) {
+    public static TravelRequestFragment newInstance(String idDriver, Travel travel) {
         TravelRequestFragment fragment = new TravelRequestFragment();
         //Bundle args = new Bundle();
         //args.putString(ARG_PARAM1, info);
         //fragment.setArguments(args);
         fragment.setIdDriver(idDriver);
-        fragment.setTravelDTO(travelDTO);
+        fragment.setTravelDTO(travel);
         return fragment;
     }
 
@@ -130,8 +129,8 @@ public class TravelRequestFragment extends Fragment {
         return rootView;
     }
 
-    public void setTravelDTO(TravelDTO mTravelDTO) {
-        this.mTravelDTO = mTravelDTO;
+    public void setTravelDTO(Travel mTravel) {
+        this.mTravel = mTravel;
     }
 
     private void setIdDriver(String idDriver) {
@@ -140,18 +139,18 @@ public class TravelRequestFragment extends Fragment {
 
     public void updateDataTravel(View rootView) {
         //TODO: show info the travel
-        Log.d(this.getClass().getName(),"TravelDTO: "+mTravelDTO.toString());
+        Log.d(this.getClass().getName(),"Travel: "+ mTravel.toString());
         TextView bigPets =rootView.findViewById(R.id.amount_big_pets);
-        bigPets.setText(String.valueOf(mTravelDTO.getBigPetQuantity()));
+        bigPets.setText(String.valueOf(mTravel.getBigPetQuantity()));
 
         TextView mediumPets =rootView.findViewById(R.id.amount_medium_pets);
-        mediumPets.setText(String.valueOf(mTravelDTO.getMediumPetQuantity()));
+        mediumPets.setText(String.valueOf(mTravel.getMediumPetQuantity()));
 
         TextView littlePets =rootView.findViewById(R.id.amount_little_pets);
-        littlePets.setText(String.valueOf(mTravelDTO.getSmallPetQuantity()));
+        littlePets.setText(String.valueOf(mTravel.getSmallPetQuantity()));
 
         TextView hasCompanion =rootView.findViewById(R.id.has_companion);
-        hasCompanion.setText(mTravelDTO.isHasCompanion() ? getString(R.string.yes_string):
+        hasCompanion.setText(mTravel.isHasCompanion() ? getString(R.string.yes_string):
                 getString(R.string.no_string));
     }
 
@@ -165,7 +164,7 @@ public class TravelRequestFragment extends Fragment {
 
     public void rejectTravelFragment() {
         TravelConfirmationDTO travelConfirmationDTO =
-                new TravelConfirmationDTO(mTravelDTO.getTravelId()
+                new TravelConfirmationDTO(mTravel.getTravelId()
                         ,Constants.getInstance().getID_DRIVERS(),this.idDriver,false);
         App.nodeServer.post("/api/travels/confirmation",travelConfirmationDTO,
                 Object.class, new Headers())
@@ -187,10 +186,10 @@ public class TravelRequestFragment extends Fragment {
     }
 
     public void acceptTravelFragment(){
-        if(mTravelDTO != null && mTravelDTO.getTravelId() != -1){
+        if(mTravel != null && mTravel.getTravelId() != -1){
             Log.d(this.getClass().getName(), "Driver accept travel and send message");
             TravelConfirmationDTO travelConfirmationDTO =
-                    new TravelConfirmationDTO(mTravelDTO.getTravelId(),
+                    new TravelConfirmationDTO(mTravel.getTravelId(),
                             Constants.getInstance().getID_DRIVERS(),
                             this.idDriver,true);
             App.nodeServer.post("/api/travels/confirmation",travelConfirmationDTO,
@@ -220,7 +219,7 @@ public class TravelRequestFragment extends Fragment {
 
     /*public void rejectTravelFragment() {
         TravelConfirmationDTO travelConfirmationDTO =
-                new TravelConfirmationDTO(mTravelDTO.getTravelId()
+                new TravelConfirmationDTO(mTravel.getTravelId()
                         ,Constants.getInstance().getID_DRIVERS(),this.idDriver,false);
         App.nodeServer.post("/api/travels/confirmation",travelConfirmationDTO,
                 SimpleResponse.class, new Headers())
@@ -242,10 +241,10 @@ public class TravelRequestFragment extends Fragment {
     }
 
     public void acceptTravelFragment() {
-        if(mTravelDTO != null && mTravelDTO.getTravelId() != -1){
+        if(mTravel != null && mTravel.getTravelId() != -1){
             Log.d(this.getClass().getName(), "Driver accept travel and send message");
             TravelConfirmationDTO travelConfirmationDTO =
-                    new TravelConfirmationDTO(mTravelDTO.getTravelId(),
+                    new TravelConfirmationDTO(mTravel.getTravelId(),
                             Constants.getInstance().getID_DRIVERS(),
                             this.idDriver,true);
             App.nodeServer.post("/api/travels/confirmation",travelConfirmationDTO,
