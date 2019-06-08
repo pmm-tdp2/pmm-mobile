@@ -128,14 +128,12 @@ public class UserHome extends AppCompatActivity
 
     private Handler handler = new Handler();
 
-    private Runnable runnableCode = new Runnable() {
+    private Runnable getTravelInfo = new Runnable() {
         @Override
         public void run() {
-            // Do something here on the main thread
-            Log.d("Handlers", "Called on main thread");
-            Log.d("Handlers", String.valueOf(onCourseTravel));
-            // Repeat this the same runnable code block again another 2 seconds
-            // 'this' is referencing the Runnable object
+            if (onCourseTravel){
+                Log.d("Handlers", "Called on main thread");
+            }
             handler.postDelayed(this, 2000);
         }
     };
@@ -145,7 +143,7 @@ public class UserHome extends AppCompatActivity
         super.onCreate(savedInstanceState);
         onCourseTravel = false;
 
-        handler.post(runnableCode);
+        handler.post(getTravelInfo);
 
         setContentView(R.layout.activity_user_home);
         Toolbar toolbar = findViewById(R.id.toolbar);

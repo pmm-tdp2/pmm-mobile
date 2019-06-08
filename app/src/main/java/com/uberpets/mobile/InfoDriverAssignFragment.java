@@ -79,6 +79,7 @@ public class InfoDriverAssignFragment extends Fragment {
 
     private void handleSuccessLoadImages(FileDocumentDTO[] files) {
         Log.i(this.getClass().getName(),"Photo profile of user obtained successfully");
-        this.driverImage.setImageBitmap(ConvertImages.getBitmapImage(files[0].getData()));
+        if (files.length > 0)
+            this.driverImage.setImageBitmap(ConvertImages.getBitmapImage(files[0].getData()));
     }
 }
