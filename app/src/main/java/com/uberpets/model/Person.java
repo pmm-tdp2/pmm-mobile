@@ -6,31 +6,24 @@ public class Person implements Serializable {
 
     private String id;
     private String name;
-    private String lastName;
 
-    public Person(String id, String name, String lastName) {
+    public Person(String id, String name) {
         this.id = id;
         this.name = name;
-        this.lastName = lastName;
     }
 
     public String getId() {
         return id;
     }
 
-    public String getFirstName() {
+    public String getName() {
         return name;
-    }
-
-    public String getLastName() {
-        return lastName;
     }
 
     public String toString() {
         return "{" +
                 "id: "+id +","
                 + "name: "+name +","
-                + "lastName: "+lastName
                 + "}";
     }
 }

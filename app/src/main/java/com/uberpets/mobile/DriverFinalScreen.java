@@ -33,8 +33,8 @@ public class DriverFinalScreen extends AppCompatActivity {
         mTravelDto = (CopyTravelDTO) getIntent().getSerializableExtra("TRAVEL");
         Log.d(this.getClass().getName(), "Travel : " + mTravelDto);
         loadImageUser();
-        TextView nameDriver = findViewById(R.id.name_driver_rating);
-        nameDriver.setText(mTravelDto.getUser().getFirstName());
+        TextView nameUser = findViewById(R.id.name_user_rating);
+        nameUser.setText(mTravelDto.getUser().getName());
     }
 
     private void loadImageUser() {
@@ -49,14 +49,14 @@ public class DriverFinalScreen extends AppCompatActivity {
         Toast toast = Toast.makeText(this,"Error al obtener la imagen del usuario"
                 ,Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER,0,0);
-        ImageView imageView = findViewById(R.id.image_driver_to_rate);
-        imageView.setImageResource(R.drawable.com_facebook_profile_picture_blank_portrait);
     }
 
     private void handleSuccessLoadImages(FileDocumentDTO[] files) {
         Log.i(this.getClass().getName(),"Photo profile of user obtained successfully");
-        ImageView imageView = findViewById(R.id.image_user_to_rate);
-        imageView.setImageBitmap(ConvertImages.getBitmapImage(files[0].getData()));
+        if(files.length>0){
+            ImageView imageView = findViewById(R.id.image_user_to_rate);
+            imageView.setImageBitmap(ConvertImages.getBitmapImage(files[0].getData()));
+        }
     }
 
     public void sendComment(android.view.View view){

@@ -556,8 +556,8 @@ public class UserHome extends AppCompatActivity
             height = getResources().getDisplayMetrics().heightPixels;
             Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
 
-            Person user = new Person("1","Juan Fernando ","Perez Gonzales");
-            Person driver = new Person("1","Chano Santiago ","Moreno Charpentier");
+            Person user = new Person("1","Juan Fernando ");
+            Person driver = new Person("1","Chano Santiago ");
             TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20 minutos",user,driver);
 
             mCardViewSearch.setVisibility(View.INVISIBLE);
@@ -887,7 +887,6 @@ public class UserHome extends AppCompatActivity
                     .setTravelId(travelAssignedDTO.getTravelId())
                     .setDriver(travelAssignedDTO.getDriver())
                     .setUser(travelAssignedDTO.getUser()));
-            showInfoDriverAssigned(travelAssignedDTO);
 
             Log.d(this.getClass().getName(),travelAssignedDTO.toString());
             Log.d(this.getClass().getName(),"--------------------");
@@ -895,6 +894,7 @@ public class UserHome extends AppCompatActivity
             Log.d(this.getClass().getName(),mTravel.toString());
             Log.d(this.getClass().getName(),"big:: "+mTravel.getBigPetQuantity());
             onCourseTravel = true;
+            showInfoDriverAssigned(travelAssignedDTO);
 
         }else {
             Log.d(this.getClass().getName(), "No se pudo econtrar un chofer");
