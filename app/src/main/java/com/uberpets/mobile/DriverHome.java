@@ -540,12 +540,12 @@ public class  DriverHome
                             Log.d(this.getClass().getName(),"------------------------");
                             mTravel = gson.fromJson(response.toString(), Travel.class);
 
-                            //TODO: reemplaar por el verdadero nombre
+                            //TODO: reemplazar por el verdadero nombre
                             mTravel.setDriver(new Person(idDriver,"NADIE","NADIE"));
 
                             //TODO: mostrar la cantidad de mascotas que tendrá el viaje
                             //TODO: dibujar el tramo del viaje
-                            Log.d(this.getClass().getName(), mTravel.toString());
+                            //Log.d(this.getClass().getName(), mTravel.toString());
 
                             TravelRequestFragment travelRequest =
                                     TravelRequestFragment.newInstance(idDriver, mTravel);
