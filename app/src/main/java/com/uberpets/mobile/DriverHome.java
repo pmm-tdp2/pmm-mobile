@@ -108,11 +108,11 @@ public class  DriverHome
 
     private Runnable sendPosition = new Runnable() {
 
-        private void handleErrorGetTravel(Exception e) {
+        private void handleErrorSendPosition(Exception e) {
             Log.d("GET TRAVEL", e.getMessage());
         }
 
-        private void handleSuccessGetTravel(SimpleResponse response) {
+        private void handleSuccessSendPosition(SimpleResponse response) {
             Log.d("GET TRAVEL", "There should be a response");
         }
 
@@ -123,8 +123,9 @@ public class  DriverHome
                 Log.d("Driver Home", String.valueOf(currentLocation.getLongitude()));
                 LatLng driverPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                 String path = "/api/driverPosition/" + idDriver;
-                App.nodeServer.put(path, driverPosition, SimpleResponse.class, new Headers())
-                        .run(this::handleSuccessGetTravel, this::handleErrorGetTravel);
+                //TODO: ver si mock location funca en el caso real
+                App.nodeServer.put(path, mockLocation, SimpleResponse.class, new Headers())
+                        .run(this::handleSuccessSendPosition, this::handleErrorSendPosition);
             }else{
                 Log.d("Driver Home", "Null Location");
             }
@@ -459,9 +460,11 @@ public class  DriverHome
         newLocation.setLongitude(mockLocation.longitude);
         newLocation.setLatitude(mockLocation.latitude);
         //TODO:id user esta harcodeado, ver porque se usaría asi
-        TraceDTO traceDTO = new TraceDTO("", idDriver,
+
+        /*TraceDTO traceDTO = new TraceDTO("", idDriver,
                 new GeograficCoordenate(String.valueOf(newLocation.getLatitude()), String.valueOf(newLocation.getLongitude())));
-        traceService.saveTrace(traceDTO, this);
+        traceService.saveTrace(traceDTO, this);*/
+
         currentPositionMarker.setPosition(mockLocation);
 
         Float bearing = prevLocation.bearingTo(newLocation);
