@@ -71,6 +71,7 @@ import org.w3c.dom.Document;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
+import static java.lang.Math.round;
 import static org.apache.http.conn.params.ConnManagerParams.setTimeout;
 
 public class UserHome extends AppCompatActivity
@@ -125,7 +126,6 @@ public class UserHome extends AppCompatActivity
     private CanceledTravelFragment mFragmentCanceledTravel;
     private Constants mConstants = Constants.getInstance();
     private Travel mTravel;
-    private Integer i;
 
     private static final String[] TRANSPORTS = {
             "websocket"
@@ -137,40 +137,36 @@ public class UserHome extends AppCompatActivity
 
         private void handleErrorGetTravel(Exception e) {
             Log.d("GET TRAVEL", e.getMessage());
-        };
+        }
 
         private void handleSuccessGetTravel(Travel travel) {
             Log.d("GET TRAVEL", travel.toString());
-            mFragmentTravelData.setTimeToArrive(travel.getTravelId());
-        };
+            double arrivalTime = travel.getArrivalTime();
+
+            mFragmentTravelData.setTimeToArrive(round(arrivalTime));
+        }
+
+        private void getTravelInfo(){
+            String path = "/api/travelStatus/" + mTravel.getTravelId();
+            App.nodeServer.get(path, Travel.class, new Headers())
+                    .run(this::handleSuccessGetTravel, this::handleErrorGetTravel);
+
+            Log.d("Handlers", "Called on main thread");
+        }
 
         @Override
         public void run() {
             if (onCourseTravel){
-                //Get Travel Info
-                String path = "/api/travels/" + mTravel.getTravelId();
-                App.nodeServer.get(path, Travel.class, new Headers())
-                        .run(this::handleSuccessGetTravel, this::handleErrorGetTravel);
-
-                mFragmentTravelData.setTimeToArrive(i);
-                i++;
-                Log.d("Handlers", "Called on main thread");
+                getTravelInfo();
             }
             handler.postDelayed(this, 2000);
         }
     };
 
-
-
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         onCourseTravel = false;
-        i = 0;
 
         handler.post(getTravelInfo);
 

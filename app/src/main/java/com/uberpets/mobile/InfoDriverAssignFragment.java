@@ -35,7 +35,7 @@ public class InfoDriverAssignFragment extends Fragment {
         this.mTravelAssignedDTO = mTravelAssignedDTO;
     }
 
-    public void setTimeToArrive(Integer time){
+    public void setTimeToArrive(Long time){
         this.textTime.setText(time.toString());
     }
 

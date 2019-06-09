@@ -20,6 +20,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.appcompat.widget.Toolbar;
+
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,12 +45,15 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.uberpets.Constants;
+import com.uberpets.library.rest.Headers;
 import com.uberpets.model.CopyTravelDTO;
 import com.uberpets.model.GeograficCoordenate;
 import com.uberpets.model.Person;
+import com.uberpets.model.SimpleResponse;
 import com.uberpets.model.TraceDTO;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.Travel;
+import com.uberpets.services.App;
 import com.uberpets.services.TraceService;
 import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
@@ -57,6 +62,8 @@ import com.uberpets.util.AccountSession;
 import org.json.JSONObject;
 
 import java.net.URISyntaxException;
+
+import static java.lang.Math.round;
 
 
 public class  DriverHome
@@ -97,9 +104,45 @@ public class  DriverHome
             "websocket"
     };
 
+    private Handler handler = new Handler();
+
+    private Runnable sendPosition = new Runnable() {
+
+        private void handleErrorGetTravel(Exception e) {
+            Log.d("GET TRAVEL", e.getMessage());
+        }
+
+        private void handleSuccessGetTravel(SimpleResponse response) {
+            Log.d("GET TRAVEL", "There should be a response");
+        }
+
+        private void sendPosition(){
+
+            if (currentLocation != null){
+                Log.d("Driver Home", String.valueOf(currentLocation.getLatitude()));
+                Log.d("Driver Home", String.valueOf(currentLocation.getLongitude()));
+                LatLng driverPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                String path = "/api/driverPosition/" + idDriver;
+                App.nodeServer.put(path, driverPosition, SimpleResponse.class, new Headers())
+                        .run(this::handleSuccessGetTravel, this::handleErrorGetTravel);
+            }else{
+                Log.d("Driver Home", "Null Location");
+            }
+        }
+
+        @Override
+        public void run() {
+            sendPosition();
+            handler.postDelayed(this, 2000);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+
         setContentView(R.layout.activity_driver_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -159,6 +202,9 @@ public class  DriverHome
             }
         }
         requestPermission();
+
+        //TODO: ver si tiene permiso de ubicacion y la ubicacion prendida
+        handler.post(sendPosition);
 
     }
 
