@@ -461,9 +461,9 @@ public class  DriverHome
         newLocation.setLatitude(mockLocation.latitude);
         //TODO:id user esta harcodeado, ver porque se usaría asi
 
-        TraceDTO traceDTO = new TraceDTO("", idDriver,
+        /*TraceDTO traceDTO = new TraceDTO("", idDriver,
                 new GeograficCoordenate(String.valueOf(newLocation.getLatitude()), String.valueOf(newLocation.getLongitude())));
-        traceService.saveTrace(traceDTO, this);
+        traceService.saveTrace(traceDTO, this);*/
 
         currentPositionMarker.setPosition(mockLocation);
 
