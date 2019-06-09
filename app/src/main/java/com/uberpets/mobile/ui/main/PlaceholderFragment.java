@@ -271,7 +271,11 @@ public class PlaceholderFragment extends Fragment {
 
     private void initRegister() {
         //TODO show message or progress bar
-        validateAmountFriends(mLoginResult);
+        if(mLoginResult == null){
+            AccountSession.finalizeSession(getActivity());
+        }else{
+            validateAmountFriends(mLoginResult);
+        }
     }
 
 
