@@ -12,6 +12,9 @@ import com.google.android.gms.maps.model.LatLng;
 public class Travel {
     private Person user;
     private Person driver;
+    private double estimatedArrivalTime;
+    private double driverDistance;
+
     private final LatLng from;
     private final LatLng to;
     private final int smallPetQuantity;
@@ -27,6 +30,8 @@ public class Travel {
         private int travelId;
         private Person user;
         private Person driver;
+        private double estimatedArrivalTime;
+        private double driverDistance;
         private int smallPetQuantity = 0;
         private int mediumPetQuantity = 0;
         private int bigPetQuantity = 0;
@@ -72,6 +77,16 @@ public class Travel {
             return this;
         }
 
+        public TravelBuilder setArrivalTime(double time){
+            this.estimatedArrivalTime = time;
+            return this;
+        }
+
+        public TravelBuilder setDriverDistance(double distance){
+            this.driverDistance = distance;
+            return this;
+        }
+
         public Travel build() {
             return new Travel(this);
         }
@@ -88,6 +103,8 @@ public class Travel {
         this.travelId = builder.travelId;
         this.user = builder.user;
         this.driver = builder.driver;
+        this.estimatedArrivalTime = builder.estimatedArrivalTime;
+        this.driverDistance = builder.driverDistance;
     }
 
     public LatLng getFrom() {
@@ -133,6 +150,12 @@ public class Travel {
     public void setDriver(Person driver) {
         this.driver = driver;
     }
+
+    public void setDriverDistance(double distance){ this.driverDistance = distance; }
+    public double getDriverDistance(){ return this.driverDistance; }
+
+    public void setArrivalTime(double time) { this.estimatedArrivalTime = time; }
+    public double getArrivalTime() { return this.estimatedArrivalTime; }
 
     @Override
     public String toString(){
