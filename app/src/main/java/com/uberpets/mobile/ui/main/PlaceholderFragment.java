@@ -232,8 +232,7 @@ public class PlaceholderFragment extends Fragment {
 
 
     private void loadImages() {
-        String id;
-        if(mLoginResult == null) {
+        if(mLoginResult != null) {
             AccountSession.setLoginId(getActivity(),mLoginResult.getAccessToken().getUserId());
             AccountSession.setRolLoggedValue(getActivity(),this.mIdTab);
             AccountSession.setLoginStatusValue(getActivity(),true);
