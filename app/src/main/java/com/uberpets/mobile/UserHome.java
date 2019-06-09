@@ -141,9 +141,12 @@ public class UserHome extends AppCompatActivity
 
         private void handleSuccessGetTravel(Travel travel) {
             Log.d("GET TRAVEL", travel.toString());
+
             double arrivalTime = travel.getArrivalTime();
+            double driverDistance = travel.getDriverDistance();
 
             mFragmentTravelData.setTimeToArrive(round(arrivalTime));
+            mFragmentTravelData.setDriversDistance(round(driverDistance));
         }
 
         private void getTravelInfo(){

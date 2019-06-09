@@ -81,5 +81,6 @@
     <string name="minutes">minutos</string>
     <string name="where_you_want_to_go">¿A dónde querés ir?</string>
     <string name="conection_problems_message">Se encontraron problemas en la conexión. inténtelo más tarde</string>
+    <string name="driver_is_near">El chofer está cerca</string>
 
 </resources>

@@ -26,6 +26,7 @@ public class InfoDriverAssignFragment extends Fragment {
 
     private TravelAssignedDTO mTravelAssignedDTO;
     private TextView textTime;
+    private TextView textDistance;
     private TextView textName;
     private TextView textLastName;
     private ImageView driverImage;
@@ -36,11 +37,11 @@ public class InfoDriverAssignFragment extends Fragment {
     }
 
     public void setTimeToArrive(Long time){
-        this.textTime.setText(time.toString());
+        this.textTime.setText("llegará en " + time.toString() + " minutos.");
     }
 
-    public void setDriversDistance(Integer distance){
-
+    public void setDriversDistance(Long distance){
+        this.textDistance.setText("El chofer esta a " + distance.toString() + " km");
     }
 
     public InfoDriverAssignFragment() {
@@ -53,6 +54,7 @@ public class InfoDriverAssignFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_info_driver_assing, container, false);
         this.textTime = rootView.findViewById(R.id.time_arrive);
+        this.textDistance = rootView.findViewById(R.id.distance_text);
         this.textName = rootView.findViewById(R.id.driver_name);
         this.driverImage = rootView.findViewById(R.id.image_driver);
         updateDisplayedDataDriver();
