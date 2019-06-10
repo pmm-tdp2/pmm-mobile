@@ -84,6 +84,8 @@ public class UserHome extends AppCompatActivity
     private String idUser;
     private TextView textPrice;
     private boolean onCourseTravel;
+    private Marker driverPositionMarker;
+    private Location driverLocation;
 
     private Marker mMarker;
     private Marker originMarker;
@@ -131,6 +133,43 @@ public class UserHome extends AppCompatActivity
             "websocket"
     };
 
+    private void moveDriverMarker(Double lat, Double lon){
+        Location newLocation = new Location("");
+        newLocation.setLatitude(lat);
+        newLocation.setLongitude(lon);
+
+        driverPositionMarker.setPosition(new LatLng(lat, lon));
+
+        Float bearing = driverLocation.bearingTo(newLocation);
+
+        driverPositionMarker.setRotation(bearing - 270);
+    }
+
+    private void setDriverMarker(Double lat, Double lon){
+        Log.d("Marker", "Setting marker");
+        LatLng latLng = new LatLng(lat, lon);
+
+        driverLocation = new Location("");
+        driverLocation.setLatitude(lat);
+        driverLocation.setLongitude(lon);
+
+        int height = 32;
+        int width = 64;
+        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.car);
+        Bitmap b = bitmapdraw.getBitmap();
+        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+
+        //MarkerOptions are used to create a new Marker.You can specify location, title etc with MarkerOptions
+        MarkerOptions markerOptions = new MarkerOptions()
+                .position(latLng)
+                .title("Su chofer")
+                .icon(BitmapDescriptorFactory.fromBitmap(smallMarker))
+                .anchor(0.5f, 0.5f);
+
+        //Adding the created the marker on the map
+        driverPositionMarker = mMap.addMarker(markerOptions);
+    }
+
     private Handler handler = new Handler();
 
     private Runnable getTravelInfo = new Runnable() {
@@ -147,6 +186,11 @@ public class UserHome extends AppCompatActivity
 
             mFragmentTravelData.setTimeToArrive(round(arrivalTime));
             mFragmentTravelData.setDriversDistance(round(driverDistance));
+
+            if (onCourseTravel){
+                if (driverPositionMarker == null) setDriverMarker(travel.getDriverLatitude(), travel.getDriverLongitude());
+                else moveDriverMarker(travel.getDriverLatitude(), travel.getDriverLongitude());
+            }
         }
 
         private void getTravelInfo(){

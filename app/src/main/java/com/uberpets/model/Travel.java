@@ -14,6 +14,8 @@ public class Travel {
     private Person driver;
     private double estimatedArrivalTime;
     private double driverDistance;
+    private double driverLatitude;
+    private double driverLongitude;
 
     private final LatLng from;
     private final LatLng to;
@@ -22,7 +24,6 @@ public class Travel {
     private final int bigPetQuantity;
     private final boolean hasCompanion;
     private final int travelId;
-
 
     public static class TravelBuilder {
         private final LatLng from;
@@ -36,6 +37,8 @@ public class Travel {
         private int mediumPetQuantity = 0;
         private int bigPetQuantity = 0;
         private boolean hasCompanion = false;
+        private double driverLatitude;
+        private double driverLongitude;
 
         public TravelBuilder(LatLng from, LatLng to) {
             this.from = from;
@@ -87,6 +90,15 @@ public class Travel {
             return this;
         }
 
+        public TravelBuilder setDriverLatitude(double lat){
+            this.driverLatitude = lat;
+            return this;
+        }
+
+        public TravelBuilder setDriverLongitude(double lon){
+            this.driverLongitude = lon;
+            return this;
+        }
         public Travel build() {
             return new Travel(this);
         }
@@ -105,6 +117,9 @@ public class Travel {
         this.driver = builder.driver;
         this.estimatedArrivalTime = builder.estimatedArrivalTime;
         this.driverDistance = builder.driverDistance;
+        this.driverLatitude = builder.driverLatitude;
+        this.driverLongitude = builder.driverLongitude;
+
     }
 
     public LatLng getFrom() {
@@ -156,6 +171,12 @@ public class Travel {
 
     public void setArrivalTime(double time) { this.estimatedArrivalTime = time; }
     public double getArrivalTime() { return this.estimatedArrivalTime; }
+
+    public void setDriverLatitude(double lat){ this.driverLatitude = lat; }
+    public double getDriverLatitude(){ return this.driverLatitude; }
+
+    public void setDriverLongitude(double lon){ this.driverLongitude = lon; }
+    public double getDriverLongitude(){ return this.driverLongitude; }
 
     @Override
     public String toString(){
