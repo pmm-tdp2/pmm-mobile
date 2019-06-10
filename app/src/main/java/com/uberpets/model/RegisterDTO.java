@@ -8,6 +8,10 @@ public class RegisterDTO {
     private final String name;
     private final String dni;
     private final String phone;
+    private final String carBrand;
+    private final String carModel;
+    private final String carColor;
+    private final String carPlate;
     private List<FileDocumentDTO> files;
     private final String role;
 
@@ -16,8 +20,13 @@ public class RegisterDTO {
         private final String name;
         private String dni;
         private String phone;
+        private String carBrand;
+        private String carModel;
+        private String carColor;
+        private String carPlate;
         private List<FileDocumentDTO> files = new ArrayList<>();
         private String role;
+
         public RegisterDTOBuilder(String id, String name, String photoProfile) {
             this.facebookId = id;
             this.name = name;
@@ -34,6 +43,26 @@ public class RegisterDTO {
 
         public RegisterDTOBuilder setPhone(String phone) {
             this.phone = phone;
+            return this;
+        }
+
+        public RegisterDTOBuilder setCarBrand(String brand){
+            this.carBrand = brand;
+            return this;
+        }
+
+        public RegisterDTOBuilder setCarModel(String model){
+            this.carModel = model;
+            return this;
+        }
+
+        public RegisterDTOBuilder setCarColor(String color){
+            this.carColor = color;
+            return this;
+        }
+
+        public RegisterDTOBuilder setCarPlate(String plate){
+            this.carPlate = plate;
             return this;
         }
 
@@ -78,6 +107,10 @@ public class RegisterDTO {
         this.phone = builder.phone;
         this.files = builder.files;
         this.role = builder.role;
+        this.carBrand = builder.carBrand;
+        this.carColor = builder.carColor;
+        this.carModel = builder.carModel;
+        this.carPlate = builder.carPlate;
     }
 
     public String getName() {

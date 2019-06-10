@@ -55,10 +55,18 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private boolean isUploadedInsuranceImage = false;
     private boolean isUploadedProfileImage = false;
     private Long id = 0l;
+
     private EditText editNameDriver;
     private EditText editDniDriver;
     private EditText editPhoneDriver;
+
+    private EditText carPlate;
+    private EditText carBrand;
+    private EditText carModel;
+    private EditText carColor;
+
     private TextView sendingDataText;
+
     private static final String IMAGE_DIRECTORY = "/demonuts";
     private int GALLERY_CAR = 1, CAMERA_CAR = 2;
     private int GALLERY_LICENSE = 3, CAMERA_LICENSE = 4;
@@ -80,6 +88,12 @@ public class DriverRegisterActivity extends AppCompatActivity {
         editNameDriver = findViewById(R.id.name_driver_facebook);
         editDniDriver = findViewById(R.id.dni_driver);
         editPhoneDriver = findViewById(R.id.phone_driver);
+
+        carBrand = findViewById(R.id.car_brand);
+        carModel = findViewById(R.id.car_model);
+        carColor = findViewById(R.id.car_color);
+        carPlate = findViewById(R.id.car_plate);
+
         sendingDataText = findViewById(R.id.sending_data_text);
         sendingDataText.setVisibility(View.INVISIBLE);
         addName();
@@ -253,7 +267,11 @@ public class DriverRegisterActivity extends AppCompatActivity {
                 .setPhotoLicense(imagesPath.containsKey(GALLERY_LICENSE)?
                         imagesPath.get(GALLERY_LICENSE): imagesPath.get(CAMERA_LICENSE))
                .setRole("driver")
-                .build();
+               .setCarBrand(this.carBrand.getText().toString())
+               .setCarModel(this.carModel.getText().toString())
+               .setCarColor(this.carColor.getText().toString())
+               .setCarPlate(this.carPlate.getText().toString())
+               .build();
     }
 
     private void sendDataToServer() {
@@ -335,8 +353,12 @@ public class DriverRegisterActivity extends AppCompatActivity {
                 && isUploadedInsuranceImage && isUploadedProfileImage
                 && editNameDriver.getText().length() > 0
                 && editDniDriver.getText().length() > 0
-                && editPhoneDriver.getText().length() > 0) {
-
+                && editPhoneDriver.getText().length() > 0
+                && carBrand.getText().length() > 0
+                && carModel.getText().length() > 0
+                && carColor.getText().length() > 0
+                && carPlate.getText().length() > 0
+        ) {
             sendDataToServer();
         }
         else{

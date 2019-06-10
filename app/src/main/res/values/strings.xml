@@ -83,5 +83,10 @@
     <string name="conection_problems_message">Se encontraron problemas en la conexión. inténtelo más tarde</string>
     <string name="driver_is_near">El chofer está cerca</string>
     <string name="account">Cuenta</string>
+    <string name="car_register_message">Por favor ingresa los datos de tu auto.</string>
+    <string name="car_plate">Patente</string>
+    <string name="car_brand">Marca</string>
+    <string name="car_model">Modelo</string>
+    <string name="car_color">Color</string>
 
 </resources>
