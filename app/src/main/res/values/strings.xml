@@ -65,7 +65,7 @@
     <string name="your_travel_has_been_canceled_title">Su viaje ha sido cancelado</string>
     <string name="your_travel_has_been_canceled_body">Lamentamos informarle que el chofer a cancelado su viaje. El mismo será penalizado. Nuevamente le pedimos disculpas. Puede gestionar un nuevo viaje desde la pantalla de inicio.</string>
 
-    <string name="logout_account">Cerar sesión</string>
+    <string name="logout_account">Cerrar sesión</string>
     <string name="number_phone">Teléfono celular</string>
     <string name="user_registry_data_instruction">Necesitamos que verifiques y completes algunos datos.</string>
 
@@ -82,5 +82,6 @@
     <string name="where_you_want_to_go">¿A dónde querés ir?</string>
     <string name="conection_problems_message">Se encontraron problemas en la conexión. inténtelo más tarde</string>
     <string name="driver_is_near">El chofer está cerca</string>
+    <string name="account">Cuenta</string>
 
 </resources>
