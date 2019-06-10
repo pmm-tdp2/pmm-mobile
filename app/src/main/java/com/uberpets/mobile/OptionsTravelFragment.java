@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -125,20 +126,30 @@ public class OptionsTravelFragment extends Fragment {
     //user send request to get quotation of travel
     public void getTravelQuote() {
 
-        TravelDTO quotation =  new TravelDTO.TravelDTOBuilder(
-                myActivity.getmOrigin(),myActivity.getmDestiny())
-                .setUserId(myActivity.getidUser())
-                .setHasCompanion(optionCompanion.isChecked())
-                .setSmallPetQuantity(mAdapter.getAllLittlePets())
-                .setMediumPetQuantity(mAdapter.getAllMediumPets())
-                .setBigPetQuantity(mAdapter.getAllBigPets())
-                .build();
+        int amountPets = mAdapter.getAllLittlePets()
+                + mAdapter.getAllMediumPets() + mAdapter.getAllBigPets();
 
-        Log.i(this.getClass().getName(),"COTIZATION: " + quotation);
-        App.nodeServer.post("/api/travels/simulateQuote",
-                quotation, TravelPriceDTO.class, new Headers())
-                .run(this::responseQuotation, this::errorQuotation);
-        Log.i(this.getClass().getName(),"DONE REQUEST: ");
+        if (amountPets > 0){
+            TravelDTO quotation =  new TravelDTO.TravelDTOBuilder(
+                    myActivity.getmOrigin(),myActivity.getmDestiny())
+                    .setUserId(myActivity.getidUser())
+                    .setHasCompanion(optionCompanion.isChecked())
+                    .setSmallPetQuantity(mAdapter.getAllLittlePets())
+                    .setMediumPetQuantity(mAdapter.getAllMediumPets())
+                    .setBigPetQuantity(mAdapter.getAllBigPets())
+                    .build();
+
+            Log.i(this.getClass().getName(),"COTIZATION: " + quotation);
+            App.nodeServer.post("/api/travels/simulateQuote",
+                    quotation, TravelPriceDTO.class, new Headers())
+                    .run(this::responseQuotation, this::errorQuotation);
+            Log.i(this.getClass().getName(),"DONE REQUEST: ");
+        }else{
+            Toast toast = Toast.makeText(getActivity(),
+                    "Seleccione al menos una mascota",Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER,0,0);
+            toast.show();
+        }
     }
 
 

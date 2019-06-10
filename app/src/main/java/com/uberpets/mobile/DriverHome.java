@@ -4,11 +4,16 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
+
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.navigation.NavigationView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -22,11 +27,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -57,11 +65,15 @@ import com.uberpets.services.App;
 import com.uberpets.services.TraceService;
 import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
+import com.uberpets.util.GMapV2Direction;
+import com.uberpets.util.GMapV2DirectionAsyncTask;
 
 
 import org.json.JSONObject;
+import org.w3c.dom.Document;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import static java.lang.Math.round;
 
@@ -96,6 +108,7 @@ public class  DriverHome
     private TraceService traceService = new TraceService();
     Constants mConstants = Constants.getInstance();
     private Travel mTravel;
+    private Polyline mRoute;
 
     private DriverFollowUpTravel driverFollowUpTravel;
 
@@ -547,6 +560,8 @@ public class  DriverHome
     }
 
     public void finishTravel(){
+        if(mRoute != null)
+            mRoute.remove();
         finishPreviousFragments();
         Intent intent = new Intent(this, DriverFinalScreen.class);
         CopyTravelDTO copyTravelDTO = new CopyTravelDTO.CopyTravelDTOBuilder()
@@ -627,6 +642,8 @@ public class  DriverHome
                             Log.d(this.getClass().getName(),"----antes de replace notification---------");
                             replaceFragment(travelRequest,true);
                             Log.d(this.getClass().getName(),"----luego de replace notification---------");
+                            getRouteTravel();
+                            showRouteFullInAssignTravel();
                         }
                     }
                 });
@@ -645,5 +662,61 @@ public class  DriverHome
         mSocket.disconnect();
         super.onDestroy();
     }
+
+    public void getRouteTravel() {
+        final Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                try {
+                    Document doc = (Document) msg.obj;
+                    GMapV2Direction md = new GMapV2Direction();
+                    ArrayList<LatLng> directionPoint = md.getDirection(doc);
+                    PolylineOptions rectLine = new PolylineOptions().width(15).color(Color.RED);
+
+                    for (int i = 0; i < directionPoint.size(); i++) {
+                        rectLine.add(directionPoint.get(i));
+                    }
+                    mRoute = mMap.addPolyline(rectLine);
+                    md.getDurationText(doc);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        };
+
+        new GMapV2DirectionAsyncTask(handler, mTravel.getTo(), mTravel.getFrom(),
+                GMapV2Direction.MODE_DRIVING, getApplicationContext()).execute();
+    }
+
+    public void showRouteFullInAssignTravel(){
+        Handler handler = new Handler();
+        handler.postDelayed( () -> {
+            // Do something after 50ms
+            try{
+                int heightScreen = getResources().getDisplayMetrics().heightPixels;
+                int padding = heightScreen/20; //space in px between box edges
+                LatLngBounds.Builder bc = new LatLngBounds.Builder();
+                bc.include(mTravel.getFrom());
+                bc.include(mTravel.getTo());
+                FrameLayout mapLayout = findViewById(R.id.include_driver_home);
+                int widthMap = mapLayout.getWidth();
+                int heightMap = mapLayout.getHeight();
+                LinearLayout optionLayout = findViewById(R.id.layout_driver_to_replace);
+                int heightOption = optionLayout.getHeight();
+
+                int newHeight = heightMap-heightOption;
+                Log.d("DIMENSION","width: "+widthMap+ "  "+" height: "+newHeight);
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bc.build(),widthMap,newHeight,padding));
+                //other magic number
+                mMap.animateCamera(CameraUpdateFactory.scrollBy(0,heightOption/2));
+            }catch (Exception ex){
+                Log.e(this.getClass().getName(),ex.toString());
+            }
+        }, 50);
+
+    }
+
+
 
 }
