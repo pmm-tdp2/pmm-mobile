@@ -84,17 +84,20 @@
         android:id="@+id/textInputLayout"
         android:layout_width="match_parent"
         android:layout_height="100dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/button5"
-        app:layout_constraintTop_toBottomOf="@+id/ratingBar_user"
-        tools:layout_editor_absoluteX="16dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ratingBar_user">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/driver_text_comment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/user_comment_hint" />
+            android:hint="@string/driver_comment_hint" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
