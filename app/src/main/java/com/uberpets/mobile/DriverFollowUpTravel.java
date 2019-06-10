@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.uberpets.Constants;
@@ -38,6 +39,8 @@ public class DriverFollowUpTravel extends Fragment {
     private Button mButtonCancel;
     private TravelAssignedDTO mTravelAssignedDTO;
     private String idDriver;
+    private TextView distanceText;
+    private TextView timeText;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -79,6 +82,8 @@ public class DriverFollowUpTravel extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     @Override
@@ -88,8 +93,12 @@ public class DriverFollowUpTravel extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_driver_follow_up_travel,
                 container, false);
 
+        distanceText = rootView.findViewById(R.id.distance_text);
+        timeText = rootView.findViewById(R.id.time_text);
+
         mButtonCancel = rootView.findViewById(R.id.button_cancel_travel);
         mButtonFinalize = rootView.findViewById(R.id.button_finalize_travel);
+
         setButtonCancel();
         setButtonFinalize();
 
@@ -234,6 +243,15 @@ public class DriverFollowUpTravel extends Fragment {
         Log.e(this.getClass().getName(),"Error in cancel");
         Log.d(this.getClass().getName(), e.toString());
         //TODO: no se ha podido finalizar el viaje
+    }
+
+    public void setTimeToArrive(Long time){
+        this.timeText.setText(time.toString() + " minutos");
+
+    }
+
+    public void setDriversDistance(Long distance){
+        this.distanceText.setText(distance.toString() + " km");
     }
 
 }

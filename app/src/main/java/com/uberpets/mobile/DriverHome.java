@@ -97,6 +97,8 @@ public class  DriverHome
     Constants mConstants = Constants.getInstance();
     private Travel mTravel;
 
+    private DriverFollowUpTravel driverFollowUpTravel;
+
     //private final String URL = "https://young-wave-26125.herokuapp.com/pmm";
     //private final String URL = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
     //private final String URL = mConstants.getURL();
@@ -131,9 +133,34 @@ public class  DriverHome
             }
         }
 
+        private void handleErrorGetTravel(Exception e) {
+            Log.d("GET TRAVEL", e.getMessage());
+        }
+
+        private void handleSuccessGetTravel(Travel travel) {
+            Log.d("GET TRAVEL", travel.toString());
+
+            double arrivalTime = travel.getArrivalTime();
+            double driverDistance = travel.getDriverDistance();
+
+            if (driverFollowUpTravel != null){
+                driverFollowUpTravel.setTimeToArrive(round(arrivalTime));
+                driverFollowUpTravel.setDriversDistance(round(driverDistance));
+            }
+        }
+
+        private void getTravelInfo(){
+            String path = "/api/travelStatus/" + mTravel.getTravelId();
+            App.nodeServer.get(path, Travel.class, new Headers())
+                    .run(this::handleSuccessGetTravel, this::handleErrorGetTravel);
+
+            Log.d("Handlers", "Called on main thread");
+        }
+
         @Override
         public void run() {
             sendPosition();
+            if (inTravel) getTravelInfo();
             handler.postDelayed(this, 2000);
         }
     };
@@ -141,8 +168,6 @@ public class  DriverHome
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
 
         setContentView(R.layout.activity_driver_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -180,15 +205,11 @@ public class  DriverHome
             imageView.setImageDrawable(roundedDrawable);
         }*/
 
-
-
         //is used to obtain user's location, with this our app no needs
         // to manually manage connections
         //to Google Play Services through GoogleApiClient
         mFusedLocationProviderClient = LocationServices
                 .getFusedLocationProviderClient(this);
-
-
         {
             try {
                 final IO.Options options = new IO.Options();
@@ -511,7 +532,7 @@ public class  DriverHome
         this.mTravel.setUser(travelAssignedDTO.getUser());
         Log.i(this.getClass().getName(),"init FollowUpTravel");
         finishPreviousFragments();
-        DriverFollowUpTravel driverFollowUpTravel = DriverFollowUpTravel.newInstance("","");
+        driverFollowUpTravel = DriverFollowUpTravel.newInstance("","");
         driverFollowUpTravel.setIdDriver(idDriver);
         driverFollowUpTravel.setmTravelAssignedDTO(travelAssignedDTO);
         replaceFragment(driverFollowUpTravel, true);
