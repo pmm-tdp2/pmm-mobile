@@ -246,12 +246,12 @@ public class DriverFollowUpTravel extends Fragment {
     }
 
     public void setTimeToArrive(Long time){
-        this.timeText.setText(time.toString() + " minutos");
+        this.timeText.setText(" " + time.toString() + " minutos");
 
     }
 
     public void setDriversDistance(Long distance){
-        this.distanceText.setText(distance.toString() + " km");
+        this.distanceText.setText( " " + distance.toString() + " km");
     }
 
 }
