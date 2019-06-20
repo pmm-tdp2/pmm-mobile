@@ -1,13 +1,20 @@
 package com.uberpets.mobile;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 
@@ -15,7 +22,11 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.navigation.NavigationView;
+
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -53,15 +64,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.uberpets.Constants;
-import com.uberpets.library.rest.Headers;
 import com.uberpets.model.CopyTravelDTO;
-import com.uberpets.model.GeograficCoordenate;
 import com.uberpets.model.Person;
 import com.uberpets.model.SimpleResponse;
-import com.uberpets.model.TraceDTO;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.Travel;
-import com.uberpets.services.App;
 import com.uberpets.services.TraceService;
 import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
@@ -72,7 +79,9 @@ import com.uberpets.util.GMapV2DirectionAsyncTask;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 
+import java.lang.ref.WeakReference;
 import java.net.URISyntaxException;
+import java.sql.Driver;
 import java.util.ArrayList;
 
 import static java.lang.Math.round;
@@ -109,6 +118,7 @@ public class  DriverHome
     Constants mConstants = Constants.getInstance();
     private Travel mTravel;
     private Polyline mRoute;
+    private String CHANNEL_ID = "some_channel_id";
 
     private DriverFollowUpTravel driverFollowUpTravel;
 
@@ -133,7 +143,7 @@ public class  DriverHome
 
         private void sendPosition(){
 
-            if (currentLocation != null){
+            /*if (currentLocation != null){
                 Log.d("Driver Home", String.valueOf(currentLocation.getLatitude()));
                 Log.d("Driver Home", String.valueOf(currentLocation.getLongitude()));
                 LatLng driverPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -143,7 +153,7 @@ public class  DriverHome
                         .run(this::handleSuccessSendPosition, this::handleErrorSendPosition);
             }else{
                 Log.d("Driver Home", "Null Location");
-            }
+            }*/
         }
 
         private void handleErrorGetTravel(Exception e) {
@@ -163,17 +173,17 @@ public class  DriverHome
         }
 
         private void getTravelInfo(){
-            String path = "/api/travelStatus/" + mTravel.getTravelId();
+            /*String path = "/api/travelStatus/" + mTravel.getTravelId();
             App.nodeServer.get(path, Travel.class, new Headers())
                     .run(this::handleSuccessGetTravel, this::handleErrorGetTravel);
 
-            Log.d("Handlers", "Called on main thread");
+            Log.d("Handlers", "Called on main thread");*/
         }
 
         @Override
         public void run() {
             sendPosition();
-            if (inTravel) getTravelInfo();
+            if (isInTravel()) getTravelInfo();
             handler.postDelayed(this, 2000);
         }
     };
@@ -183,10 +193,10 @@ public class  DriverHome
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_driver_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
@@ -240,6 +250,7 @@ public class  DriverHome
 
         //TODO: ver si tiene permiso de ubicacion y la ubicacion prendida
         handler.post(sendPosition);
+        this.createNotificationChannel();
 
     }
 
@@ -250,7 +261,8 @@ public class  DriverHome
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
-                super.onBackPressed();
+                //super.onBackPressed();
+                moveTaskToBack(true);
             }
         }
     }
@@ -412,6 +424,12 @@ public class  DriverHome
         }
     }
 
+
+    private void beginTravel(){this.inTravel = true;}
+    private void endTravel(){this.inTravel = false;}
+    private boolean isInTravel(){return inTravel;}
+
+
     public boolean popFragment() {
         boolean isPop = false;
 
@@ -536,12 +554,12 @@ public class  DriverHome
      */
     public void rejectTravel(){
         removeUpperSectionFragment();
-        inTravel = false;
+        endTravel();
     }
 
     public void acceptTravel(TravelAssignedDTO travelAssignedDTO){
         //TODO: mostrar información o mandarla a otro fragment del viaje asignado
-        inTravel = true;
+        beginTravel();
         this.mTravel.setUser(travelAssignedDTO.getUser());
         Log.i(this.getClass().getName(),"init FollowUpTravel");
         finishPreviousFragments();
@@ -556,12 +574,13 @@ public class  DriverHome
     * methods that are implemented by fragment interface DriverFollowUpTravel
     * */
     public void cancelOngoingTravel(){
+        endTravel();
+        returnOriginalState();
         removeUpperSectionFragment();
     }
 
     public void finishTravel(){
-        if(mRoute != null)
-            mRoute.remove();
+        returnOriginalState();
         finishPreviousFragments();
         Intent intent = new Intent(this, DriverFinalScreen.class);
         CopyTravelDTO copyTravelDTO = new CopyTravelDTO.CopyTravelDTOBuilder()
@@ -579,7 +598,7 @@ public class  DriverHome
         Log.i(this.getClass().getName(),"-----------------------------------");
         startActivity(intent);
         //TODO: mandar notificación al server de la puntuacion
-        inTravel = false;
+        endTravel();
     }
 
     /* BEGIN OF SOCKET CONNECTION*/
@@ -606,6 +625,53 @@ public class  DriverHome
         mSocket.emit(TAG_ROL, ROL, idDriver);
     }
 
+    private void createNotificationChannel() {
+
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+
+    private void notificationPopUpTravel(){
+
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        // Create an explicit intent for an Activity in your app
+        Intent intent = new Intent(this,DriverHome.class);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.baseline_pets_black_24)
+                .setContentTitle("Nuevo Viaje")
+                .setContentText("Te ha llegado un nuevo viaje ingresa chabon")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+                .setSound(alarmSound)
+                .setLights(Color.BLUE, 500, 500)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        int notificationId =1;
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(notificationId, builder.build());
+
+    }
+
 
     //listen request of travel
     public void listenNotificaciónTravel() {
@@ -617,7 +683,8 @@ public class  DriverHome
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (!inTravel){
+                        if (!isInTravel()){
+                            notificationPopUpTravel();
                             JSONObject response = (JSONObject) args[0];
                             Gson gson = new Gson();
                             Log.d(this.getClass().getName(),"--NOTIFICACIÓN DE VIAJE-");
@@ -656,6 +723,7 @@ public class  DriverHome
 
     @Override
     public void onDestroy() {
+        Log.d(this.getClass().getName(),"DESTROY OF ACTIVITY");
         mSocket.emit("FIN ROL","DRIVER", this.idDriver);
         mSocket.off("FINISH", mListenerConnection);
         mSocket.off("FINISH", mListenerNotificationTravel);
@@ -664,7 +732,7 @@ public class  DriverHome
     }
 
     public void getRouteTravel() {
-        final Handler handler = new Handler() {
+        /*final Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 try {
                     Document doc = (Document) msg.obj;
@@ -682,11 +750,41 @@ public class  DriverHome
                 }
             }
 
-        };
+        };*/
+
+        final Handler handler = new DriverHome.MyVeryOwnHandler(this);
 
         new GMapV2DirectionAsyncTask(handler, mTravel.getTo(), mTravel.getFrom(),
                 GMapV2Direction.MODE_DRIVING, getApplicationContext()).execute();
     }
+
+
+    public static class MyVeryOwnHandler extends Handler {
+        private final WeakReference<DriverHome> mHome;
+
+        MyVeryOwnHandler(DriverHome service) {
+            mHome = new WeakReference<>(service);
+        }
+
+        public void handleMessage(Message msg) {
+            DriverHome home = mHome.get();
+            try {
+                Document doc = (Document) msg.obj;
+                GMapV2Direction md = new GMapV2Direction();
+                ArrayList<LatLng> directionPoint = md.getDirection(doc);
+                PolylineOptions rectLine = new PolylineOptions().width(15).color(Color.RED);
+
+                for (int i = 0; i < directionPoint.size(); i++) {
+                    rectLine.add(directionPoint.get(i));
+                }
+                home.mRoute = home.mMap.addPolyline(rectLine);
+                md.getDurationText(doc);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 
     public void showRouteFullInAssignTravel(){
         Handler handler = new Handler();
@@ -715,6 +813,14 @@ public class  DriverHome
             }
         }, 50);
 
+    }
+
+    public void returnOriginalState(){
+        if(mRoute != null)
+            mRoute.remove();
+        LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),
+                currentLocation.getLongitude());
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, ZOOM_VALUE));
     }
 
 

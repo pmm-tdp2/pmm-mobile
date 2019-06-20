@@ -61,6 +61,7 @@
         <activity
             android:name=".DriverHome"
             android:label="@string/title_activity_driver_home"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -51,14 +52,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.uberpets.Constants;
-import com.uberpets.library.rest.Headers;
 import com.uberpets.mobile.ui.main.CanceledTravelFragment;
 import com.uberpets.model.CopyTravelDTO;
-import com.uberpets.model.FileDocumentDTO;
 import com.uberpets.model.Person;
 import com.uberpets.model.Travel;
 import com.uberpets.model.TravelAssignedDTO;
-import com.uberpets.services.App;
 import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
 import com.uberpets.util.GMapV2Direction;
@@ -68,6 +66,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 
+import java.lang.ref.WeakReference;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
@@ -82,7 +81,6 @@ public class UserHome extends AppCompatActivity
     private GoogleMap mMap;
     private Polyline mRoute;
     private String idUser;
-    private TextView textPrice;
     private boolean onCourseTravel;
     private Marker driverPositionMarker;
     private Location driverLocation;
@@ -121,13 +119,13 @@ public class UserHome extends AppCompatActivity
     private Emitter.Listener mListenerDriverArrivedToUser;
     private Emitter.Listener mListenerDriverArrivedToDestiny;
     private Emitter.Listener mListenerDriverCancelTravel;
-    private Emitter.Listener mListenerAssignDriver;
 
     private InfoDriverAssignFragment mFragmentTravelData;
     private OptionsTravelFragment mFragmentTest;
     private CanceledTravelFragment mFragmentCanceledTravel;
     private Constants mConstants = Constants.getInstance();
     private Travel mTravel;
+    private boolean inTravel = false;
 
     private static final String[] TRANSPORTS = {
             "websocket"
@@ -194,11 +192,11 @@ public class UserHome extends AppCompatActivity
         }
 
         private void getTravelInfo(){
-            String path = "/api/travelStatus/" + mTravel.getTravelId();
+            /*String path = "/api/travelStatus/" + mTravel.getTravelId();
             App.nodeServer.get(path, Travel.class, new Headers())
                     .run(this::handleSuccessGetTravel, this::handleErrorGetTravel);
 
-            Log.d("Handlers", "Called on main thread");
+            Log.d("Handlers", "Called on main thread");*/
         }
 
         @Override
@@ -228,7 +226,7 @@ public class UserHome extends AppCompatActivity
         toggle.syncState();
 
         //setting id:
-        this.idUser = AccountSession.getIdLogin(this) == "" ? "123456782" : AccountSession.getIdLogin(this);
+        this.idUser = AccountSession.getIdLogin(this).equals("") ? "123456782" : AccountSession.getIdLogin(this);
         Log.i(this.getClass().getName(),"idFacebook: "+idUser);
 
         NavigationView navigationView = findViewById(R.id.nav_view_user);
@@ -278,6 +276,10 @@ public class UserHome extends AppCompatActivity
         return idUser;
     }
 
+    private void beginTravel(){this.inTravel = true;}
+    private void endTravel(){this.inTravel = false;}
+    private boolean isInTravel(){return inTravel;}
+
     @Override
     public void onBackPressed() {
         if (!finishPreviousFragments()) {
@@ -285,7 +287,9 @@ public class UserHome extends AppCompatActivity
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
             } else {
-                super.onBackPressed();
+               //super.onBackPressed();
+                moveTaskToBack(true);
+
             }
         }else{
             returnOriginalState();
@@ -339,7 +343,7 @@ public class UserHome extends AppCompatActivity
             finish();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -516,7 +520,7 @@ public class UserHome extends AppCompatActivity
     public void getRouteTravel() {
         showOptionsToTravel();
         mCardViewSearch.setVisibility(View.INVISIBLE);
-        final Handler handler = new Handler() {
+        /*final Handler handler = new Handler() {
             public void handleMessage(Message msg) {
                 try {
                     Document doc = (Document) msg.obj;
@@ -534,11 +538,41 @@ public class UserHome extends AppCompatActivity
                 }
             }
 
-        };
+        };*/
+
+        final Handler handler = new MyVeryOwnHandler(this);
 
         new GMapV2DirectionAsyncTask(handler, mOrigin, mDestiny,
                 GMapV2Direction.MODE_DRIVING, getApplicationContext()).execute();
     }
+
+    public static class MyVeryOwnHandler extends Handler {
+        private final WeakReference<UserHome> mHome;
+
+        MyVeryOwnHandler(UserHome service) {
+            mHome = new WeakReference<>(service);
+        }
+
+        public void handleMessage(Message msg) {
+            UserHome home = mHome.get();
+            try {
+                Document doc = (Document) msg.obj;
+                GMapV2Direction md = new GMapV2Direction();
+                ArrayList<LatLng> directionPoint = md.getDirection(doc);
+                PolylineOptions rectLine = new PolylineOptions().width(15).color(Color.RED);
+
+                for (int i = 0; i < directionPoint.size(); i++) {
+                    rectLine.add(directionPoint.get(i));
+                }
+                home.mRoute = home.mMap.addPolyline(rectLine);
+                md.getDurationText(doc);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 
     //init fragment options travel
     public void showOptionsToTravel() {
@@ -550,6 +584,7 @@ public class UserHome extends AppCompatActivity
 
     public void showInfoDriverAssigned(TravelAssignedDTO travelAssignedDTO){
         finishPreviousFragments();
+        beginTravel();
         InfoDriverAssignFragment infoTravelFragment= new InfoDriverAssignFragment();
         mFragmentTravelData = infoTravelFragment;
         infoTravelFragment.setTravelAssignedDTO(travelAssignedDTO);
@@ -590,7 +625,8 @@ public class UserHome extends AppCompatActivity
     public void generateMockDriverAssign(View view){
         try{
             Log.d(this.getClass().getName(),"========================");
-            Fragment mapFragment = (Fragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            Fragment mapFragment = getSupportFragmentManager().findFragmentById(R.id.map);
+
             int width = mapFragment.getView().getMeasuredWidth();
             int height = mapFragment.getView().getMeasuredHeight();
 
@@ -606,8 +642,10 @@ public class UserHome extends AppCompatActivity
             mCardViewSearch.setVisibility(View.INVISIBLE);
             fastGenerationOriginDestiny(view);
             showInfoDriverAssigned(travelAssignedDTO);
-        }catch (Exception ex){
-            Log.e(TAG_USER_HOME,"Error to generate mock Driver Assign");
+
+        }catch (Exception e){
+            Log.e(this.getClass().getName(),"Error to generate mock Driver Assign");
+            Log.e(this.getClass().getName(),e.getMessage());
         }
 
     }
@@ -655,28 +693,21 @@ public class UserHome extends AppCompatActivity
         newLocation.setLongitude(longitude);
         newLocation.setLatitude(latitude);
 
-        Float bearing = prevLocation.bearingTo(newLocation);
+        float bearing = prevLocation.bearingTo(newLocation);
         driverMarker.setRotation(bearing - 270);
         driverMarker.setVisible(true);
         driverMarker.setPosition(newLatLng);
 
-        //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLatLng, ZOOM_VALUE));
-    }
-
-
-    //TODO: esto falta implementar, tiene que notificar el server cuando llega el chofer al origen
-    public void initTravel(){
-        finishPreviousFragments();
-        replaceFragment(new TrackingTravelFragment(),true);
     }
 
 
     public void showRatingBar(){
+        endTravel();
         Log.d(this.getClass().getName(),"Init showRatingBard");
         finishPreviousFragments();
         returnOriginalState();
         Intent intent = new Intent(this, UserFinalScreen.class);
-        CopyTravelDTO copyTravelDTO = null;
+        CopyTravelDTO copyTravelDTO;
 
         copyTravelDTO = new CopyTravelDTO.CopyTravelDTOBuilder()
                 .setBigPetQuantity(mTravel.getBigPetQuantity())
@@ -730,13 +761,7 @@ public class UserHome extends AppCompatActivity
 
                     @Override
                     public void run() {
-                        JSONObject response = (JSONObject) args[0];
                         Log.d(TAG_CONNECTION_SERVER, "Established Connection");
-                        /*try{
-                            idUser= response.getString("id");
-                        }catch (Exception ex){
-                            Log.e(TAG_CONNECTION_SERVER,"user has no assigned a id");
-                        }*/
                     }
                 });
             }
@@ -765,29 +790,39 @@ public class UserHome extends AppCompatActivity
             @Override
             public void call(final Object... args) {
                 runOnUiThread( () -> {
-                    Log.d(TAG_USER_HOME,"message finalize travel arrived");
-                    onCourseTravel = false;
-                    JSONObject data = (JSONObject) args[0];
-                    showRatingBar();
+                    if(isInTravel()){
+                        Log.d(TAG_USER_HOME,"message finalize travel arrived");
+                        onCourseTravel = false;
+                        showRatingBar();
+                    }else {
+                        Log.w(this.getClass().getName(),"Server notify end travel when" +
+                                "user is not in travel");
+                    }
                 });
             }
         });
     }
 
-    //listen if arrive message that driver arrived to destiny
+
+
+    //listen if driver cancel travel
     public void listenCancelTravel() {
         mSocket.on(mConstants.getEVENT_CANCEL_TRAVEL(),
                 mListenerDriverCancelTravel = new Emitter.Listener() {
                     @Override
                     public void call(final Object... args) {
                         runOnUiThread( () -> {
-                            Log.d(this.getClass().getName(),"message finalize travel arrived");
-                            Log.d(this.getClass().getName(),args[0].toString());
-                            finishPreviousFragments();
-                            returnOriginalState();
-                            onCourseTravel = false;
-                            if (mFragmentCanceledTravel == null) mFragmentCanceledTravel = new CanceledTravelFragment();
-                            replaceFragment(mFragmentCanceledTravel,true);
+                            if(isInTravel()) {
+                                Log.d(this.getClass().getName(),"message finalize travel arrived");
+                                Log.d(this.getClass().getName(),args[0].toString());
+                                finishPreviousFragments();
+                                returnOriginalState();
+                                onCourseTravel = false;
+                                if (mFragmentCanceledTravel == null) mFragmentCanceledTravel = new CanceledTravelFragment();
+                                replaceFragment(mFragmentCanceledTravel,true);
+                            }else{
+                                Log.w(this.getClass().getName(),"Server notify travel canceled when user is not in travel");
+                            }
                         });
                     }
                 });
@@ -826,6 +861,7 @@ public class UserHome extends AppCompatActivity
         mSocket.off("FINISH", mListenerPositionDriver);
         mSocket.off("FINISH", mListenerDriverArrivedToUser);
         mSocket.off("FINISH", mListenerDriverArrivedToDestiny);
+        mSocket.off("FINISH", mListenerDriverCancelTravel);
         super.onDestroy();
     }
 
@@ -877,47 +913,6 @@ public class UserHome extends AppCompatActivity
     }
 
     /*END REPLACE FRAGMENT*/
-
-
-    /*public void listenAssignedDriver() {
-        mSocket.on(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
-                mListenerAssignDriver = new Emitter.Listener() {
-                    @Override
-                    public void call(final Object... args) {
-                        runOnUiThread( () -> {
-                            Log.d(this.getClass().getName(),"I was assign a driver");
-                            //finishFragmentExecuted();
-                            try{
-                                JSONObject response = (JSONObject) args[0];
-                                Log.i(this.getClass().getName(), response.toString());
-                                Gson gson =  new Gson();
-
-                                TravelAssignedDTO travelAssignedDTO =
-                                      gson.fromJson(response.toString(),TravelAssignedDTO.class);
-                                mTravel = new Travel((new Travel.TravelBuilder(
-                                        originMarker.getPosition(),
-                                        destinyMarker.getPosition()))
-                                        .setTravelId(travelAssignedDTO.getTravelId())
-                                        .setDriverId(travelAssignedDTO.getDriver().getId())
-                                        .setUserId(travelAssignedDTO.getUser().getId()));
-
-                                Log.i(this.getClass().getName(), travelAssignedDTO
-                                        .getDriver().toString());
-
-                                showInfoDriverAssigned(travelAssignedDTO);
-
-                            }catch (Exception e){
-                                Log.d(this.getClass().getName(),e.toString());
-                                Log.d(this.getClass().getName(), "no data found");
-                                showDriverNotFound();
-                            }
-
-                            mSocket.off(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
-                                    mListenerAssignDriver);
-                        });
-                    }
-                });
-    }*/
 
     public void driverAssignedToTravel(TravelAssignedDTO travelAssignedDTO) {
 
