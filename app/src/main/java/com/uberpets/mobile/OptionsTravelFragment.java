@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import androidx.fragment.app.FragmentManager;
@@ -21,11 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.ServerError;
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.Socket;
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
-import com.uberpets.model.Travel;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.TravelConfirmationDTO;
 import com.uberpets.model.TravelDTO;
@@ -49,8 +48,6 @@ public class OptionsTravelFragment extends Fragment {
     private Button mButtonGetTravel;
     private TextView mPriceText;
     private int travelID;
-    private Socket socketIO;
-    private Emitter.Listener mListenerAssignDriver;
     private Constants mConstants = Constants.getInstance();
 
 
@@ -59,7 +56,7 @@ public class OptionsTravelFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_options_travel,
@@ -81,16 +78,16 @@ public class OptionsTravelFragment extends Fragment {
 
         myActivity = (UserHome) getActivity();
 
-        setmButtonFab();
-        setmButtonGetTravel();
+        setButtonFab();
+        setButtonGetTravel();
 
         return rootView;
     }
 
 
-    public void setmButtonFab(){mButtonFab.setOnClickListener(view->addItem());}
+    private void setButtonFab(){mButtonFab.setOnClickListener(view->addItem());}
 
-    public void setmButtonGetTravel(){
+    private void setButtonGetTravel(){
         mButtonGetTravel.setOnClickListener(view->onClickButtonGetTravel());
     }
 
@@ -111,12 +108,12 @@ public class OptionsTravelFragment extends Fragment {
     }*/
 
 
-    public void addItem(){
+    private void addItem(){
         mAdapter.updateList();
     }
 
 
-    public void onClickButtonGetTravel() {
+    private void onClickButtonGetTravel() {
         if (!readyToGetTravel)
             getTravelQuote();
         else
@@ -124,7 +121,7 @@ public class OptionsTravelFragment extends Fragment {
     }
 
     //user send request to get quotation of travel
-    public void getTravelQuote() {
+    private void getTravelQuote() {
 
         int amountPets = mAdapter.getAllLittlePets()
                 + mAdapter.getAllMediumPets() + mAdapter.getAllBigPets();
@@ -153,19 +150,16 @@ public class OptionsTravelFragment extends Fragment {
     }
 
 
-    public void responseQuotation(TravelPriceDTO priceTravel) {
-        Log.i(this.getClass().getName(),"COTIZATION 1: "+priceTravel.toString());
-        if (priceTravel != null) {
-            Log.i(this.getClass().getName(),"COTIZATION: "+priceTravel.toString());
-            mButtonGetTravel.setText("Pedir Viaje");
-            String price = "$"+ priceTravel.getPrice();
-            mPriceText.setText(price);
-            readyToGetTravel=true;
-            travelID = priceTravel.getTravelId();
-        }
+    private void responseQuotation(TravelPriceDTO priceTravel) {
+        Log.i(this.getClass().getName(),"COTIZATION: "+priceTravel.toString());
+        mButtonGetTravel.setText(R.string.text_button_request_travel);
+        String price = "$"+ priceTravel.getPrice();
+        mPriceText.setText(price);
+        readyToGetTravel=true;
+        travelID = priceTravel.getTravelId();
     }
 
-    public void errorQuotation(Exception ex) {
+    private void errorQuotation(Exception ex) {
         /*
         Show message of Error
          */
@@ -177,7 +171,7 @@ public class OptionsTravelFragment extends Fragment {
 
 
     //user send request to confirm travel
-    public void confirmTravel() {
+    private void confirmTravel() {
         Log.i(this.getClass().getName(),"he pedido un viaje");
         if (readyToGetTravel){
             showSearchingDriver();
@@ -192,7 +186,7 @@ public class OptionsTravelFragment extends Fragment {
     }
 
 
-    public void showSearchingDriver() {
+    private void showSearchingDriver() {
         SearchingDriverFragment fragment2 = new SearchingDriverFragment();
         FragmentManager fragmentManager = myActivity.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -201,7 +195,7 @@ public class OptionsTravelFragment extends Fragment {
         fragmentTransaction.commitAllowingStateLoss();
     }
 
-    public void finishFragmentExecuted() {
+    private void finishFragmentExecuted() {
         FragmentManager fragmentManager = myActivity.getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.options_travel, this);
@@ -209,22 +203,12 @@ public class OptionsTravelFragment extends Fragment {
         fragmentTransaction.commitAllowingStateLoss();
     }
 
-//TODO: cambiar el tipo de respuesta
-    public void handleGoodResponse(TravelAssignedDTO travelAssignedDTO) {
+    private void handleGoodResponse(TravelAssignedDTO travelAssignedDTO) {
         finishFragmentExecuted();
         myActivity.driverAssignedToTravel(travelAssignedDTO);
-        /*if(travelAssignedDTO != null){
-            Log.d(this.getClass().getName(), "LA SOLICITUD FUE RECIBIDA");
-            Log.d(this.getClass().getName(),travelAssignedDTO.toString());
-            //listenAssignedDriver();
-        }else{
-            Log.d(this.getClass().getName(), "NO SE PUDO MANDAR LA SOLICUTD");
-            finishFragmentExecuted();
-            myActivity.showDriverNotFound();
-        }*/
     }
 
-    public void handleErrorResponse(Exception e) {
+    private void handleErrorResponse(Exception e) {
         Log.e(this.getClass().getName(),"Error no driver found");
         Log.e(this.getClass().getName(),e.toString());
         Activity activity = getActivity();
@@ -239,10 +223,5 @@ public class OptionsTravelFragment extends Fragment {
                         , Toast.LENGTH_LONG).show();
         }
     }
-
-
-    public void setSocketIO(Socket socketIO) {
-        this.socketIO = socketIO;
-    }
-
+    
 }

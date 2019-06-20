@@ -3,6 +3,8 @@ package com.uberpets.mobile;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -52,7 +54,7 @@ public class TravelRequestFragment extends Fragment {
      * @return A new instance of fragment TravelRequestFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TravelRequestFragment newInstance(String idDriver, Travel travel) {
+    static TravelRequestFragment newInstance(String idDriver, Travel travel) {
         TravelRequestFragment fragment = new TravelRequestFragment();
         //Bundle args = new Bundle();
         //args.putString(ARG_PARAM1, info);
@@ -113,7 +115,7 @@ public class TravelRequestFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_travel_request,
@@ -129,7 +131,7 @@ public class TravelRequestFragment extends Fragment {
         return rootView;
     }
 
-    public void setTravelDTO(Travel mTravel) {
+    void setTravelDTO(Travel mTravel) {
         this.mTravel = mTravel;
     }
 
@@ -137,7 +139,7 @@ public class TravelRequestFragment extends Fragment {
         this.idDriver = idDriver;
     }
 
-    public void updateDataTravel(View rootView) {
+    private void updateDataTravel(View rootView) {
         //TODO: show info the travel
         Log.d(this.getClass().getName(),"Travel: "+ mTravel.toString());
         TextView bigPets =rootView.findViewById(R.id.amount_big_pets);
@@ -154,15 +156,15 @@ public class TravelRequestFragment extends Fragment {
                 getString(R.string.no_string));
     }
 
-    public void setButtonReject() {
+    private void setButtonReject() {
         mButtonReject.setOnClickListener(view->rejectTravelFragment());
     }
 
-    public void setButtonAccept() {
+    private void setButtonAccept() {
         mButtonAccept.setOnClickListener(view->acceptTravelFragment());
     }
 
-    public void rejectTravelFragment() {
+    private void rejectTravelFragment() {
         TravelConfirmationDTO travelConfirmationDTO =
                 new TravelConfirmationDTO(mTravel.getTravelId()
                         ,Constants.getInstance().getID_DRIVERS(),this.idDriver,false);
@@ -172,20 +174,19 @@ public class TravelRequestFragment extends Fragment {
         //mListener.rejectTravel();
     }
 
-    public void errorRejectTravelFragment(Exception ex){
-        //TODO: muestra que hubo un error y que vuelva a intentarlo
+    private void errorRejectTravelFragment(Exception e){
         Log.e(this.getClass().getName(),"No se pudo rechazar el viaje....");
-        Log.e(this.getClass().getName(),ex.toString());
+        Log.e(this.getClass().getName(),e.toString());
         Toast.makeText(getActivity(),"no se pudo realizar la acción, intente nuevamente",
                 Toast.LENGTH_LONG).show();
     }
 
-    public void responseRejectTravelFragment(Object o){
+    private void responseRejectTravelFragment(Object o){
         Log.d(this.getClass().getName(),"reject travel message has arrived to server successfully");
         mListener.rejectTravel();
     }
 
-    public void acceptTravelFragment(){
+    private void acceptTravelFragment(){
         if(mTravel != null && mTravel.getTravelId() != -1){
             Log.d(this.getClass().getName(), "Driver accept travel and send message");
             TravelConfirmationDTO travelConfirmationDTO =
@@ -203,7 +204,7 @@ public class TravelRequestFragment extends Fragment {
 
     }
 
-    public void errorAcceptTravelFragment(Exception ex){
+    private void errorAcceptTravelFragment(Exception ex){
         //TODO: muestra que hubo un error y que vuelva a intentarlo
         Log.e(this.getClass().getName(),"No se pudo aceptar el viaje....");
         Log.e(this.getClass().getName(),ex.toString());
@@ -211,7 +212,7 @@ public class TravelRequestFragment extends Fragment {
                 Toast.LENGTH_LONG).show();
     }
 
-    public void responseAcceptTravelFragment(TravelAssignedDTO travelAssignedDTO){
+    private void responseAcceptTravelFragment(TravelAssignedDTO travelAssignedDTO){
         Log.d(this.getClass().getName(),"accept travel message has arrived to server successfully");
         Log.d(this.getClass().getName(),travelAssignedDTO.toString());
         mListener.acceptTravel(travelAssignedDTO);

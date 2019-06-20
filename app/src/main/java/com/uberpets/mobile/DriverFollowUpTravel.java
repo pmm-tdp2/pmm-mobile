@@ -154,15 +154,15 @@ public class DriverFollowUpTravel extends Fragment {
         this.idDriver = idDriver;
     }
 
-    public void setButtonCancel() {
+    private void setButtonCancel() {
         mButtonCancel.setOnClickListener(view->cancelTravelFragment());
     }
 
-    public void setButtonFinalize() {
+    private void setButtonFinalize() {
         mButtonFinalize.setOnClickListener(view->finalizeTravelFragment());
     }
 
-    public void cancelTravelFragment() {
+    private void cancelTravelFragment() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.cancel_travel_information)
                 .setTitle(R.string.are_you_sure)
@@ -181,7 +181,7 @@ public class DriverFollowUpTravel extends Fragment {
         alertDialog.show();
     }
 
-    public void cancelTravelRequest(){
+    private void cancelTravelRequest(){
         String rol = Constants.getInstance().getID_DRIVERS();
         int travelId = mTravelAssignedDTO == null ? 9999 : mTravelAssignedDTO.getTravelId();
         TravelConfirmationDTO travelCancelDTO = new TravelConfirmationDTO(
@@ -190,7 +190,7 @@ public class DriverFollowUpTravel extends Fragment {
                 .run(this::responseCancelTravel, this::errorCancelTravel);
     }
 
-    public void finalizeTravelFragment() {
+    private void finalizeTravelFragment() {
         if(mTravelAssignedDTO !=  null){
             String rol = Constants.getInstance().getID_DRIVERS();
             Log.i(this.getClass().getName(),"ANTES DE CREAR DTO");
@@ -207,12 +207,12 @@ public class DriverFollowUpTravel extends Fragment {
 
     }
 
-    public void responseFinalizeTravelFragment(SimpleResponse simpleResponse) {
+    private void responseFinalizeTravelFragment(SimpleResponse simpleResponse) {
         Log.d(this.getClass().getName(),simpleResponse.getMessage());
         mListener.finishTravel();
     }
 
-    public void errorRejectTravelFragment(Exception e){
+    private void errorRejectTravelFragment(Exception e){
         //TODO: mandar un mensaje que no se pudo finalizar el viaje
         Log.e(this.getClass().getName(),e.toString());
         Toast toast = Toast.makeText(getActivity(), "no se pudo cancelar intentelo nuevamente",
@@ -221,7 +221,7 @@ public class DriverFollowUpTravel extends Fragment {
         toast.show();
     }
 
-    public void responseCancelTravel(SimpleResponse response) {
+    private void responseCancelTravel(SimpleResponse response) {
         Log.d(this.getClass().getName(), response.getMessage());
         if (response.getStatus() == 200){
             //cancelo el viaje
@@ -239,19 +239,21 @@ public class DriverFollowUpTravel extends Fragment {
         }
     }
 
-    public void errorCancelTravel(Exception e){
+    private void errorCancelTravel(Exception e){
         Log.e(this.getClass().getName(),"Error in cancel");
         Log.d(this.getClass().getName(), e.toString());
         //TODO: no se ha podido finalizar el viaje
     }
 
     public void setTimeToArrive(Long time){
-        this.timeText.setText(" " + time.toString() + " minutos");
+        String text = " " + time.toString() + " minutos";
+        this.timeText.setText(text);
 
     }
 
     public void setDriversDistance(Long distance){
-        this.distanceText.setText( " " + distance.toString() + " km");
+        String text = " " + distance.toString() + " km";
+        this.distanceText.setText(text);
     }
 
 }

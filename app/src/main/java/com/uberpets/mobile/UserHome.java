@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -71,7 +70,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import static java.lang.Math.round;
-import static org.apache.http.conn.params.ConnManagerParams.setTimeout;
 
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
@@ -121,7 +119,6 @@ public class UserHome extends AppCompatActivity
     private Emitter.Listener mListenerDriverCancelTravel;
 
     private InfoDriverAssignFragment mFragmentTravelData;
-    private OptionsTravelFragment mFragmentTest;
     private CanceledTravelFragment mFragmentCanceledTravel;
     private Constants mConstants = Constants.getInstance();
     private Travel mTravel;
@@ -138,7 +135,7 @@ public class UserHome extends AppCompatActivity
 
         driverPositionMarker.setPosition(new LatLng(lat, lon));
 
-        Float bearing = driverLocation.bearingTo(newLocation);
+        float bearing = driverLocation.bearingTo(newLocation);
 
         driverPositionMarker.setRotation(bearing - 270);
     }
@@ -219,7 +216,7 @@ public class UserHome extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -320,7 +317,7 @@ public class UserHome extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
@@ -576,9 +573,8 @@ public class UserHome extends AppCompatActivity
 
     //init fragment options travel
     public void showOptionsToTravel() {
-        mFragmentTest = new OptionsTravelFragment();
-        mFragmentTest.setSocketIO(mSocket);
-        replaceFragment(mFragmentTest , true);
+        OptionsTravelFragment optionsTravelFragment = new OptionsTravelFragment();
+        replaceFragment(optionsTravelFragment , true);
     }
 
 
@@ -613,7 +609,8 @@ public class UserHome extends AppCompatActivity
 
                     mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bc.build(),widthMap,newHeight,padding));
                     //other magic number
-                    mMap.animateCamera(CameraUpdateFactory.scrollBy(0,heightOption/2));
+                    int newHeightOption = heightOption/2;
+                    mMap.animateCamera(CameraUpdateFactory.scrollBy(0,newHeightOption));
                 }catch (Exception ex){
                     Log.e(TAG_USER_HOME,ex.toString());
                 }
@@ -627,21 +624,25 @@ public class UserHome extends AppCompatActivity
             Log.d(this.getClass().getName(),"========================");
             Fragment mapFragment = getSupportFragmentManager().findFragmentById(R.id.map);
 
-            int width = mapFragment.getView().getMeasuredWidth();
-            int height = mapFragment.getView().getMeasuredHeight();
+            if(mapFragment != null && mapFragment.getView() != null){
 
-            Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
-            width = getResources().getDisplayMetrics().widthPixels;
-            height = getResources().getDisplayMetrics().heightPixels;
-            Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
+                View viewFragment = mapFragment.getView();
+                int width = viewFragment.getMeasuredWidth();
+                int height = viewFragment.getMeasuredHeight();
 
-            Person user = new Person("1","Juan Fernando ");
-            Person driver = new Person("1","Chano Santiago ");
-            TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20 minutos",user,driver);
+                Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
+                width = getResources().getDisplayMetrics().widthPixels;
+                height = getResources().getDisplayMetrics().heightPixels;
+                Log.i("DIMENSION","width: "+width+ "  "+" height: "+height);
 
-            mCardViewSearch.setVisibility(View.INVISIBLE);
-            fastGenerationOriginDestiny(view);
-            showInfoDriverAssigned(travelAssignedDTO);
+                Person user = new Person("1","Juan Fernando ");
+                Person driver = new Person("1","Chano Santiago ");
+                TravelAssignedDTO travelAssignedDTO = new TravelAssignedDTO(1,"20 minutos",user,driver);
+
+                mCardViewSearch.setVisibility(View.INVISIBLE);
+                fastGenerationOriginDestiny(view);
+                showInfoDriverAssigned(travelAssignedDTO);
+            }
 
         }catch (Exception e){
             Log.e(this.getClass().getName(),"Error to generate mock Driver Assign");
@@ -664,10 +665,7 @@ public class UserHome extends AppCompatActivity
         finishPreviousFragments();
         mMessageCard.setVisibility(CardView.VISIBLE);
         Handler handler = new Handler();
-        handler.postDelayed(() -> {
-            // Do something after 2000ms
-            returnOriginalState();
-        }, 2000);
+        handler.postDelayed(this::returnOriginalState, 2000);
     }
 
     public void returnOriginalState(){
@@ -741,7 +739,8 @@ public class UserHome extends AppCompatActivity
                         Log.d(TAG_CONNECTION_SERVER,"position driver received");
                         ShowPositionDriver(Float.parseFloat(latitude),Float.parseFloat(longitude));
                     } catch (JSONException e) {
-                        return;
+                        Log.e(this.getClass().getName(),"Error to get positionDriver");
+                        Log.e(this.getClass().getName(),e.toString());
                     }
                 });
             }

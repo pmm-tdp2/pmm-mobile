@@ -2,6 +2,8 @@ package com.uberpets.mobile;
 
 import android.content.Intent;
 import android.os.Handler;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.cardview.widget.CardView;
@@ -9,7 +11,6 @@ import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.common.api.Status;
@@ -49,7 +50,7 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
     private CardView mCardPick;
 
     private LatLng currentPlace;
-    private static float ZOOM_VALUE = 14.0f;
+    private final static float ZOOM_VALUE = 14.0f;
     private LinearLayout mMenu;
     private CardView mCardLayout;
     private Button mButton;
@@ -61,7 +62,11 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
         autocompleteLocation();
 
         mFragmentMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map_place_autocomplete));
-        ((SupportMapFragment) mFragmentMap).getView().setVisibility(View.INVISIBLE);
+
+        if(mFragmentMap != null && mFragmentMap.getView() != null){
+            View view = mFragmentMap.getView();
+            view.setVisibility(View.INVISIBLE);
+        }
 
         mCardPick = findViewById(R.id.card_view_autocomplete);
         mCardPick.setVisibility(View.INVISIBLE);
@@ -119,7 +124,7 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
             }
 
             @Override
-            public void onError(Status status) {
+            public void onError(@NonNull Status status) {
                 // TODO: Handle the error.
                 //System.out.printf(status.toString());
                 Log.i(TAG_PLACE_AUTO, "An error occurred in origin place: " + status);
@@ -130,7 +135,7 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
         // Set up a PlaceSelectionListener to handle the response.
         mAutocompleteSupportFragmentDestiny.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
-            public void onPlaceSelected(Place place) {
+            public void onPlaceSelected(@NonNull Place place) {
                 // TODO: Get info about the selected place.
                 //System.out.printf(place.getName());
                 Log.i(TAG_PLACE_AUTO, "Destiny place: " + place.getName() + ", " + place.getId());
@@ -138,7 +143,7 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
             }
 
             @Override
-            public void onError(Status status) {
+            public void onError(@NonNull Status status) {
                 // TODO: Handle the error.
                 //System.out.printf(status.toString());
                 Log.i(TAG_PLACE_AUTO, "An error occurred in destiny place: " + status);
@@ -214,7 +219,9 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
         mMenu.setVisibility(View.VISIBLE);
         mCardPick.setVisibility(View.INVISIBLE);
         mButton.setVisibility(View.VISIBLE);
-        ((SupportMapFragment) mFragmentMap).getView().setVisibility(View.INVISIBLE);
+        View view = mFragmentMap.getView();
+        if(view != null)
+            view.setVisibility(View.INVISIBLE);
     }
 
 
@@ -223,7 +230,9 @@ public class PlaceAutoCompleteActivity extends AppCompatActivity implements OnMa
         mMenu.setVisibility(View.INVISIBLE);
         mCardPick.setVisibility(View.VISIBLE);
         mButton.setVisibility(View.INVISIBLE);
-        ((SupportMapFragment) mFragmentMap).getView().setVisibility(View.VISIBLE);
+        View view = mFragmentMap.getView();
+        if(view != null)
+            view.setVisibility(View.VISIBLE);
     }
 
 

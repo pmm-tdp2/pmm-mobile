@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.uberpets.model.PetSize;
@@ -21,7 +20,7 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
     private static final int maxNumbItems = 3;
     private FloatingActionButton addPetButton;
 
-    public SizePetsAdapter(ArrayList<PetSize> pets, FloatingActionButton addPetButton){
+    SizePetsAdapter(ArrayList<PetSize> pets, FloatingActionButton addPetButton){
         this.pets = pets;
         this.addPetButton = addPetButton;
     }
@@ -39,30 +38,22 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
 
         updateHolder(holder,position);
 
-        holder.getLittlePet().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.getLittlePet().setOnClickListener( view -> {
                 setLittlePetInHolder(holder);
                 pets.get(position).changeToLittlePet();
-            }
         });
-        holder.getMediumPet().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+
+        holder.getMediumPet().setOnClickListener( view -> {
                 setMediumPetInHolder(holder);
                 pets.get(position).changeToMediumPet();
-            }
         });
-        holder.getBigPet().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+
+        holder.getBigPet().setOnClickListener( view -> {
                 setBigPetInHolder(holder);
                 pets.get(position).changeToBigPet();
-            }
         });
-        holder.getDeleteButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+
+        holder.getDeleteButton().setOnClickListener( view -> {
                 if(getItemCount() > minNumbItems){
                     pets.remove(position);
                     notifyItemRemoved(position);
@@ -70,7 +61,6 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
                     //mostrar el fab button
                     addPetButton.show();
                 }
-            }
         });
     }
 
@@ -81,7 +71,7 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
     }
 
 
-    public void updateList() {
+    void updateList() {
         if(getItemCount() < maxNumbItems) {
             this.pets.add(new PetSize());
             notifyItemInserted(getItemCount());
@@ -91,7 +81,7 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
         }
     }
 
-    public int getAllLittlePets() {
+    int getAllLittlePets() {
         int number=0;
         for (PetSize pet:pets) {
             if(pet.isLittlePet())
@@ -100,7 +90,7 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
         return number;
     }
 
-    public int getAllMediumPets() {
+    int getAllMediumPets() {
         int number=0;
         for (PetSize pet:pets) {
             if(pet.isMediumPet())
@@ -109,7 +99,7 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
         return number;
     }
 
-    public int getAllBigPets() {
+    int getAllBigPets() {
         int number=0;
         for (PetSize pet:pets) {
             if(pet.isBigPet())
@@ -119,29 +109,29 @@ public class SizePetsAdapter extends RecyclerView.Adapter<SizePetsHolder> {
     }
 
 
-    public void setLittlePetInHolder(SizePetsHolder holder){
+    private void setLittlePetInHolder(SizePetsHolder holder){
         holder.getLittlePet().setBackgroundResource(R.drawable.layout_selection);
         holder.getBigPet().setBackgroundColor(Color.TRANSPARENT);
         holder.getMediumPet().setBackgroundColor(Color.TRANSPARENT);
     }
-    public void setMediumPetInHolder(SizePetsHolder holder){
+    private void setMediumPetInHolder(SizePetsHolder holder){
         holder.getLittlePet().setBackgroundColor(Color.TRANSPARENT);
         holder.getMediumPet().setBackgroundResource(R.drawable.layout_selection);
         holder.getBigPet().setBackgroundColor(Color.TRANSPARENT);
     }
-    public void setBigPetInHolder(SizePetsHolder holder){
+    private void setBigPetInHolder(SizePetsHolder holder){
         holder.getLittlePet().setBackgroundColor(Color.TRANSPARENT);
         holder.getMediumPet().setBackgroundColor(Color.TRANSPARENT);
         holder.getBigPet().setBackgroundResource(R.drawable.layout_selection);
     }
-    public void setBlankAllPetsInHolder(SizePetsHolder holder){
+    private void setBlankAllPetsInHolder(SizePetsHolder holder){
         holder.getLittlePet().setBackgroundColor(Color.TRANSPARENT);
         holder.getMediumPet().setBackgroundColor(Color.TRANSPARENT);
         holder.getBigPet().setBackgroundColor(Color.TRANSPARENT);
     }
 
 
-    public void updateHolder(SizePetsHolder holder, int position) {
+    private void updateHolder(SizePetsHolder holder, int position) {
         PetSize petSize = pets.get(position);
         if(petSize.isLittlePet())
             setLittlePetInHolder(holder);

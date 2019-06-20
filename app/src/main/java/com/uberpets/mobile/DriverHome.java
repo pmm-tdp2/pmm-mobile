@@ -98,8 +98,10 @@ public class  DriverHome
     private GoogleMap mMap;
     private final String ROL = "DRIVER";
     private final String TAG_ROL = "ROL";
+    private int locationRequestCode = 1000;
+    private final String EVENT_CONNECTION = "message";
+
     private String idDriver;
-    private final Constants mConstant = Constants.getInstance();
     private boolean inTravel = false;
     private Location currentLocation;
     private LatLng mockLocation;
@@ -107,14 +109,11 @@ public class  DriverHome
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private static float ZOOM_VALUE = 14.0f;
     private static double MOVEMENT_SPEED = 0.001;
-    private int locationRequestCode = 1000;
-    private Fragment notification;
 
     private Socket mSocket;
-    private final String EVENT_CONNECTION = "message";
     private Emitter.Listener mListenerConnection;
     private Emitter.Listener mListenerNotificationTravel;
-    private TraceService traceService = new TraceService();
+
     Constants mConstants = Constants.getInstance();
     private Travel mTravel;
     private Polyline mRoute;
@@ -122,9 +121,6 @@ public class  DriverHome
 
     private DriverFollowUpTravel driverFollowUpTravel;
 
-    //private final String URL = "https://young-wave-26125.herokuapp.com/pmm";
-    //private final String URL = mConstants.getURL_REMOTE() + mConstants.getURL_BASE_PATH();
-    //private final String URL = mConstants.getURL();
     private static final String[] TRANSPORTS = {
             "websocket"
     };
@@ -207,7 +203,7 @@ public class  DriverHome
         this.idDriver = AccountSession.getIdLogin(this) == "" ? "987654399" : AccountSession.getIdLogin(this);
         Log.i(this.getClass().getName(),"idFacebook: "+idDriver);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view_driver);
+        NavigationView navigationView = findViewById(R.id.nav_view_driver);
         navigationView.setNavigationItemSelectedListener(this);
         View hView =  navigationView.getHeaderView(0);
         ImageView imageView = hView.findViewById(R.id.image_profile_driver_navigation);
@@ -237,11 +233,10 @@ public class  DriverHome
             try {
                 final IO.Options options = new IO.Options();
                 options.transports = TRANSPORTS;
-                String uuu = Constants.getInstance().getURL_SOCKET();
                 mSocket = IO.socket(Constants.getInstance().getURL_SOCKET(), options);
                 Log.i(this.getClass().getName(),"io socket succes");
                 connectToServer();
-                listenNotificaciónTravel();
+                listenNotificationTravel();
             } catch (URISyntaxException e) {
                 Log.e(this.getClass().getName(),"io socket failure");
             }
@@ -314,7 +309,7 @@ public class  DriverHome
             finish();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -341,14 +336,11 @@ public class  DriverHome
     public void onRequestPermissionsResult (int requestCode, @NonNull String [] permissions,
                                             @NonNull int [] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case 1000: {
-                // Si se cancela la solicitud, las matrices de resultados están vacías.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    fetchLastLocation();
-                }
-            }
+
+        // Si se cancela la solicitud, las matrices de resultados están vacías.
+        if (requestCode == 1000 && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            fetchLastLocation();
         }
     }
 
@@ -519,7 +511,7 @@ public class  DriverHome
 
         currentPositionMarker.setPosition(mockLocation);
 
-        Float bearing = prevLocation.bearingTo(newLocation);
+        float bearing = prevLocation.bearingTo(newLocation);
 
         currentPositionMarker.setRotation(bearing - 270);
 
@@ -611,13 +603,7 @@ public class  DriverHome
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        JSONObject response = (JSONObject) args[0];
                         Log.d(this.getClass().getName(), "Established Connection");
-                        /*try{
-                            idDriver= response.getString("id");
-                        }catch (Exception ex){
-                            Log.e(this.getClass().getName(),"driver has no assigned a id");
-                        }*/
                     }
                 });
             }
@@ -674,7 +660,7 @@ public class  DriverHome
 
 
     //listen request of travel
-    public void listenNotificaciónTravel() {
+    public void listenNotificationTravel() {
         Log.d(this.getClass().getName(),mConstants.getEVENT_NOTIFICATION_TRAVEL());
         mSocket.on(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
                 mListenerNotificationTravel = new Emitter.Listener() {

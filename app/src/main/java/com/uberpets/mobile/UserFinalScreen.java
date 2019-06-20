@@ -3,6 +3,7 @@ package com.uberpets.mobile;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.text.Editable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -59,6 +60,7 @@ public class UserFinalScreen extends AppCompatActivity {
         Toast toast = Toast.makeText(this,"Error al obtener la imagen del chofer"
                 ,Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER,0,0);
+        toast.show();
     }
 
     private void handleSuccessLoadImages(FileDocumentDTO[] files) {
@@ -76,7 +78,9 @@ public class UserFinalScreen extends AppCompatActivity {
         if(rating != 0 && mTravelDto != null) {
             Log.i(this.getClass().getName(), "user: " + mTravelDto.getUser().getId() + " has scored with " + rating);
             Log.i(this.getClass().getName(), "to driver: " + mTravelDto.getDriver().getId());
-            Log.i(this.getClass().getName(),"comentario: " + mTextInput.getText().toString());
+            Editable editable = mTextInput.getText();
+            if(editable != null)
+                Log.i(this.getClass().getName(),"comentario: " + editable.toString());
 
             RatingDTO ratingDto = new RatingDTO.RatingDTOBuilder()
                     .setComments(mTextInput.getText().toString())

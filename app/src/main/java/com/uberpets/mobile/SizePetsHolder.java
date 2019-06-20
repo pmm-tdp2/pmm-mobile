@@ -4,29 +4,29 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageButton;
 
-public class SizePetsHolder extends RecyclerView.ViewHolder {
+class SizePetsHolder extends RecyclerView.ViewHolder {
     private ImageButton littlePet;
     private ImageButton bigPet;
     private ImageButton deleteButton;
     private ImageButton mediumPet;
 
-    public ImageButton getDeleteButton() {
+    ImageButton getDeleteButton() {
         return deleteButton;
     }
 
-    public ImageButton getLittlePet() {
+    ImageButton getLittlePet() {
         return littlePet;
     }
 
-    public ImageButton getMediumPet() {
+    ImageButton getMediumPet() {
         return mediumPet;
     }
 
-    public ImageButton getBigPet() {
+    ImageButton getBigPet() {
         return bigPet;
     }
 
-    public SizePetsHolder(View itemView){
+    SizePetsHolder(View itemView){
         super(itemView);
         littlePet = itemView.findViewById(R.id.little_pet);
         mediumPet = itemView.findViewById(R.id.medium_pet);

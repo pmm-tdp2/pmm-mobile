@@ -49,6 +49,7 @@ public class DriverFinalScreen extends AppCompatActivity {
         Toast toast = Toast.makeText(this,"Error al obtener la imagen del usuario"
                 ,Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER,0,0);
+        toast.show();
     }
 
     private void handleSuccessLoadImages(FileDocumentDTO[] files) {

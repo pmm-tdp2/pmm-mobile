@@ -54,7 +54,6 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private boolean isUploadedLicenseImage = false;
     private boolean isUploadedInsuranceImage = false;
     private boolean isUploadedProfileImage = false;
-    private Long id = 0l;
 
     private EditText editNameDriver;
     private EditText editDniDriver;
@@ -73,7 +72,6 @@ public class DriverRegisterActivity extends AppCompatActivity {
     private int GALLERY_INSURANCE = 5, CAMERA_INSURANCE = 6;
     private int GALLERY_PROFILE = 7, CAMERA_PROFILE = 8;
     private Map<Integer,String> imagesPath;
-    private RegisterDTO mRegisterDTO;
 
     @Override
     public Resources getResources() {
@@ -98,16 +96,16 @@ public class DriverRegisterActivity extends AppCompatActivity {
         sendingDataText.setVisibility(View.INVISIBLE);
         addName();
         imageviewCar = findViewById(R.id.imageview_car);
-        imageviewCar.setOnClickListener(view -> uploadImageCar(view));
+        imageviewCar.setOnClickListener(this::uploadImageCar);
         imageviewCarInusrance = findViewById(R.id.imageview_car_insurance);
-        imageviewCarInusrance.setOnClickListener(view -> uploadImageCarInsurance(view));
+        imageviewCarInusrance.setOnClickListener(this::uploadImageCarInsurance);
         imageviewLicense = findViewById(R.id.imageview_license);
-        imageviewLicense.setOnClickListener(view -> uploadImageLicense(view));
+        imageviewLicense.setOnClickListener(this::uploadImageLicense);
         imageviewProfile = findViewById(R.id.imageview_profile);
-        imageviewProfile.setOnClickListener(view -> uploadImageProfile(view));
+        imageviewProfile.setOnClickListener(this::uploadImageProfile);
 
         continueButton = findViewById(R.id.end_register_driver_btn);
-        continueButton.setOnClickListener(view -> finishRegister(view));
+        continueButton.setOnClickListener(this::finishRegister);
 
         if (getIntent().hasExtra("DATA"))
             mDataFacebook = (DataFacebook)getIntent().getSerializableExtra("DATA");
@@ -158,7 +156,8 @@ public class DriverRegisterActivity extends AppCompatActivity {
             Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(intent, code);
         }else{
-            Toast.makeText(DriverRegisterActivity.this, "No tenes permisos para realizar esta acción.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DriverRegisterActivity.this,
+                    "No tenes permisos para realizar esta acción.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -275,9 +274,9 @@ public class DriverRegisterActivity extends AppCompatActivity {
     }
 
     private void sendDataToServer() {
-        mRegisterDTO = getRegisterDTO();
+        RegisterDTO RegisterDTO = getRegisterDTO();
         App.nodeServer.post("/api/register",
-                mRegisterDTO, SimpleResponse.class, new Headers())
+                RegisterDTO, SimpleResponse.class, new Headers())
                 .run(this::handleResponseRegister,this::handleErrorRegister);
     }
 
@@ -287,18 +286,6 @@ public class DriverRegisterActivity extends AppCompatActivity {
             AccountImages.getInstance().setPhotoProfile(ConvertImages
                     .getBitmapImage(imagesPath.containsKey(GALLERY_PROFILE) ?
                             imagesPath.get(GALLERY_PROFILE): imagesPath.get(CAMERA_PROFILE)));
-
-           /*AccountImages.getInstance().setPhotoProfile(ConvertImages
-                    .getBitmapImage(this.mRegisterDTO.getFiles().get(0).getData()));
-
-            AccountImages.getInstance().setPhotoCar(ConvertImages
-                    .getBitmapImage(this.mRegisterDTO.getPhotoCar()));
-
-            AccountImages.getInstance().setPhotoLicence(ConvertImages
-                    .getBitmapImage(this.mRegisterDTO.getPhotoLicense()));
-
-            AccountImages.getInstance().setPhotoInsurance(ConvertImages
-                    .getBitmapImage(this.mRegisterDTO.getPhotoInsurance()));*/
 
             //TODO: mostrar mensaje de que el registro fue exitoso y luego de un delay redirigir
             Intent intent = new Intent(this,DriverHome.class);

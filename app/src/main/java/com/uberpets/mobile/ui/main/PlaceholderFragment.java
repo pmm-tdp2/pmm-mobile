@@ -1,6 +1,5 @@
 package com.uberpets.mobile.ui.main;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,8 +25,6 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
 import com.uberpets.mobile.DriverHome;
@@ -46,18 +43,9 @@ import com.uberpets.util.ConvertImages;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.StringReader;
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 
 /**
@@ -74,8 +62,9 @@ public class PlaceholderFragment extends Fragment {
     private CardView mCardMessage;
     private TextView mTextCard;
     private LoginResult mLoginResult;
+    private static final String patternDate  = "yyyy-MM-dd'T'HH:mm:ss";
 
-    public static PlaceholderFragment newInstance(int index) {
+    static PlaceholderFragment newInstance(int index) {
         PlaceholderFragment fragment = new PlaceholderFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(ARG_SECTION_NUMBER, index);
@@ -140,7 +129,7 @@ public class PlaceholderFragment extends Fragment {
         }
     }
 
-    public void setListenerButtonLogin() {
+    private void setListenerButtonLogin() {
         mLoginButton.setOnClickListener( view ->{
             idWhoHasLogged = mIdTab;
             mCardMessage.setVisibility(View.INVISIBLE);
@@ -155,7 +144,7 @@ public class PlaceholderFragment extends Fragment {
         }
     }
 
-    public void registerCallback() {
+    private void registerCallback() {
         mLoginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -251,6 +240,7 @@ public class PlaceholderFragment extends Fragment {
         Toast toast = Toast.makeText(getActivity(),"Error para obtener las imagenes"
                 ,Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER,0,0);
+        toast.show();
     }
 
     private void handleSuccessLoadImages(FileDocumentDTO[] files) {
@@ -266,7 +256,10 @@ public class PlaceholderFragment extends Fragment {
                 mIdTab.equals(mConstant.getID_USERS()) ?
                         UserHome.class : DriverHome.class);
         startActivity(intent);
-        getActivity().finish();
+        if(getActivity()!= null)
+            getActivity().finish();
+        else
+            Log.e(this.getClass().getName(),"Eror to go Home from LoginTab");
     }
 
     private void initRegister() {
@@ -279,7 +272,7 @@ public class PlaceholderFragment extends Fragment {
     }
 
 
-    public void validateAmountFriends(@NonNull LoginResult loginResult) {
+    private void validateAmountFriends(@NonNull LoginResult loginResult) {
         int minimumNumberFriends = mConstant.getMINIMUM_FRIENDS_ACCOUNT();
         GraphRequest requestFriends = GraphRequest.newMyFriendsRequest(
                 loginResult.getAccessToken(),
@@ -314,7 +307,7 @@ public class PlaceholderFragment extends Fragment {
     }
 
 
-    public void getAllDateAlbumsToValidate(@NonNull LoginResult loginResult) {
+    private void getAllDateAlbumsToValidate(@NonNull LoginResult loginResult) {
 
         final Boolean[] isValid = {false};
         final Boolean[] hasNextPage = {true};
@@ -380,7 +373,7 @@ public class PlaceholderFragment extends Fragment {
     }
 
 
-    public void showErrorInRegister(String text) {
+    private void showErrorInRegister(String text) {
         LoginManager.getInstance().logOut();
         if (text.length() > 0){
             mTextCard.setText(text);
@@ -394,7 +387,7 @@ public class PlaceholderFragment extends Fragment {
     }
 
 
-    public boolean validateAlbumDate( @NonNull JSONObject object){
+    private boolean validateAlbumDate( @NonNull JSONObject object){
         long minimumTimeAccount = mConstant.getMINIMUM_TIME_ACCOUNT();
 
         try {
@@ -408,7 +401,7 @@ public class PlaceholderFragment extends Fragment {
 
                   //String dateCreationAlbum = "2015-02-28T05:29:36+0000";
                   String dateCreationAlbum = item.getString("created_time");
-                  DateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                  DateFormat df1 = new SimpleDateFormat(patternDate);
                   Date result1 = df1.parse(dateCreationAlbum);
                   long difference = dateNow.getTime()-result1.getTime();
                   if (difference >= minimumTimeAccount)
@@ -428,7 +421,7 @@ public class PlaceholderFragment extends Fragment {
      * and picture is picture by default
      * @param loginResult is object that contain token, id of facebook account
      */
-    public void getDataLoginFacebook(@NonNull LoginResult loginResult) {
+    private void getDataLoginFacebook(@NonNull LoginResult loginResult) {
         GraphRequest request = GraphRequest.newMeRequest(
                 loginResult.getAccessToken(),
             new GraphRequest.GraphJSONObjectCallback() {

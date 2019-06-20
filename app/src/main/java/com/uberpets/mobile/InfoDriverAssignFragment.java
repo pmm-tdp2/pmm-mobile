@@ -28,7 +28,6 @@ public class InfoDriverAssignFragment extends Fragment {
     private TextView textTime;
     private TextView textDistance;
     private TextView textName;
-    private TextView textLastName;
     private ImageView driverImage;
 
 
@@ -37,11 +36,13 @@ public class InfoDriverAssignFragment extends Fragment {
     }
 
     public void setTimeToArrive(Long time){
-        this.textTime.setText("llegará en " + time.toString() + " minutos.");
+        String text = "llegará en " + time.toString() + " minutos.";
+        this.textTime.setText(text);
     }
 
     public void setDriversDistance(Long distance){
-        this.textDistance.setText("El chofer esta a " + distance.toString() + " km");
+        String text = "El chofer esta a " + distance.toString() + " km";
+        this.textDistance.setText(text);
     }
 
     public InfoDriverAssignFragment() {
@@ -62,7 +63,7 @@ public class InfoDriverAssignFragment extends Fragment {
         return rootView;
     }
 
-    public void updateDisplayedDataDriver() {
+    private void updateDisplayedDataDriver() {
         this.textTime.setText(this.mTravelAssignedDTO.getTime());
         this.textName.setText(this.mTravelAssignedDTO.getDriver().getName());
         loadImageUser();
@@ -82,6 +83,7 @@ public class InfoDriverAssignFragment extends Fragment {
         Toast toast = Toast.makeText(getActivity(),"Error al obtener la imagen del usuario",
                 Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER,0,0);
+        toast.show();
         this.driverImage.setImageResource(R.drawable.com_facebook_profile_picture_blank_portrait);
     }
 

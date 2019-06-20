@@ -18,7 +18,6 @@ public class LoginActivity extends AppCompatActivity {
     private LoginButton mLoginButton;
     private TextView dataDisplayed;
     private CallbackManager mCallbackManager;
-    private final String TAG_LOGIN = "LOGIN_FACEBOOK";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,20 +59,21 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void handleSuccessEvent(@NonNull LoginResult loginResult) {
-        dataDisplayed.setText("ID USER: "+
+        String text = "ID USER: "+
                 loginResult.getAccessToken().getUserId() + "\n" +
-                "TOKEN: "+loginResult.getAccessToken().getToken());
+                "TOKEN: "+loginResult.getAccessToken().getToken();
+        dataDisplayed.setText(text);
 
         //handle if redirect to register or home of user
     }
 
     private void handleCancelEvent() {
-        dataDisplayed.setText("El login fue cancelado");
+        dataDisplayed.setText(R.string.message_login_canceled);
     }
 
     private void handleErrorEvent(FacebookException error) {
-        dataDisplayed.setText("Error en el Login");
-        Log.e(TAG_LOGIN,error.getMessage());
+        dataDisplayed.setText(R.string.message_login_error);
+        Log.e(this.getClass().getName(),error.getMessage());
     }
 
 }
