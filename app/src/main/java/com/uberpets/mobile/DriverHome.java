@@ -549,6 +549,7 @@ public class  DriverHome
      */
     public void rejectTravel(){
         removeUpperSectionFragment();
+        returnOriginalState();
         endTravel();
     }
 
