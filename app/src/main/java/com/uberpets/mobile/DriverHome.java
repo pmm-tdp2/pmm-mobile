@@ -46,6 +46,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -64,11 +65,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.uberpets.Constants;
+import com.uberpets.library.rest.Headers;
 import com.uberpets.model.CopyTravelDTO;
 import com.uberpets.model.Person;
 import com.uberpets.model.SimpleResponse;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.Travel;
+import com.uberpets.services.App;
 import com.uberpets.services.TraceService;
 import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
@@ -139,7 +142,7 @@ public class  DriverHome
 
         private void sendPosition(){
 
-            /*if (currentLocation != null){
+            if (currentLocation != null){
                 Log.d("Driver Home", String.valueOf(currentLocation.getLatitude()));
                 Log.d("Driver Home", String.valueOf(currentLocation.getLongitude()));
                 LatLng driverPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
@@ -149,7 +152,7 @@ public class  DriverHome
                         .run(this::handleSuccessSendPosition, this::handleErrorSendPosition);
             }else{
                 Log.d("Driver Home", "Null Location");
-            }*/
+            }
         }
 
         private void handleErrorGetTravel(Exception e) {
@@ -169,11 +172,11 @@ public class  DriverHome
         }
 
         private void getTravelInfo(){
-            /*String path = "/api/travelStatus/" + mTravel.getTravelId();
+            String path = "/api/travelStatus/" + mTravel.getTravelId();
             App.nodeServer.get(path, Travel.class, new Headers())
                     .run(this::handleSuccessGetTravel, this::handleErrorGetTravel);
 
-            Log.d("Handlers", "Called on main thread");*/
+            Log.d("Handlers", "Called on main thread");
         }
 
         @Override
@@ -804,11 +807,12 @@ public class  DriverHome
     public void returnOriginalState(){
         if(mRoute != null)
             mRoute.remove();
+        else
+            Toast.makeText(this,"ROUTE INS NULL",Toast.LENGTH_LONG).show();
+
         LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),
                 currentLocation.getLongitude());
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, ZOOM_VALUE));
     }
-
-
 
 }

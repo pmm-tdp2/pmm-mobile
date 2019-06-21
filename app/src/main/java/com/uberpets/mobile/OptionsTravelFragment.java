@@ -214,13 +214,23 @@ public class OptionsTravelFragment extends Fragment {
         Activity activity = getActivity();
         if(activity != null ){
             finishFragmentExecuted();
-            if (e instanceof ServerError) {
+            myActivity.showMessageCard();
+
+            /*Toast toast = Toast.makeText(activity
+                    , "No se pudo encontrar un chofer, vuelva a intentarlo "
+                    , Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER,0,0);
+            toast.show();*/
+
+            //show data of travel
+
+            /*if (e instanceof ServerError) {
                 Log.d(this.getClass().getName(), "error to connect server");
                 myActivity.showMessageCard();
             } else
                 Toast.makeText(activity
-                        , getString(R.string.error_quotation)
-                        , Toast.LENGTH_LONG).show();
+                        , getString("Error al ")
+                        , Toast.LENGTH_LONG).show();*/
         }
     }
     

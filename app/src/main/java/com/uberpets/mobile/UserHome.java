@@ -51,11 +51,13 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.uberpets.Constants;
+import com.uberpets.library.rest.Headers;
 import com.uberpets.mobile.ui.main.CanceledTravelFragment;
 import com.uberpets.model.CopyTravelDTO;
 import com.uberpets.model.Person;
 import com.uberpets.model.Travel;
 import com.uberpets.model.TravelAssignedDTO;
+import com.uberpets.services.App;
 import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
 import com.uberpets.util.GMapV2Direction;
@@ -170,14 +172,17 @@ public class UserHome extends AppCompatActivity
     private Runnable getTravelInfo = new Runnable() {
 
         private void handleErrorGetTravel(Exception e) {
-            Log.d("GET TRAVEL", e.getMessage());
+            Log.d("GET_TRAVEL", e.getMessage());
         }
 
         private void handleSuccessGetTravel(Travel travel) {
-            Log.d("GET TRAVEL", travel.toString());
+            Log.d("GET_TRAVEL", travel.toString());
 
             double arrivalTime = travel.getArrivalTime();
             double driverDistance = travel.getDriverDistance();
+
+            Log.d("GET_TRAVEL", "tiempo de arribo: "+arrivalTime);
+            Log.d("GET_TRAVEL", "distancia para arribar: "+driverDistance);
 
             mFragmentTravelData.setTimeToArrive(round(arrivalTime));
             mFragmentTravelData.setDriversDistance(round(driverDistance));
@@ -189,11 +194,11 @@ public class UserHome extends AppCompatActivity
         }
 
         private void getTravelInfo(){
-            /*String path = "/api/travelStatus/" + mTravel.getTravelId();
+            String path = "/api/travelStatus/" + mTravel.getTravelId();
             App.nodeServer.get(path, Travel.class, new Headers())
                     .run(this::handleSuccessGetTravel, this::handleErrorGetTravel);
 
-            Log.d("Handlers", "Called on main thread");*/
+            Log.d("Handlers", "Called on main thread");
         }
 
         @Override
