@@ -113,7 +113,7 @@ public class  DriverHome
     private static float ZOOM_VALUE = 14.0f;
     private static double MOVEMENT_SPEED = 0.001;
 
-    private Socket mSocket;
+    //private Socket mSocket;
     private Emitter.Listener mListenerConnection;
     private Emitter.Listener mListenerNotificationTravel;
 
@@ -124,9 +124,9 @@ public class  DriverHome
 
     private DriverFollowUpTravel driverFollowUpTravel;
 
-    private static final String[] TRANSPORTS = {
+    /*private static final String[] TRANSPORTS = {
             "websocket"
-    };
+    };*/
 
     private Handler handler = new Handler();
 
@@ -136,8 +136,10 @@ public class  DriverHome
             Log.d("GET TRAVEL", e.getMessage());
         }
 
-        private void handleSuccessSendPosition(SimpleResponse response) {
+        private void handleSuccessSendPosition(Travel travel) {
             Log.d("GET TRAVEL", "There should be a response");
+            if(travel.getTravelId() != -1)
+                notificationTravel(travel);
         }
 
         private void sendPosition(){
@@ -148,7 +150,7 @@ public class  DriverHome
                 LatLng driverPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
                 String path = "/api/driverPosition/" + idDriver;
                 //TODO: ver si mock location funca en el caso real
-                App.nodeServer.put(path, mockLocation, SimpleResponse.class, new Headers())
+                App.nodeServer.put(path, mockLocation, Travel.class, new Headers())
                         .run(this::handleSuccessSendPosition, this::handleErrorSendPosition);
             }else{
                 Log.d("Driver Home", "Null Location");
@@ -232,7 +234,7 @@ public class  DriverHome
         //to Google Play Services through GoogleApiClient
         mFusedLocationProviderClient = LocationServices
                 .getFusedLocationProviderClient(this);
-        {
+        /*{
             try {
                 final IO.Options options = new IO.Options();
                 options.transports = TRANSPORTS;
@@ -243,7 +245,7 @@ public class  DriverHome
             } catch (URISyntaxException e) {
                 Log.e(this.getClass().getName(),"io socket failure");
             }
-        }
+        }*/
         requestPermission();
 
         //TODO: ver si tiene permiso de ubicacion y la ubicacion prendida
@@ -599,7 +601,7 @@ public class  DriverHome
 
     /* BEGIN OF SOCKET CONNECTION*/
 
-    public void connectToServer(){
+    /*public void connectToServer(){
         mSocket.connect();
         mSocket.on(EVENT_CONNECTION, mListenerConnection = new Emitter.Listener() {
             @Override
@@ -613,7 +615,7 @@ public class  DriverHome
             }
         });
         mSocket.emit(TAG_ROL, ROL, idDriver);
-    }
+    }*/
 
     private void createNotificationChannel() {
 
@@ -664,7 +666,7 @@ public class  DriverHome
 
 
     //listen request of travel
-    public void listenNotificationTravel() {
+    /*public void listenNotificationTravel() {
         Log.d(this.getClass().getName(),mConstants.getEVENT_NOTIFICATION_TRAVEL());
         mSocket.on(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
                 mListenerNotificationTravel = new Emitter.Listener() {
@@ -692,10 +694,7 @@ public class  DriverHome
 
                             TravelRequestFragment travelRequest =
                                     TravelRequestFragment.newInstance(idDriver, mTravel);
-                            /*TravelRequestFragment travelRequest = new TravelRequestFragment();
-                            travelRequest.setTravelDTO(travelDTO);
-                            travelRequest.setROL(ROL);
-                            travelRequest.setIdDriver(idDriver);*/
+
                             Log.d(this.getClass().getName(),"----antes de replace notification---------");
                             replaceFragment(travelRequest,true);
                             Log.d(this.getClass().getName(),"----luego de replace notification---------");
@@ -706,7 +705,34 @@ public class  DriverHome
                 });
             }
         });
+    */
+
+
+    public void notificationTravel(Travel travel) {
+        Log.d(this.getClass().getName(),mConstants.getEVENT_NOTIFICATION_TRAVEL());
+        if (!isInTravel()){
+            notificationPopUpTravel();
+            Log.d(this.getClass().getName(),"--NOTIFICACIÓN DE VIAJE-");
+            mTravel = travel;
+
+            //TODO: reemplazar por el verdadero nombre
+            mTravel.setDriver(new Person(idDriver,"NADIE"));
+
+            //TODO: mostrar la cantidad de mascotas que tendrá el viaje
+            //TODO: dibujar el tramo del viaje
+            //Log.d(this.getClass().getName(), mTravel.toString());
+
+            TravelRequestFragment travelRequest =
+                    TravelRequestFragment.newInstance(idDriver, mTravel);
+
+            Log.d(this.getClass().getName(),"----antes de replace notification---------");
+            replaceFragment(travelRequest,true);
+            Log.d(this.getClass().getName(),"----luego de replace notification---------");
+            getRouteTravel();
+            showRouteFullInAssignTravel();
+        }
     }
+
 
     /* END OF SOCKET CONNECTION*/
 
@@ -714,10 +740,10 @@ public class  DriverHome
     @Override
     public void onDestroy() {
         Log.d(this.getClass().getName(),"DESTROY OF ACTIVITY");
-        mSocket.emit("FIN ROL","DRIVER", this.idDriver);
+        /*mSocket.emit("FIN ROL","DRIVER", this.idDriver);
         mSocket.off("FINISH", mListenerConnection);
         mSocket.off("FINISH", mListenerNotificationTravel);
-        mSocket.disconnect();
+        mSocket.disconnect();*/
         handler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }

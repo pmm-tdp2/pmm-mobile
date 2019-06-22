@@ -109,7 +109,7 @@ public class UserHome extends AppCompatActivity
     private static final int locationRequestCode = 1000;
     private CardView mCardViewSearch;
 
-    private Socket mSocket;
+    //private Socket mSocket;
 
     private final String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
     private final String TAG_USER_HOME = "USER_HOME";
@@ -187,10 +187,14 @@ public class UserHome extends AppCompatActivity
             mFragmentTravelData.setTimeToArrive(round(arrivalTime));
             mFragmentTravelData.setDriversDistance(round(driverDistance));
 
-            if (onCourseTravel){
+            if (isInTravel()){
                 if (driverPositionMarker == null) setDriverMarker(travel.getDriverLatitude(), travel.getDriverLongitude());
                 else moveDriverMarker(travel.getDriverLatitude(), travel.getDriverLongitude());
             }
+
+            //TODO: se tiene que recibir información si el viaje ha terminado o ha sido cancelado.
+            //if(travel.)
+
         }
 
         private void getTravelInfo(){
@@ -203,7 +207,7 @@ public class UserHome extends AppCompatActivity
 
         @Override
         public void run() {
-            if (onCourseTravel){
+            if (isInTravel()){
                 getTravelInfo();
             }
             handler.postDelayed(this, 2000);
@@ -254,7 +258,7 @@ public class UserHome extends AppCompatActivity
         mMessageCard = findViewById(R.id.card_view_message);
         mMessageCard.setVisibility(CardView.INVISIBLE);
 
-        {
+        /*{
             try {
                 final IO.Options options = new IO.Options();
                 options.transports = TRANSPORTS;
@@ -269,7 +273,7 @@ public class UserHome extends AppCompatActivity
             } catch (URISyntaxException e) {
                 Log.e(TAG_CONNECTION_SERVER,"io socket failure");
             }
-        }
+        }*/
 
         requestPermission();
     }
@@ -729,7 +733,7 @@ public class UserHome extends AppCompatActivity
 
     /* BEGIN OF SOCKET CONNECTION*/
 
-    public void listenDriverPosition(){
+    /*public void listenDriverPosition(){
         mSocket.on(mConstants.getEVENT_POSITION_DRIVER(),
                 mListenerPositionDriver = new Emitter.Listener() {
             @Override
@@ -750,9 +754,9 @@ public class UserHome extends AppCompatActivity
                 });
             }
         });
-    }
+    }*/
 
-    public void connectToServer(){
+    /*public void connectToServer(){
         mSocket.connect();
         mSocket.on(mConstants.getEVENT_CONNECTION(), mListenerConnection = new Emitter.Listener() {
             @Override
@@ -771,11 +775,11 @@ public class UserHome extends AppCompatActivity
             }
         });
         mSocket.emit(TAG_ROL, ROL, idUser);
-    }
+    }*/
 
 
     //listen if arrive message that driver arrived to user
-    public void listenDriverArrivedUser() {
+    /*public void listenDriverArrivedUser() {
         mSocket.on(mConstants.getEVENT_DRIVER_ARRIVED_USER(),
                 mListenerDriverArrivedToUser = new Emitter.Listener() {
             @Override
@@ -785,10 +789,10 @@ public class UserHome extends AppCompatActivity
                 });
             }
         });
-    }
+    }*/
 
     //listen if arrive message that driver arrived to destiny
-    public void listenDriverArrivedDestiny() {
+    /*public void listenDriverArrivedDestiny() {
         mSocket.on(mConstants.getEVENT_DRIVER_ARRIVED_DESTINY(),
                 mListenerDriverArrivedToDestiny = new Emitter.Listener() {
             @Override
@@ -805,12 +809,24 @@ public class UserHome extends AppCompatActivity
                 });
             }
         });
+    }*/
+
+
+    public void driverArriveToDestiny() {
+        if(isInTravel()){
+            Log.d(TAG_USER_HOME,"message finalize travel arrived");
+            //onCourseTravel = false;
+            endTravel();
+            showRatingBar();
+        }else {
+            Log.w(this.getClass().getName(),"Server notify end travel when" +
+                    "user is not in travel");
+        }
     }
 
 
-
     //listen if driver cancel travel
-    public void listenCancelTravel() {
+    /*public void listenCancelTravel() {
         mSocket.on(mConstants.getEVENT_CANCEL_TRAVEL(),
                 mListenerDriverCancelTravel = new Emitter.Listener() {
                     @Override
@@ -830,6 +846,21 @@ public class UserHome extends AppCompatActivity
                         });
                     }
                 });
+    }*/
+
+
+    public void cancelTravel() {
+        if(isInTravel()) {
+            Log.d(this.getClass().getName(),"message finalize travel arrived");
+            finishPreviousFragments();
+            returnOriginalState();
+            //onCourseTravel = false;
+            endTravel();
+            if (mFragmentCanceledTravel == null) mFragmentCanceledTravel = new CanceledTravelFragment();
+            replaceFragment(mFragmentCanceledTravel,true);
+        }else{
+            Log.w(this.getClass().getName(),"Server notify travel canceled when user is not in travel");
+        }
     }
 
 
@@ -859,15 +890,17 @@ public class UserHome extends AppCompatActivity
 
     @Override
     public void onDestroy() {
-        mSocket.emit("FIN ROL","USER", this.idUser);
+        Log.e("#########################","se destruyo1");
+        /*mSocket.emit("FIN ROL","USER", this.idUser);
         mSocket.disconnect();
         mSocket.off("FINISH", mListenerConnection);
         mSocket.off("FINISH", mListenerPositionDriver);
         mSocket.off("FINISH", mListenerDriverArrivedToUser);
         mSocket.off("FINISH", mListenerDriverArrivedToDestiny);
-        mSocket.off("FINISH", mListenerDriverCancelTravel);
+        mSocket.off("FINISH", mListenerDriverCancelTravel);*/
         super.onDestroy();
     }
+
 
     /*BEGIN REPLACE FRAGMENT*/
 

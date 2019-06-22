@@ -45,6 +45,7 @@
         <activity
             android:name=".UserHome"
             android:label="@string/title_activity_user_home"
+            android:stopWithTask="true"
             android:theme="@style/AppTheme.NoActionBar" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
