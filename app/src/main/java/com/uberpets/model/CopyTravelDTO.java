@@ -115,13 +115,16 @@ public class CopyTravelDTO implements Serializable {
 
     @Override
     public String toString(){
-        return "user: "+user.toString()
-         +" driver: "+driver.toString()
-         +" travelId: "+travelId
-         +" smallPetQuantity: "+smallPetQuantity
-         +" mediumPetQuantity: "+mediumPetQuantity
-         +" bigPetQuantity: "+bigPetQuantity
-         +" hasCompanion: "+hasCompanion;
+        String userString = user==null? "null" : user.toString();
+        String driverString = driver==null? "null" : driver.toString();
+
+        return "user: "+userString
+                +" driver: "+driverString
+                +" travelId: "+travelId
+                +" smallPetQuantity: "+smallPetQuantity
+                +" mediumPetQuantity: "+mediumPetQuantity
+                +" bigPetQuantity: "+bigPetQuantity
+                +" hasCompanion: "+hasCompanion;
 
     }
 }

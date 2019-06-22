@@ -718,6 +718,7 @@ public class  DriverHome
         mSocket.off("FINISH", mListenerConnection);
         mSocket.off("FINISH", mListenerNotificationTravel);
         mSocket.disconnect();
+        handler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
 
