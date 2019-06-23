@@ -16,7 +16,7 @@ public class Travel {
     private double driverDistance;
     private double driverLatitude;
     private double driverLongitude;
-    private int status = 0;
+    private final String status;
 
     private final LatLng from;
     private final LatLng to;
@@ -29,10 +29,10 @@ public class Travel {
     public static class TravelBuilder {
         private final LatLng from;
         private final LatLng to;
-        private int travelId;
+        private int travelId = -1;
         private Person user;
         private Person driver;
-        private int status = 0;
+        private String status = "";
         private double estimatedArrivalTime;
         private double driverDistance;
         private int smallPetQuantity = 0;
@@ -102,7 +102,7 @@ public class Travel {
             return this;
         }
 
-        public TravelBuilder setStatus(int status){
+        public TravelBuilder setStatus(String status){
             this.status = status;
             return this;
         }
@@ -186,7 +186,7 @@ public class Travel {
     public void setDriverLongitude(double lon){ this.driverLongitude = lon; }
     public double getDriverLongitude(){ return this.driverLongitude; }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 

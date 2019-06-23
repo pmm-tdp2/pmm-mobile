@@ -40,6 +40,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -67,6 +68,7 @@ import com.google.gson.Gson;
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
 import com.uberpets.model.CopyTravelDTO;
+import com.uberpets.model.LoginDTO;
 import com.uberpets.model.Person;
 import com.uberpets.model.SimpleResponse;
 import com.uberpets.model.TravelAssignedDTO;
@@ -128,6 +130,29 @@ public class  DriverHome
             "websocket"
     };*/
 
+    private void logout() {
+        LoginDTO loginDTO = new LoginDTO(this.idDriver, Constants.getInstance().getID_DRIVERS());
+        App.nodeServer.post("/api/logout",loginDTO,SimpleResponse.class, new Headers())
+                .run(this::handleSuccessfulServerLogoutResponse,this::handleErrorLogoutServerResponse);
+    }
+
+    private void handleErrorLogoutServerResponse(Exception e) {
+        Log.e(this.getClass().getName(),"Error en el logout");
+        Log.e(this.getClass().getName(),e.toString());
+        Toast toast = Toast.makeText(this,"No se pudo cerrar sesión",Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER,0,0);
+        toast.show();
+    }
+
+
+    private void handleSuccessfulServerLogoutResponse(SimpleResponse response) {
+        Log.d(this.getClass().getName(),"data response logout: "+response.getStatus());
+        AccountSession.finalizeSession(this);
+        Intent intent = new Intent(this, TabLoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
     private Handler handler = new Handler();
 
     private Runnable sendPosition = new Runnable() {
@@ -138,7 +163,7 @@ public class  DriverHome
 
         private void handleSuccessSendPosition(Travel travel) {
             Log.d("GET TRAVEL", "There should be a response");
-            if(travel.getTravelId() != -1)
+            if(travel != null)
                 notificationTravel(travel);
         }
 
@@ -308,10 +333,7 @@ public class  DriverHome
         } else if (id == R.id.nav_send) {
 
         }else if (id == R.id.logout_from_home_account_driver) {
-            AccountSession.finalizeSession(this);
-            Intent intent = new Intent(this, TabLoginActivity.class);
-            startActivity(intent);
-            finish();
+            logout();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

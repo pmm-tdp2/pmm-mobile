@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.cardview.widget.CardView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import com.google.android.material.navigation.NavigationView;
 import androidx.core.view.GravityCompat;
@@ -30,6 +31,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
@@ -54,7 +56,9 @@ import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
 import com.uberpets.mobile.ui.main.CanceledTravelFragment;
 import com.uberpets.model.CopyTravelDTO;
+import com.uberpets.model.LoginDTO;
 import com.uberpets.model.Person;
+import com.uberpets.model.SimpleResponse;
 import com.uberpets.model.Travel;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.services.App;
@@ -130,6 +134,35 @@ public class UserHome extends AppCompatActivity
             "websocket"
     };*/
 
+    private static final String TRAVEL_COMPLETED = "finalizado";
+    private static final String TRAVEL_CANCELED_BY_DRIVER = "cancelado por chofer";
+
+
+    private void logout() {
+        LoginDTO loginDTO = new LoginDTO(this.idUser, Constants.getInstance().getID_DRIVERS());
+        App.nodeServer.post("/api/logout",loginDTO, SimpleResponse.class, new Headers())
+                .run(this::handleSuccessfulServerLogoutResponse,this::handleErrorLogoutServerResponse);
+    }
+
+    private void handleErrorLogoutServerResponse(Exception e) {
+        Log.e(this.getClass().getName(),"Error en el logout");
+        Log.e(this.getClass().getName(),e.toString());
+        Toast toast = Toast.makeText(this,"No se pudo cerrar sesión",Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER,0,0);
+        toast.show();
+    }
+
+
+    private void handleSuccessfulServerLogoutResponse(SimpleResponse response) {
+        Log.d(this.getClass().getName(),"data response logout: "+response.getStatus());
+        AccountSession.finalizeSession(this);
+        Intent intent = new Intent(this, TabLoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+
+
     private void moveDriverMarker(Double lat, Double lon){
         Location newLocation = new Location("");
         newLocation.setLatitude(lat);
@@ -192,10 +225,14 @@ public class UserHome extends AppCompatActivity
                 else moveDriverMarker(travel.getDriverLatitude(), travel.getDriverLongitude());
             }
 
+            Log.e("PRUEBA-PRUEBA",travel.toString());
+            Log.e("PRUEBA-PRUEBA",travel.getStatus());
+            Log.e("PRUEBA-PRUEBA",TRAVEL_COMPLETED);
+
             //TODO: se tiene que recibir información si el viaje ha terminado o ha sido cancelado.
-            if(travel.getStatus() == 100) // the travel is finished
+            if(travel.getStatus().equals(TRAVEL_COMPLETED)) // the travel is finished
                 driverArriveToDestiny();
-            else if (travel.getStatus() == 101) // the travel is canceled
+            else if (travel.getStatus().equals(TRAVEL_CANCELED_BY_DRIVER) ) // the travel is canceled
                 cancelTravel();
 
         }
@@ -346,10 +383,7 @@ public class UserHome extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         }else if (id == R.id.logout_from_home_account_user) {
-            AccountSession.finalizeSession(this);
-            Intent intent = new Intent(this, TabLoginActivity.class);
-            startActivity(intent);
-            finish();
+            logout();
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
