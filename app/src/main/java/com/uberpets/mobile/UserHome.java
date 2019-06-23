@@ -34,8 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -67,12 +65,9 @@ import com.uberpets.util.AccountSession;
 import com.uberpets.util.GMapV2Direction;
 import com.uberpets.util.GMapV2DirectionAsyncTask;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 
 import java.lang.ref.WeakReference;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import static java.lang.Math.round;
@@ -80,12 +75,9 @@ import static java.lang.Math.round;
 public class UserHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
-    public final String ROL = "USER";
-    public final String TAG_ROL = "ROL";
     private GoogleMap mMap;
     private Polyline mRoute;
     private String idUser;
-    private boolean onCourseTravel;
     private Marker driverPositionMarker;
     private Location driverLocation;
 
@@ -115,14 +107,7 @@ public class UserHome extends AppCompatActivity
 
     //private Socket mSocket;
 
-    private final String TAG_CONNECTION_SERVER = "CONNECTION_SERVER";
     private final String TAG_USER_HOME = "USER_HOME";
-
-    private Emitter.Listener mListenerConnection;
-    private Emitter.Listener mListenerPositionDriver;
-    private Emitter.Listener mListenerDriverArrivedToUser;
-    private Emitter.Listener mListenerDriverArrivedToDestiny;
-    private Emitter.Listener mListenerDriverCancelTravel;
 
     private InfoDriverAssignFragment mFragmentTravelData;
     private CanceledTravelFragment mFragmentCanceledTravel;
@@ -130,16 +115,12 @@ public class UserHome extends AppCompatActivity
     private Travel mTravel;
     private boolean inTravel = false;
 
-    /*private static final String[] TRANSPORTS = {
-            "websocket"
-    };*/
-
     private static final String TRAVEL_COMPLETED = "finalizado";
     private static final String TRAVEL_CANCELED_BY_DRIVER = "cancelado por chofer";
 
 
     private void logout() {
-        LoginDTO loginDTO = new LoginDTO(this.idUser, Constants.getInstance().getID_DRIVERS());
+        LoginDTO loginDTO = new LoginDTO(this.idUser, Constants.getInstance().getID_USERS());
         App.nodeServer.post("/api/logout",loginDTO, SimpleResponse.class, new Headers())
                 .run(this::handleSuccessfulServerLogoutResponse,this::handleErrorLogoutServerResponse);
     }
@@ -225,10 +206,6 @@ public class UserHome extends AppCompatActivity
                 else moveDriverMarker(travel.getDriverLatitude(), travel.getDriverLongitude());
             }
 
-            Log.e("PRUEBA-PRUEBA",travel.toString());
-            Log.e("PRUEBA-PRUEBA",travel.getStatus());
-            Log.e("PRUEBA-PRUEBA",TRAVEL_COMPLETED);
-
             //TODO: se tiene que recibir información si el viaje ha terminado o ha sido cancelado.
             if(travel.getStatus().equals(TRAVEL_COMPLETED)) // the travel is finished
                 driverArriveToDestiny();
@@ -257,7 +234,6 @@ public class UserHome extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        onCourseTravel = false;
 
         handler.post(getTravelInfo);
 
@@ -281,14 +257,6 @@ public class UserHome extends AppCompatActivity
         ImageView imageView = hView.findViewById(R.id.image_profile_user_navigation);
         Bitmap bitmapProfile = AccountImages.getInstance().getPhotoProfile();
         imageView.setImageBitmap(bitmapProfile);
-        /*if( bitmapProfile != null){
-            //creamos el drawable redondeado
-            RoundedBitmapDrawable roundedDrawable =
-                    RoundedBitmapDrawableFactory.create(getResources(), bitmapProfile);
-            //asignamos el CornerRadius
-            roundedDrawable.setCornerRadius(100);
-            imageView.setImageDrawable(roundedDrawable);
-        }*/
 
         //is used to obtain user's location, with this our app no needs to manually manage connections
         //to Google Play Services through GoogleApiClient
@@ -297,23 +265,6 @@ public class UserHome extends AppCompatActivity
 
         mMessageCard = findViewById(R.id.card_view_message);
         mMessageCard.setVisibility(CardView.INVISIBLE);
-
-        /*{
-            try {
-                final IO.Options options = new IO.Options();
-                options.transports = TRANSPORTS;
-                mSocket = IO.socket(Constants.getInstance().getURL_SOCKET(), options);
-                Log.i(TAG_CONNECTION_SERVER,"io socket success");
-                connectToServer();
-                listenDriverPosition();
-                listenDriverArrivedUser();
-                listenDriverArrivedDestiny();
-                listenCancelTravel();
-                //listenAssignedDriver();
-            } catch (URISyntaxException e) {
-                Log.e(TAG_CONNECTION_SERVER,"io socket failure");
-            }
-        }*/
 
         requestPermission();
     }
@@ -551,7 +502,6 @@ public class UserHome extends AppCompatActivity
                     destinyMarker.setVisible(true);
                     destinyMarker.setPosition(mDestiny);
                     getRouteTravel();
-                    //mockDrawLine();
                 }else{
                     Log.d(TAG_USER_HOME,"no data is returned from activity PLACEAUTOCOMPLETEACTIVITY");
                 }
@@ -563,28 +513,7 @@ public class UserHome extends AppCompatActivity
     public void getRouteTravel() {
         showOptionsToTravel();
         mCardViewSearch.setVisibility(View.INVISIBLE);
-        /*final Handler handler = new Handler() {
-            public void handleMessage(Message msg) {
-                try {
-                    Document doc = (Document) msg.obj;
-                    GMapV2Direction md = new GMapV2Direction();
-                    ArrayList<LatLng> directionPoint = md.getDirection(doc);
-                    PolylineOptions rectLine = new PolylineOptions().width(15).color(Color.RED);
-
-                    for (int i = 0; i < directionPoint.size(); i++) {
-                        rectLine.add(directionPoint.get(i));
-                    }
-                    mRoute = mMap.addPolyline(rectLine);
-                    md.getDurationText(doc);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-        };*/
-
         final Handler handler = new MyVeryOwnHandler(this);
-
         new GMapV2DirectionAsyncTask(handler, mOrigin, mDestiny,
                 GMapV2Direction.MODE_DRIVING, getApplicationContext()).execute();
     }
@@ -767,88 +696,6 @@ public class UserHome extends AppCompatActivity
         startActivity(intent);
     }
 
-
-    /* BEGIN OF SOCKET CONNECTION*/
-
-    /*public void listenDriverPosition(){
-        mSocket.on(mConstants.getEVENT_POSITION_DRIVER(),
-                mListenerPositionDriver = new Emitter.Listener() {
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread( ()-> {
-                    try {
-                        JSONObject data = (JSONObject) args[0];
-                        String latitude;
-                        String longitude;
-                        latitude = data.getString("latitude");
-                        longitude = data.getString("longitude");
-                        Log.d(TAG_CONNECTION_SERVER,"position driver received");
-                        ShowPositionDriver(Float.parseFloat(latitude),Float.parseFloat(longitude));
-                    } catch (JSONException e) {
-                        Log.e(this.getClass().getName(),"Error to get positionDriver");
-                        Log.e(this.getClass().getName(),e.toString());
-                    }
-                });
-            }
-        });
-    }*/
-
-    /*public void connectToServer(){
-        mSocket.connect();
-        mSocket.on(mConstants.getEVENT_CONNECTION(), mListenerConnection = new Emitter.Listener() {
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public int hashCode() {
-                        return super.hashCode();
-                    }
-
-                    @Override
-                    public void run() {
-                        Log.d(TAG_CONNECTION_SERVER, "Established Connection");
-                    }
-                });
-            }
-        });
-        mSocket.emit(TAG_ROL, ROL, idUser);
-    }*/
-
-
-    //listen if arrive message that driver arrived to user
-    /*public void listenDriverArrivedUser() {
-        mSocket.on(mConstants.getEVENT_DRIVER_ARRIVED_USER(),
-                mListenerDriverArrivedToUser = new Emitter.Listener() {
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread( () -> {
-                    Log.d(this.getClass().getName(),"the driver has arrived to user");
-                });
-            }
-        });
-    }*/
-
-    //listen if arrive message that driver arrived to destiny
-    /*public void listenDriverArrivedDestiny() {
-        mSocket.on(mConstants.getEVENT_DRIVER_ARRIVED_DESTINY(),
-                mListenerDriverArrivedToDestiny = new Emitter.Listener() {
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread( () -> {
-                    if(isInTravel()){
-                        Log.d(TAG_USER_HOME,"message finalize travel arrived");
-                        onCourseTravel = false;
-                        showRatingBar();
-                    }else {
-                        Log.w(this.getClass().getName(),"Server notify end travel when" +
-                                "user is not in travel");
-                    }
-                });
-            }
-        });
-    }*/
-
-
     public void driverArriveToDestiny() {
         if(isInTravel()){
             Log.d(TAG_USER_HOME,"message finalize travel arrived");
@@ -860,30 +707,6 @@ public class UserHome extends AppCompatActivity
                     "user is not in travel");
         }
     }
-
-
-    //listen if driver cancel travel
-    /*public void listenCancelTravel() {
-        mSocket.on(mConstants.getEVENT_CANCEL_TRAVEL(),
-                mListenerDriverCancelTravel = new Emitter.Listener() {
-                    @Override
-                    public void call(final Object... args) {
-                        runOnUiThread( () -> {
-                            if(isInTravel()) {
-                                Log.d(this.getClass().getName(),"message finalize travel arrived");
-                                Log.d(this.getClass().getName(),args[0].toString());
-                                finishPreviousFragments();
-                                returnOriginalState();
-                                onCourseTravel = false;
-                                if (mFragmentCanceledTravel == null) mFragmentCanceledTravel = new CanceledTravelFragment();
-                                replaceFragment(mFragmentCanceledTravel,true);
-                            }else{
-                                Log.w(this.getClass().getName(),"Server notify travel canceled when user is not in travel");
-                            }
-                        });
-                    }
-                });
-    }*/
 
 
     public void cancelTravel() {
@@ -922,19 +745,10 @@ public class UserHome extends AppCompatActivity
     }
 
 
-    /* END OF SOCKET CONNECTION*/
-
 
     @Override
     public void onDestroy() {
         Log.e("#########################","se destruyo1");
-        /*mSocket.emit("FIN ROL","USER", this.idUser);
-        mSocket.disconnect();
-        mSocket.off("FINISH", mListenerConnection);
-        mSocket.off("FINISH", mListenerPositionDriver);
-        mSocket.off("FINISH", mListenerDriverArrivedToUser);
-        mSocket.off("FINISH", mListenerDriverArrivedToDestiny);
-        mSocket.off("FINISH", mListenerDriverCancelTravel);*/
         super.onDestroy();
     }
 
@@ -1005,7 +819,6 @@ public class UserHome extends AppCompatActivity
 
             Log.d(this.getClass().getName(),mTravel.toString());
             Log.d(this.getClass().getName(),"big:: "+mTravel.getBigPetQuantity());
-            onCourseTravel = true;
             showInfoDriverAssigned(travelAssignedDTO);
 
         }else {

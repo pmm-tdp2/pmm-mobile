@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Button driverButton = findViewById(R.id.driverButton);
+        //Button driverButton = findViewById(R.id.driverButton);
         radioCloudServer = findViewById(R.id.cloud_server);
         radioWriteIp = findViewById(R.id.local_ip_configurable);
         ip_input = findViewById(R.id.ip_input);

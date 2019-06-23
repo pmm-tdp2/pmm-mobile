@@ -1,14 +1,12 @@
 package com.uberpets.mobile;
 
 import android.Manifest;
-import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
@@ -23,7 +21,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.navigation.NavigationView;
 
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -49,9 +46,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.Socket;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -64,7 +58,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.gson.Gson;
 import com.uberpets.Constants;
 import com.uberpets.library.rest.Headers;
 import com.uberpets.model.CopyTravelDTO;
@@ -74,19 +67,15 @@ import com.uberpets.model.SimpleResponse;
 import com.uberpets.model.TravelAssignedDTO;
 import com.uberpets.model.Travel;
 import com.uberpets.services.App;
-import com.uberpets.services.TraceService;
 import com.uberpets.util.AccountImages;
 import com.uberpets.util.AccountSession;
 import com.uberpets.util.GMapV2Direction;
 import com.uberpets.util.GMapV2DirectionAsyncTask;
 
 
-import org.json.JSONObject;
 import org.w3c.dom.Document;
 
 import java.lang.ref.WeakReference;
-import java.net.URISyntaxException;
-import java.sql.Driver;
 import java.util.ArrayList;
 
 import static java.lang.Math.round;
@@ -101,10 +90,7 @@ public class  DriverHome
             DriverFollowUpTravel.OnFragmentInteractionListener
 {
     private GoogleMap mMap;
-    private final String ROL = "DRIVER";
-    private final String TAG_ROL = "ROL";
     private int locationRequestCode = 1000;
-    private final String EVENT_CONNECTION = "message";
 
     private String idDriver;
     private boolean inTravel = false;
@@ -115,20 +101,12 @@ public class  DriverHome
     private static float ZOOM_VALUE = 14.0f;
     private static double MOVEMENT_SPEED = 0.001;
 
-    //private Socket mSocket;
-    private Emitter.Listener mListenerConnection;
-    private Emitter.Listener mListenerNotificationTravel;
-
     Constants mConstants = Constants.getInstance();
     private Travel mTravel;
     private Polyline mRoute;
     private String CHANNEL_ID = "some_channel_id";
 
     private DriverFollowUpTravel driverFollowUpTravel;
-
-    /*private static final String[] TRANSPORTS = {
-            "websocket"
-    };*/
 
     private void logout() {
         LoginDTO loginDTO = new LoginDTO(this.idDriver, Constants.getInstance().getID_DRIVERS());
@@ -240,37 +218,11 @@ public class  DriverHome
         Bitmap bitmapProfile = AccountImages.getInstance().getPhotoProfile();
         imageView.setImageBitmap(bitmapProfile);
 
-        /*if( bitmapProfile != null){
-            int lowerValue = bitmapProfile.getHeight() < bitmapProfile.getWidth()?
-                    bitmapProfile.getHeight() :  bitmapProfile.getWidth();
-
-            Bitmap bitmapResized = (Bitmap.createScaledBitmap(bitmapProfile, lowerValue, lowerValue, false));
-
-            //creamos el drawable redondeado
-            RoundedBitmapDrawable roundedDrawable =
-                    RoundedBitmapDrawableFactory.create(getResources(), bitmapResized);
-            //asignamos el CornerRadius
-            roundedDrawable.setCornerRadius(bitmapResized.getHeight());
-            imageView.setImageDrawable(roundedDrawable);
-        }*/
-
         //is used to obtain user's location, with this our app no needs
         // to manually manage connections
         //to Google Play Services through GoogleApiClient
         mFusedLocationProviderClient = LocationServices
                 .getFusedLocationProviderClient(this);
-        /*{
-            try {
-                final IO.Options options = new IO.Options();
-                options.transports = TRANSPORTS;
-                mSocket = IO.socket(Constants.getInstance().getURL_SOCKET(), options);
-                Log.i(this.getClass().getName(),"io socket succes");
-                connectToServer();
-                listenNotificationTravel();
-            } catch (URISyntaxException e) {
-                Log.e(this.getClass().getName(),"io socket failure");
-            }
-        }*/
         requestPermission();
 
         //TODO: ver si tiene permiso de ubicacion y la ubicacion prendida
@@ -532,10 +484,6 @@ public class  DriverHome
         newLocation.setLatitude(mockLocation.latitude);
         //TODO:id user esta harcodeado, ver porque se usaría asi
 
-        /*TraceDTO traceDTO = new TraceDTO("", idDriver,
-                new GeograficCoordenate(String.valueOf(newLocation.getLatitude()), String.valueOf(newLocation.getLongitude())));
-        traceService.saveTrace(traceDTO, this);*/
-
         currentPositionMarker.setPosition(mockLocation);
 
         float bearing = prevLocation.bearingTo(newLocation);
@@ -621,23 +569,6 @@ public class  DriverHome
         endTravel();
     }
 
-    /* BEGIN OF SOCKET CONNECTION*/
-
-    /*public void connectToServer(){
-        mSocket.connect();
-        mSocket.on(EVENT_CONNECTION, mListenerConnection = new Emitter.Listener() {
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d(this.getClass().getName(), "Established Connection");
-                    }
-                });
-            }
-        });
-        mSocket.emit(TAG_ROL, ROL, idDriver);
-    }*/
 
     private void createNotificationChannel() {
 
@@ -687,49 +618,6 @@ public class  DriverHome
     }
 
 
-    //listen request of travel
-    /*public void listenNotificationTravel() {
-        Log.d(this.getClass().getName(),mConstants.getEVENT_NOTIFICATION_TRAVEL());
-        mSocket.on(mConstants.getEVENT_NOTIFICATION_TRAVEL(),
-                mListenerNotificationTravel = new Emitter.Listener() {
-            @Override
-            public void call(final Object... args) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (!isInTravel()){
-                            notificationPopUpTravel();
-                            JSONObject response = (JSONObject) args[0];
-                            Gson gson = new Gson();
-                            Log.d(this.getClass().getName(),"--NOTIFICACIÓN DE VIAJE-");
-                            Log.d(this.getClass().getName(),response.toString());
-                            Log.d(this.getClass().getName(),"------------------------");
-                            mTravel = gson.fromJson(response.toString(), Travel.class);
-
-
-                            //TODO: reemplazar por el verdadero nombre
-                            mTravel.setDriver(new Person(idDriver,"NADIE"));
-
-                            //TODO: mostrar la cantidad de mascotas que tendrá el viaje
-                            //TODO: dibujar el tramo del viaje
-                            //Log.d(this.getClass().getName(), mTravel.toString());
-
-                            TravelRequestFragment travelRequest =
-                                    TravelRequestFragment.newInstance(idDriver, mTravel);
-
-                            Log.d(this.getClass().getName(),"----antes de replace notification---------");
-                            replaceFragment(travelRequest,true);
-                            Log.d(this.getClass().getName(),"----luego de replace notification---------");
-                            getRouteTravel();
-                            showRouteFullInAssignTravel();
-                        }
-                    }
-                });
-            }
-        });
-    */
-
-
     public void notificationTravel(Travel travel) {
         Log.d(this.getClass().getName(),mConstants.getEVENT_NOTIFICATION_TRAVEL());
         if (!isInTravel()){
@@ -739,10 +627,6 @@ public class  DriverHome
 
             //TODO: reemplazar por el verdadero nombre
             mTravel.setDriver(new Person(idDriver,"NADIE"));
-
-            //TODO: mostrar la cantidad de mascotas que tendrá el viaje
-            //TODO: dibujar el tramo del viaje
-            //Log.d(this.getClass().getName(), mTravel.toString());
 
             TravelRequestFragment travelRequest =
                     TravelRequestFragment.newInstance(idDriver, mTravel);
@@ -756,43 +640,16 @@ public class  DriverHome
     }
 
 
-    /* END OF SOCKET CONNECTION*/
-
 
     @Override
     public void onDestroy() {
         Log.d(this.getClass().getName(),"DESTROY OF ACTIVITY");
-        /*mSocket.emit("FIN ROL","DRIVER", this.idDriver);
-        mSocket.off("FINISH", mListenerConnection);
-        mSocket.off("FINISH", mListenerNotificationTravel);
-        mSocket.disconnect();*/
         handler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
 
     public void getRouteTravel() {
-        /*final Handler handler = new Handler() {
-            public void handleMessage(Message msg) {
-                try {
-                    Document doc = (Document) msg.obj;
-                    GMapV2Direction md = new GMapV2Direction();
-                    ArrayList<LatLng> directionPoint = md.getDirection(doc);
-                    PolylineOptions rectLine = new PolylineOptions().width(15).color(Color.RED);
-
-                    for (int i = 0; i < directionPoint.size(); i++) {
-                        rectLine.add(directionPoint.get(i));
-                    }
-                    mRoute = mMap.addPolyline(rectLine);
-                    md.getDurationText(doc);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-        };*/
-
         final Handler handler = new DriverHome.MyVeryOwnHandler(this);
-
         new GMapV2DirectionAsyncTask(handler, mTravel.getTo(), mTravel.getFrom(),
                 GMapV2Direction.MODE_DRIVING, getApplicationContext()).execute();
     }
