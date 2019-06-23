@@ -126,9 +126,9 @@ public class UserHome extends AppCompatActivity
     private Travel mTravel;
     private boolean inTravel = false;
 
-    private static final String[] TRANSPORTS = {
+    /*private static final String[] TRANSPORTS = {
             "websocket"
-    };
+    };*/
 
     private void moveDriverMarker(Double lat, Double lon){
         Location newLocation = new Location("");
@@ -193,7 +193,10 @@ public class UserHome extends AppCompatActivity
             }
 
             //TODO: se tiene que recibir información si el viaje ha terminado o ha sido cancelado.
-            //if(travel.)
+            if(travel.getStatus() == 100) // the travel is finished
+                driverArriveToDestiny();
+            else if (travel.getStatus() == 101) // the travel is canceled
+                cancelTravel();
 
         }
 

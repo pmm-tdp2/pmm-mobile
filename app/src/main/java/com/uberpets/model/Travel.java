@@ -16,6 +16,7 @@ public class Travel {
     private double driverDistance;
     private double driverLatitude;
     private double driverLongitude;
+    private int status = 0;
 
     private final LatLng from;
     private final LatLng to;
@@ -31,6 +32,7 @@ public class Travel {
         private int travelId;
         private Person user;
         private Person driver;
+        private int status = 0;
         private double estimatedArrivalTime;
         private double driverDistance;
         private int smallPetQuantity = 0;
@@ -99,6 +101,12 @@ public class Travel {
             this.driverLongitude = lon;
             return this;
         }
+
+        public TravelBuilder setStatus(int status){
+            this.status = status;
+            return this;
+        }
+
         public Travel build() {
             return new Travel(this);
         }
@@ -119,7 +127,7 @@ public class Travel {
         this.driverDistance = builder.driverDistance;
         this.driverLatitude = builder.driverLatitude;
         this.driverLongitude = builder.driverLongitude;
-
+        this.status = builder.status;
     }
 
     public LatLng getFrom() {
@@ -178,6 +186,10 @@ public class Travel {
     public void setDriverLongitude(double lon){ this.driverLongitude = lon; }
     public double getDriverLongitude(){ return this.driverLongitude; }
 
+    public int getStatus() {
+        return status;
+    }
+
     @Override
     public String toString(){
 
@@ -194,7 +206,8 @@ public class Travel {
          +" smallPetQuantity: "+smallPetQuantity
          +" mediumPetQuantity: "+mediumPetQuantity
          +" bigPetQuantity: "+bigPetQuantity
-         +" hasCompanion: "+hasCompanion;
+         +" hasCompanion: "+hasCompanion
+         +" status: "+status;
 
     }
 }
