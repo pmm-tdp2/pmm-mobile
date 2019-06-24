@@ -145,15 +145,22 @@ public class UserHome extends AppCompatActivity
 
 
     private void moveDriverMarker(Double lat, Double lon){
-        Location newLocation = new Location("");
-        newLocation.setLatitude(lat);
-        newLocation.setLongitude(lon);
 
+        Location prevLocation = new Location("");
+
+        prevLocation.setLatitude(driverPositionMarker.getPosition().latitude);
+        prevLocation.setLongitude(driverPositionMarker.getPosition().longitude);
+
+
+        Location newLocation = new Location("");
+        newLocation.setLongitude(lon);
+        newLocation.setLatitude(lat);
+
+        float bearing = prevLocation.bearingTo(newLocation);
+        driverPositionMarker.setRotation(bearing - 270);
+        driverPositionMarker.setVisible(true);
         driverPositionMarker.setPosition(new LatLng(lat, lon));
 
-        float bearing = driverLocation.bearingTo(newLocation);
-
-        driverPositionMarker.setRotation(bearing - 270);
     }
 
     private void setDriverMarker(Double lat, Double lon){
@@ -646,6 +653,8 @@ public class UserHome extends AppCompatActivity
     public void returnOriginalState(){
         if(mRoute != null)
             mRoute.remove();
+
+        driverPositionMarker.setVisible(false);
         LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
         mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Estas Acá"));
         mCardViewSearch.setVisibility(View.VISIBLE);

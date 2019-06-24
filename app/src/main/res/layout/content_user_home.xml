@@ -31,26 +31,4 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
 
-    <Button
-        android:id="@+id/button6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:onClick="fastGenerationOriginDestiny"
-        android:text="Generar O/D"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/mockDriverAssign"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:onClick="generateMockDriverAssign"
-        android:text="GenerarDriver"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/button6" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
