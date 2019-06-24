@@ -653,8 +653,7 @@ public class UserHome extends AppCompatActivity
     public void returnOriginalState(){
         if(mRoute != null)
             mRoute.remove();
-
-        driverPositionMarker.setVisible(false);
+        if (driverPositionMarker != null) driverPositionMarker.setVisible(false);
         LatLng currentLatLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
         mMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Estas Acá"));
         mCardViewSearch.setVisibility(View.VISIBLE);
